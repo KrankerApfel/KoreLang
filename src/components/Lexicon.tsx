@@ -499,6 +499,7 @@ const Lexicon: React.FC<LexiconProps> = ({
                     projectConstraints={constraints}
                     scriptConfig={scriptConfig}
                     isScriptMode={isScriptMode}
+                    phonology={phonology}
                 />
             </div>
         );

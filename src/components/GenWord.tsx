@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Wand2, Download, Copy, RefreshCw, Trash, ShieldAlert } from 'lucide-react';
 import { generateWords } from '../services/geminiService';
-import { LexiconEntry, PartOfSpeech, ProjectConstraints, ScriptConfig } from '../types';
+import { LexiconEntry, PartOfSpeech, ProjectConstraints, ScriptConfig, PhonologyConfig } from '../types';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
 
@@ -20,9 +20,10 @@ interface GenWordProps {
   projectConstraints: ProjectConstraints;
   scriptConfig?: ScriptConfig; // NEW
   isScriptMode?: boolean; // NEW
+  phonology?: PhonologyConfig; // NEW
 }
 
-const GenWord: React.FC<GenWordProps> = ({ onAddWords, onEditEntry, initialState, saveState, projectConstraints, scriptConfig, isScriptMode = false }) => {
+const GenWord: React.FC<GenWordProps> = ({ onAddWords, onEditEntry, initialState, saveState, projectConstraints, scriptConfig, isScriptMode = false, phonology }) => {
   const { t } = useTranslation();
 
   // Use state lifted from parent
@@ -60,7 +61,7 @@ const GenWord: React.FC<GenWordProps> = ({ onAddWords, onEditEntry, initialState
     setLoading(true);
     setErrorMessage(null); // Clear previous errors
     try {
-      const results = await generateWords(count, constraints, vibe, projectConstraints);
+      const results = await generateWords(count, constraints, vibe, projectConstraints, phonology);
       // RTE-PERSISTENCE: Merge new results with existing ones
       updateState({ generated: [...generated, ...results] });
     } catch (e: any) {

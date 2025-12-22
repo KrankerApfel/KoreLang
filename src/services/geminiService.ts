@@ -124,123 +124,123 @@ const safeParsePhonologyConfig = (text: string): PhonologyConfig => {
             syllableStructure: typeof parsed.syllableStructure === 'string' ? parsed.syllableStructure : '',
             bannedCombinations: Array.isArray(parsed.bannedCombinations) ? parsed.bannedCombinations : [],
         };
-            // Heuristic inference: attempt to infer manner/place and height/backness from nearby descriptive text
-            const MANNERS = ['plosive', 'nasal', 'trill', 'tap', 'flap', 'fricative', 'lateral-fricative', 'approximant', 'lateral-approximant', 'affricate'];
-            const PLACES = ['bilabial', 'labiodental', 'dental', 'alveolar', 'postalveolar', 'retroflex', 'palatal', 'velar', 'uvular', 'pharyngeal', 'glottal'];
-            const HEIGHTS = ['close', 'near-close', 'close-mid', 'mid', 'open-mid', 'near-open', 'open'];
-            const BACKNESS = ['front', 'central', 'back'];
+        // Heuristic inference: attempt to infer manner/place and height/backness from nearby descriptive text
+        const MANNERS = ['plosive', 'nasal', 'trill', 'tap', 'flap', 'fricative', 'lateral-fricative', 'approximant', 'lateral-approximant', 'affricate'];
+        const PLACES = ['bilabial', 'labiodental', 'dental', 'alveolar', 'postalveolar', 'retroflex', 'palatal', 'velar', 'uvular', 'pharyngeal', 'glottal'];
+        const HEIGHTS = ['close', 'near-close', 'close-mid', 'mid', 'open-mid', 'near-open', 'open'];
+        const BACKNESS = ['front', 'central', 'back'];
 
-            const MANNER_ALIASES: Record<string,string> = {
-                'stop': 'plosive',
-                'voiced stop': 'plosive',
-                'voiceless stop': 'plosive',
-                'affricate': 'affricate',
-                'liquid': 'approximant',
-                'fric': 'fricative',
-                'lateral': 'lateral-approximant'
-            };
+        const MANNER_ALIASES: Record<string, string> = {
+            'stop': 'plosive',
+            'voiced stop': 'plosive',
+            'voiceless stop': 'plosive',
+            'affricate': 'affricate',
+            'liquid': 'approximant',
+            'fric': 'fricative',
+            'lateral': 'lateral-approximant'
+        };
 
-            const HEIGHT_ALIASES: Record<string,string> = {
-                'high': 'close',
-                'mid-high': 'close-mid',
-                'mid': 'mid',
-                'low': 'open'
-            };
+        const HEIGHT_ALIASES: Record<string, string> = {
+            'high': 'close',
+            'mid-high': 'close-mid',
+            'mid': 'mid',
+            'low': 'open'
+        };
 
-            const PLACE_ALIASES: Record<string,string> = {
-                'postalveolar': 'postalveolar',
-                'post-alveolar': 'postalveolar',
-                'palato-alveolar': 'postalveolar'
-            };
+        const PLACE_ALIASES: Record<string, string> = {
+            'postalveolar': 'postalveolar',
+            'post-alveolar': 'postalveolar',
+            'palato-alveolar': 'postalveolar'
+        };
 
-            const escapeForRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const escapeForRegex = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-            const inferForList = (list: any[], type: 'consonant' | 'vowel') => {
-                return list.map(ph => {
-                    const symbol = (ph.symbol || '').toString().trim();
-                    let desc = (ph.description || '') + '\n' + text;
-                    desc = desc.toLowerCase();
+        const inferForList = (list: any[], type: 'consonant' | 'vowel') => {
+            return list.map(ph => {
+                const symbol = (ph.symbol || '').toString().trim();
+                let desc = (ph.description || '') + '\n' + text;
+                desc = desc.toLowerCase();
 
-                    const out: any = { ...ph };
+                const out: any = { ...ph };
 
-                    if (type === 'consonant') {
-                        if (!out.manner) {
-                            for (const m of MANNERS) {
-                                if (desc.includes(m)) { out.manner = m; break; }
-                            }
-                        }
-                        if (!out.place) {
-                            for (const p of PLACES) {
-                                if (desc.includes(p)) { out.place = p; break; }
-                            }
-                        }
-                    } else {
-                        if (!out.height) {
-                            for (const h of HEIGHTS) {
-                                if (desc.includes(h)) { out.height = h; break; }
-                            }
-                        }
-                        if (!out.backness) {
-                            for (const b of BACKNESS) {
-                                if (desc.includes(b)) { out.backness = b; break; }
-                            }
-                        }
-                        if (out.rounded === undefined) {
-                            out.rounded = /round|rounded/.test(desc);
+                if (type === 'consonant') {
+                    if (!out.manner) {
+                        for (const m of MANNERS) {
+                            if (desc.includes(m)) { out.manner = m; break; }
                         }
                     }
-
-                    // Also try pattern like "p: bilabial plosive" or "p (bilabial plosive)"
-                    try {
-                        const sym = escapeForRegex(symbol);
-                        const regex = new RegExp(sym + '\\s*(?:[:\\-]\\s*|\\(|\\[)\\s*([a-z ,\\-]+)', 'i');
-                        const m = text.match(regex);
-                        if (m && m[1]) {
-                            const tokens = m[1].toLowerCase().split(/[ ,\\-]+/).map(s=>s.trim()).filter(Boolean);
-                            tokens.forEach(tokRaw => {
-                                const tok = tokRaw.replace(/[^a-z\-]/g,'').toLowerCase();
-                                // voiced / voiceless
-                                if (/voic/.test(tok)) {
-                                    if (/voiceless/.test(tok) || /unvoiced/.test(tok)) out.voiced = false;
-                                    else out.voiced = true;
-                                }
-
-                                // map manners via aliases or direct match
-                                if (!out.manner) {
-                                    if (MANNERS.includes(tok)) out.manner = tok;
-                                    else if (MANNER_ALIASES[tok]) out.manner = MANNER_ALIASES[tok];
-                                }
-
-                                // places
-                                if (!out.place) {
-                                    if (PLACES.includes(tok)) out.place = tok;
-                                    else if (PLACE_ALIASES[tok]) out.place = PLACE_ALIASES[tok];
-                                }
-
-                                // heights/backness
-                                if (!out.height) {
-                                    if (HEIGHTS.includes(tok)) out.height = tok;
-                                    else if (HEIGHT_ALIASES[tok]) out.height = HEIGHT_ALIASES[tok];
-                                }
-                                if (!out.backness) {
-                                    if (BACKNESS.includes(tok)) out.backness = tok;
-                                }
-
-                                if (out.rounded === undefined && /round|rounded/.test(tok)) out.rounded = true;
-                            });
+                    if (!out.place) {
+                        for (const p of PLACES) {
+                            if (desc.includes(p)) { out.place = p; break; }
                         }
-                    } catch (e) {
-                        // ignore regex errors for odd symbols
                     }
+                } else {
+                    if (!out.height) {
+                        for (const h of HEIGHTS) {
+                            if (desc.includes(h)) { out.height = h; break; }
+                        }
+                    }
+                    if (!out.backness) {
+                        for (const b of BACKNESS) {
+                            if (desc.includes(b)) { out.backness = b; break; }
+                        }
+                    }
+                    if (out.rounded === undefined) {
+                        out.rounded = /round|rounded/.test(desc);
+                    }
+                }
 
-                    return out;
-                });
-            };
+                // Also try pattern like "p: bilabial plosive" or "p (bilabial plosive)"
+                try {
+                    const sym = escapeForRegex(symbol);
+                    const regex = new RegExp(sym + '\\s*(?:[:\\-]\\s*|\\(|\\[)\\s*([a-z ,\\-]+)', 'i');
+                    const m = text.match(regex);
+                    if (m && m[1]) {
+                        const tokens = m[1].toLowerCase().split(/[ ,\\-]+/).map(s => s.trim()).filter(Boolean);
+                        tokens.forEach(tokRaw => {
+                            const tok = tokRaw.replace(/[^a-z\-]/g, '').toLowerCase();
+                            // voiced / voiceless
+                            if (/voic/.test(tok)) {
+                                if (/voiceless/.test(tok) || /unvoiced/.test(tok)) out.voiced = false;
+                                else out.voiced = true;
+                            }
 
-            phonologyConfig.consonants = inferForList(phonologyConfig.consonants, 'consonant');
-            phonologyConfig.vowels = inferForList(phonologyConfig.vowels, 'vowel');
+                            // map manners via aliases or direct match
+                            if (!out.manner) {
+                                if (MANNERS.includes(tok)) out.manner = tok;
+                                else if (MANNER_ALIASES[tok]) out.manner = MANNER_ALIASES[tok];
+                            }
 
-            return phonologyConfig;
+                            // places
+                            if (!out.place) {
+                                if (PLACES.includes(tok)) out.place = tok;
+                                else if (PLACE_ALIASES[tok]) out.place = PLACE_ALIASES[tok];
+                            }
+
+                            // heights/backness
+                            if (!out.height) {
+                                if (HEIGHTS.includes(tok)) out.height = tok;
+                                else if (HEIGHT_ALIASES[tok]) out.height = HEIGHT_ALIASES[tok];
+                            }
+                            if (!out.backness) {
+                                if (BACKNESS.includes(tok)) out.backness = tok;
+                            }
+
+                            if (out.rounded === undefined && /round|rounded/.test(tok)) out.rounded = true;
+                        });
+                    }
+                } catch (e) {
+                    // ignore regex errors for odd symbols
+                }
+
+                return out;
+            });
+        };
+
+        phonologyConfig.consonants = inferForList(phonologyConfig.consonants, 'consonant');
+        phonologyConfig.vowels = inferForList(phonologyConfig.vowels, 'vowel');
+
+        return phonologyConfig;
 
         return phonologyConfig;
 
@@ -369,21 +369,33 @@ export const generateWords = async (
     count: number,
     constraints: string,
     vibe: string,
-    projectRules?: ProjectConstraints
+    projectRules?: ProjectConstraints,
+    phonology?: PhonologyConfig
 ): Promise<Array<{ word: string; ipa: string }>> => {
     try {
         const genAI = getGenAI();
         const model = genAI.getGenerativeModel({
             model: "gemma-3-27b-it",
-
         });
         const safeCount = Math.min(count, 15);
         let globalRulesPrompt = "";
+
         if (projectRules) {
             const banned = projectRules.bannedSequences.length > 0 ? "Banned sequences: " + projectRules.bannedSequences.join(', ') + "." : "";
             const allowed = projectRules.allowedGraphemes ? "Allowed characters (Regex): [" + projectRules.allowedGraphemes + "]." : "";
             const structure = projectRules.phonotacticStructure ? "Must match Regex Structure: " + projectRules.phonotacticStructure : "";
-            globalRulesPrompt = "STRICT RULES: " + banned + " " + allowed + " " + structure;
+            globalRulesPrompt += "STRICT RULES: " + banned + " " + allowed + " " + structure;
+        }
+
+        if (phonology) {
+            const cons = phonology.consonants.map(p => p.symbol).join(', ');
+            const vows = phonology.vowels.map(p => p.symbol).join(', ');
+            const syl = phonology.syllableStructure || 'Free';
+            globalRulesPrompt += `\nPHONOLOGY RULES:
+            - Consonants available: ${cons}
+            - Vowels available: ${vows}
+            - Permitted Syllable Structure: ${syl}
+            Only use these sounds.`;
         }
 
         console.log("Iniciando generación con el modelo gemma-3-27b-it...");
@@ -495,7 +507,26 @@ export const generatePhonology = async (description: string): Promise<PhonologyC
         });
 
         console.log("Iniciando generación con el modelo gemma-3-27b-it...");
-        const result = await model.generateContent("Create phonology from description: \"" + description + "\". Your response MUST be a JSON object that strictly adheres to the PhonologyConfig TypeScript interface, including all fields. If a field has no data, use an empty array for lists (e.g., `consonants`, `vowels`, `bannedCombinations`) or an empty string for strings (e.g., `name`, `description`, `syllableStructure`). DO NOT include any conversational text, markdown fences (e.g., ```json), or extra characters, just the raw JSON object. Example of a complete PhonologyConfig JSON object: {\"name\":\"\", \"description\":\"\", \"consonants\":[], \"vowels\":[], \"syllableStructure\":\"\", \"bannedCombinations\":[]}");
+        const result = await model.generateContent(`Create a structured phonology from this description: "${description}". 
+        
+        Your response MUST be a single raw JSON object (no markdown, no backticks) that matches this interface:
+        {
+          "name": "string",
+          "description": "string",
+          "consonants": [
+            { "symbol": "string", "type": "consonant", "manner": "string", "place": "string", "voiced": boolean }
+          ],
+          "vowels": [
+            { "symbol": "string", "type": "vowel", "height": "string", "backness": "string", "rounded": boolean }
+          ],
+          "syllableStructure": "string (e.g. CVC)",
+          "bannedCombinations": ["string"]
+        }
+        
+        Use IPA symbols. For manner use: [plosive, nasal, trill, tap, fricative, lateral-fricative, approximant, lateral-approximant]. 
+        For place use: [bilabial, labiodental, dental, alveolar, postalveolar, retroflex, palatal, velar, uvular, pharyngeal, glottal].
+        For height use: [close, near-close, close-mid, mid, open-mid, near-open, open].
+        For backness use: [front, central, back].`);
         const response = await result.response;
         const textResponse = response.text();
         console.log("Raw AI response for phonology:", textResponse);
