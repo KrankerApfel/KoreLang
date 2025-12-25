@@ -2,8 +2,7 @@
 import React, { useState } from 'react';
 import { X, Moon, Sun, CloudMoon, Cpu, CloudSun, Palette, Download, Upload, Check, Eye, EyeOff, HelpCircle, ExternalLink, ChevronLeft } from 'lucide-react';
 import { AppSettings, CustomTheme } from '../types';
-import { useTranslation, i18n as globalI18n } from '../i18n';
-type Language = 'en' | 'es' | 'fr';
+import { useTranslation, languages, LanguageCode } from '../i18n';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -25,7 +24,7 @@ const DEFAULT_CUSTOM: CustomTheme = {
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings, onUpdateSettings }) => {
   const { t, i18n } = useTranslation();
   const language = i18n.language;
-  const setLanguage = (lang: string) => i18n.changeLanguage(lang);
+  const setLanguage = (lang: string) => onUpdateSettings({ ...settings, language: lang });
   const [activeTab, setActiveTab] = useState<'GENERAL' | 'THEME'>('GENERAL');
   const [apiKey, setApiKeyLocal] = useState(getApiKey());
   const [showApiKey, setShowApiKey] = useState(false);
@@ -34,10 +33,6 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
 
   if (!isOpen) return null;
 
-  // Filtrado final: Habilitar idiomas soportados
-  const languages: { code: Language; label: string }[] = [
-    { code: 'en', label: 'English' }
-  ];
 
   const handleCustomUpdate = (key: keyof CustomTheme, val: string) => {
     const current = settings.customTheme || DEFAULT_CUSTOM;
@@ -133,9 +128,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
 
               <div>
                 <label className="text-xs font-bold text-slate-500 uppercase mb-3 block">Language</label>
-                <div className="grid grid-cols-2 gap-2 bg-slate-950 p-2 rounded">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-slate-950 p-2 rounded max-h-[200px] overflow-y-auto custom-scrollbar">
                   {languages.map(lang => (
-                    <button key={lang.code} onClick={() => setLanguage(lang.code)} className={`py-1.5 text-xs rounded ${language === lang.code ? 'bg-blue-600 text-white shadow' : 'text-slate-500 hover:text-slate-200'}`}>{lang.label}</button>
+                    <button key={lang.code} onClick={() => setLanguage(lang.code)} className={`py-1.5 px-2 text-[10px] font-medium rounded truncate transition-all ${language === lang.code ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40 translate-y-[-1px]' : 'text-slate-500 hover:text-slate-200 hover:bg-slate-800'}`} title={lang.label}>{lang.label}</button>
                   ))}
                 </div>
               </div>
