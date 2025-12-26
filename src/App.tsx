@@ -95,6 +95,7 @@ const AppContent: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>("DASHBOARD");
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isConstraintsOpen, setIsConstraintsOpen] = useState(false);
+  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isWhatsNewOpen, setIsWhatsNewOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -446,7 +447,6 @@ const AppContent: React.FC = () => {
     { id: "GRAMMAR", icon: Languages },
     { id: "GENEVOLVE", icon: GitBranch },
     { id: "NOTEBOOK", icon: BookOpen },
-    { id: "CONSOLE", icon: Terminal },
   ];
 
   return (
@@ -479,6 +479,7 @@ const AppContent: React.FC = () => {
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenProjectSettings={() => { setWizardMode('edit'); setIsWizardOpen(true); }}
         onOpenConstraints={() => setIsConstraintsOpen(true)}
+        onOpenConsole={() => setIsConsoleOpen(true)}
         onZoomIn={() => setZoomLevel((p) => Math.min(p + 10, 150))}
         onZoomOut={() => setZoomLevel((p) => Math.max(p - 10, 50))}
         onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}

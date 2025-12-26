@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Feather,
   Info,
+  Terminal,
   LucideIcon,
 } from "lucide-react";
 import { AppSettings } from "../types";
@@ -45,6 +46,7 @@ interface MenuBarProps {
   onOpenSettings: () => void;
   onOpenProjectSettings: () => void;
   onOpenConstraints: () => void;
+  onOpenConsole: () => void;
   onZoomIn: () => void;
   onZoomOut: () => void;
   onToggleSidebar: () => void;
@@ -61,6 +63,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
   onOpenSettings,
   onOpenProjectSettings,
   onOpenConstraints,
+  onOpenConsole,
   onZoomIn,
   onZoomOut,
   onToggleSidebar,
@@ -130,6 +133,12 @@ const MenuBar: React.FC<MenuBarProps> = ({
           label: t("menu.validation"),
           icon: ShieldCheck,
           action: onOpenConstraints,
+          shortcut: "",
+        },
+        {
+          label: t("menu.console"),
+          icon: Terminal,
+          action: onOpenConsole,
           shortcut: "",
         },
       ],
