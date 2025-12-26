@@ -1,13 +1,63 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "../i18n";
 import { X, ChevronDown, ChevronUp, Terminal } from "lucide-react";
+import ConsoleConfig from "./ConsoleConfig";
+import {
+  ProjectConstraints,
+  AppSettings,
+  LexiconEntry,
+  LogEntry,
+  ScriptConfig,
+  ViewState,
+} from "../types";
 
 interface ConsoleModalProps {
   isOpen: boolean;
   onClose: () => void;
+
+  // forwarded to ConsoleConfig
+  constraints: ProjectConstraints;
+  setConstraints: (c: ProjectConstraints) => void;
+  settings: AppSettings;
+  setSettings: (s: AppSettings) => void;
+  entries: LexiconEntry[];
+  setEntries: React.Dispatch<React.SetStateAction<LexiconEntry[]>>;
+  history: LogEntry[];
+  setHistory: React.Dispatch<React.SetStateAction<LogEntry[]>>;
+  setProjectName: (name: string) => void;
+  setProjectDescription: (desc: string) => void;
+  setProjectAuthor: (author: string) => void;
+  setIsSidebarOpen: (open: boolean) => void;
+  setView: (view: ViewState) => void;
+  setJumpToTerm: (term: string | null) => void;
+  setDraftEntry: (entry: Partial<LexiconEntry> | null) => void;
+  scriptConfig?: ScriptConfig;
+  isScriptMode?: boolean;
+  author?: string;
 }
 
-const ConsoleModal: React.FC<ConsoleModalProps> = ({ isOpen, onClose }) => {
+const ConsoleModal: React.FC<ConsoleModalProps> = ({
+  isOpen,
+  onClose,
+  constraints,
+  setConstraints,
+  settings,
+  setSettings,
+  entries,
+  setEntries,
+  history,
+  setHistory,
+  setProjectName,
+  setProjectDescription,
+  setProjectAuthor,
+  setIsSidebarOpen,
+  setView,
+  setJumpToTerm,
+  setDraftEntry,
+  scriptConfig,
+  isScriptMode,
+  author,
+}) => {
   const { t } = useTranslation();
 
   const [height, setHeight] = useState<number>(() => {
@@ -176,8 +226,27 @@ const ConsoleModal: React.FC<ConsoleModalProps> = ({ isOpen, onClose }) => {
         </div>
 
         {!isMinimized && (
-          <div className="h-full overflow-hidden bg-[var(--bg-main)] relative" aria-hidden>
-            <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.4)" }} />
+          <div className="h-full overflow-hidden bg-[var(--bg-main)] relative">
+            <ConsoleConfig
+              constraints={constraints}
+              setConstraints={setConstraints}
+              settings={settings}
+              setSettings={setSettings}
+              entries={entries}
+              setEntries={setEntries}
+              history={history}
+              setHistory={setHistory}
+              setProjectName={setProjectName}
+              setProjectDescription={setProjectDescription}
+              setProjectAuthor={setProjectAuthor}
+              setIsSidebarOpen={setIsSidebarOpen}
+              setView={setView}
+              setJumpToTerm={setJumpToTerm}
+              setDraftEntry={setDraftEntry}
+              scriptConfig={scriptConfig}
+              isScriptMode={isScriptMode}
+              author={author}
+            />
           </div>
         )}
       </div>

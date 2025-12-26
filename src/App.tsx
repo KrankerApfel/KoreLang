@@ -65,6 +65,7 @@ const THEMES = {
     bgPanel: "#1e1e1e",
     text1: "#f1f5f9",
     text2: "#94a3b8",
+      textInfo: "10px",
     accent: "#3b82f6",
   },
   light: {
@@ -72,6 +73,7 @@ const THEMES = {
     bgPanel: "#ffffff",
     text1: "#0f172a",
     text2: "#475569",
+      textInfo: "10px",
     accent: "#2563eb",
   },
   "tokyo-night": {
@@ -79,6 +81,7 @@ const THEMES = {
     bgPanel: "#24283b",
     text1: "#a9b1d6",
     text2: "#565f89",
+      textInfo: "10px",
     accent: "#7aa2f7",
   },
   "tokyo-light": {
@@ -86,6 +89,7 @@ const THEMES = {
     bgPanel: "#cbccd1",
     text1: "#343b58",
     text2: "#565a6e",
+      textInfo: "10px",
     accent: "#34548a",
   },
 };
@@ -197,6 +201,7 @@ const AppContent: React.FC = () => {
     root.style.setProperty("--bg-panel", themeData.bgPanel);
     root.style.setProperty("--text-1", themeData.text1);
     root.style.setProperty("--text-2", themeData.text2);
+    root.style.setProperty("--text-info", (themeData as any).textInfo || "10px");
     root.style.setProperty("--accent", themeData.accent);
   }, [settings.theme, settings.customTheme]);
 
@@ -581,7 +586,28 @@ const AppContent: React.FC = () => {
         onClose={() => setIsWizardOpen(false)}
         onSubmit={handleWizardSubmit}
       />
-      <ConsoleModal isOpen={isConsoleOpen} onClose={() => setIsConsoleOpen(false)} />
+      <ConsoleModal
+        isOpen={isConsoleOpen}
+        onClose={() => setIsConsoleOpen(false)}
+        constraints={constraints}
+        setConstraints={setConstraints}
+        settings={settings}
+        setSettings={setSettings}
+        entries={lexicon}
+        setEntries={setLexicon}
+        history={consoleHistory}
+        setHistory={setConsoleHistory}
+        setProjectName={setProjectName}
+        setProjectDescription={setProjectDescription}
+        setProjectAuthor={setProjectAuthor}
+        setIsSidebarOpen={setIsSidebarOpen}
+        setView={setCurrentView}
+        setJumpToTerm={setJumpToTerm}
+        setDraftEntry={setDraftEntry}
+        scriptConfig={scriptConfig}
+        isScriptMode={isScriptMode}
+        author={projectAuthor}
+      />
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
       <WhatsNewModal isOpen={isWhatsNewOpen} onClose={closeWhatsNew} />
     </div>

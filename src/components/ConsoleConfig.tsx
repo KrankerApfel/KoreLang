@@ -1,4 +1,4 @@
-import { Terminal, ArrowRight, Zap, ShieldAlert, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Info, ArrowRight, Zap, ShieldAlert, CheckCircle2, AlertTriangle } from 'lucide-react';
 import React, { useState, useEffect, useRef } from 'react';
 import { ProjectConstraints, AppSettings, LexiconEntry, LogEntry, ViewState, POS_SUGGESTIONS, ScriptConfig } from '../types';
 import { useTranslation } from '../i18n';
@@ -293,9 +293,9 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
 
     return (
         <div className="h-full flex flex-col bg-[var(--bg-main)] font-mono text-sm relative">
-            <div className="p-2 bg-[var(--bg-panel)] border-b border-white/5 flex justify-between items-center text-xs text-[var(--text-2)]">
-                <span className="flex items-center gap-2"><Terminal size={14} /> KoreLang kernel_v1.1_stable</span>
-                <span className="flex items-center gap-2">
+            <div className="p-2  border-b border-white/5 flex justify-between items-center text-xs text-[var(--text-2)]">
+                <span className="flex items-center gap-2" style={{ fontSize: 'var(--text-info)' }}><Info size={10} /> KoreLang kernel_v1.1_stable</span>
+                <span className="flex items-center gap-2 text-emerald-500" style={{ fontSize: 'var(--text-info)' }}>
                     {loadingAI && <Zap size={12} className="text-purple-500 animate-pulse" />}
                     SYSTEM_READY
                 </span>
