@@ -8,7 +8,6 @@ import GenEvolve from './components/GenEvolve';
 import PhonologyEditor from './components/PhonologyEditor';
 import Dashboard from './components/Dashboard';
 import ConsoleConfig from './components/ConsoleConfig';
-import SourceView from './components/SourceView';
 import ScriptEditor from './components/ScriptEditor';
 import Notebook from './components/Notebook';
 import ProjectWizard from './components/ProjectWizard';
@@ -18,7 +17,7 @@ import SettingsModal from './components/SettingsModal';
 import WhatsNewModal from './components/WhatsNewModal';
 import { ViewState, LexiconEntry, SoundChangeRule, ProjectData, AppSettings, MorphologyState, PhonologyConfig, ProjectConstraints, LogEntry, ScriptConfig } from './types';
 import { LanguageProvider, useTranslation, i18n } from './i18n';
-import { PanelLeftOpen, LayoutDashboard, Activity, BookA, Languages, GitBranch, Terminal, FileJson, Feather, BookOpen } from 'lucide-react';
+import { PanelLeftOpen, LayoutDashboard, Activity, BookA, Languages, GitBranch, Terminal, Feather, BookOpen } from 'lucide-react';
 
 const STORAGE_KEY = 'conlang_studio_autosave';
 const SETTINGS_STORAGE_KEY = 'conlang_studio_settings';
@@ -241,25 +240,24 @@ const AppContent: React.FC = () => {
       case 'CONSOLE': return <ConsoleConfig constraints={constraints} setConstraints={setConstraints} settings={settings} setSettings={setSettings} entries={lexicon} setEntries={setLexicon} history={consoleHistory} setHistory={setConsoleHistory} setProjectName={setProjectName} setProjectDescription={setProjectDescription} setProjectAuthor={setProjectAuthor} setIsSidebarOpen={setIsSidebarOpen} setView={setCurrentView} setJumpToTerm={setJumpToTerm} setDraftEntry={setDraftEntry} author={projectAuthor} {...commonProps} />;
       case 'SCRIPT': return <ScriptEditor scriptConfig={scriptConfig} setScriptConfig={setScriptConfig} constraints={constraints} />;
       case 'NOTEBOOK': return <Notebook {...commonProps} text={notebook} setText={setNotebook} />;
-      case 'SOURCE': return <SourceView data={getFullProjectData()} onApply={(data) => { loadProjectData(data); alert('Project state synced.'); }} />;
       default: return <Dashboard entries={lexicon} projectName={projectName} author={projectAuthor} description={projectDescription} setView={setCurrentView} {...commonProps} />;
     }
   };
 
-  const navItems = [{ id: 'DASHBOARD', icon: LayoutDashboard }, { id: 'PHONOLOGY', icon: Activity }, { id: 'SCRIPT', icon: Feather }, { id: 'LEXICON', icon: BookA }, { id: 'GRAMMAR', icon: Languages }, { id: 'GENEVOLVE', icon: GitBranch }, { id: 'NOTEBOOK', icon: BookOpen }, { id: 'CONSOLE', icon: Terminal }, { id: 'SOURCE', icon: FileJson }];
+  const navItems = [{ id: 'DASHBOARD', icon: LayoutDashboard }, { id: 'PHONOLOGY', icon: Activity }, { id: 'SCRIPT', icon: Feather }, { id: 'LEXICON', icon: BookA }, { id: 'GRAMMAR', icon: Languages }, { id: 'GENEVOLVE', icon: GitBranch }, { id: 'NOTEBOOK', icon: BookOpen }, { id: 'CONSOLE', icon: Terminal }];
 
   return (
     <div className="flex flex-col h-screen w-screen bg-[var(--bg-main)] text-[var(--text-1)] font-sans overflow-hidden transition-colors duration-200">
       <MenuBar onNewProject={() => { setWizardMode('create'); setIsWizardOpen(true); }} onSaveProject={() => { if (typeof window !== 'undefined') { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(getFullProjectData(), null, 2)], { type: 'application/json' })); a.download = `${projectName.toLowerCase().replace(/\s/g, '-')}.json`; a.click(); } }} onOpenProject={(file) => { const r = new FileReader(); r.onload = (e) => loadProjectData(JSON.parse(e.target?.result as string)); r.readAsText(file); }} onOpenSettings={() => setIsSettingsOpen(true)} onOpenConstraints={() => setIsConstraintsOpen(true)} onZoomIn={() => setZoomLevel(p => Math.min(p + 10, 150))} onZoomOut={() => setZoomLevel(p => Math.max(p - 10, 50))} onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} settings={settings} isScriptMode={isScriptMode} onToggleScriptMode={() => setIsScriptMode(!isScriptMode)} onOpenAbout={() => setIsAboutOpen(true)} />
-      <div className="flex flex-1 overflow-hidden relative">
-        {isMobile && isSidebarOpen && <div className="absolute inset-0 bg-black/50 z-30 backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)} />}
+      <div className="relative flex flex-1 overflow-hidden">
+        {isMobile && isSidebarOpen && <div className="absolute inset-0 z-30 bg-black/50 backdrop-blur-sm" onClick={() => setIsSidebarOpen(false)} />}
         {isSidebarOpen ? (
           <div className={`flex-shrink-0 bg-[var(--bg-panel)] w-64 border-e border-neutral-700 transition-all h-full ${isMobile ? 'absolute z-40 shadow-2xl' : 'relative'}`}>
             <Sidebar currentView={currentView} setView={setCurrentView} onOpenProjectSettings={() => { setWizardMode('edit'); setIsWizardOpen(true); }} onToggleSidebar={() => setIsSidebarOpen(false)} />
           </div>
         ) : (
           <div className="flex-shrink-0 bg-[var(--bg-panel)] w-12 border-e border-neutral-700 flex flex-col items-center py-2 gap-1.5 z-20 overflow-y-auto no-scrollbar">
-            <button onClick={() => setIsSidebarOpen(true)} className="text-neutral-500 hover:text-white p-2 rounded hover:bg-neutral-800 transition-colors mb-1">
+            <button onClick={() => setIsSidebarOpen(true)} className="p-2 mb-1 transition-colors rounded text-neutral-500 hover:text-white hover:bg-neutral-800">
               <PanelLeftOpen size={18} className={i18n.dir() === 'rtl' ? 'rotate-180' : ''} />
             </button>
             <div className="w-6 h-px bg-neutral-700 mb-1.5"></div>
@@ -269,7 +267,7 @@ const AppContent: React.FC = () => {
         <main className="flex-1 overflow-auto bg-[var(--bg-main)] relative w-full" style={{ zoom: zoomLevel / 100 }}>{renderView()}</main>
       </div>
       <footer className="h-6 bg-[var(--bg-panel)] border-t border-neutral-700 flex items-center px-4 text-xs text-[var(--text-2)] gap-4 shrink-0 z-50 relative">
-        <span className="flex items-center gap-1 text-emerald-500 font-bold"><span className="w-2 h-2 rounded-full bg-emerald-500"></span>Auto-Saved</span>
+        <span className="flex items-center gap-1 font-bold text-emerald-500"><span className="w-2 h-2 rounded-full bg-emerald-500"></span>Auto-Saved</span>
         <span className="text-neutral-400">{projectName}</span>
         <span className="text-neutral-500/80 font-mono text-[11px]">v1.1</span>
         <span className="ml-auto">Ln 1, Col 1</span>

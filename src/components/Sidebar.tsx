@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookA, GitBranch, Languages, LayoutDashboard, Settings, Activity, Terminal, FileJson, Feather, BookOpen } from 'lucide-react';
+import { BookA, GitBranch, Languages, LayoutDashboard, Settings, Activity, Terminal, Feather, BookOpen } from 'lucide-react';
 import { ViewState } from '../types';
 import { useTranslation } from '../i18n';
 
@@ -25,7 +25,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onOpenProjectSe
 
   const systemItems = [
     { id: 'CONSOLE', label: t('nav.console'), icon: Terminal },
-    { id: 'SOURCE', label: t('nav.source'), icon: FileJson },
   ];
 
   const renderItem = (item: any) => {
@@ -49,9 +48,9 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onOpenProjectSe
 
   return (
     <aside className="w-64 bg-[var(--bg-panel)] border-e border-neutral-700 flex flex-col h-full shrink-0">
-      <div className="p-4 border-b border-neutral-700 flex justify-between items-start">
+      <div className="flex items-start justify-between p-4 border-b border-neutral-700">
         <div>
-          <h1 className="text-lg font-bold text-blue-500 tracking-tight flex items-center gap-2">
+          <h1 className="flex items-center gap-2 text-lg font-bold tracking-tight text-blue-500">
             <span className="text-xl">⚡</span>
             {t('app.title')}
           </h1>
@@ -63,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onOpenProjectSe
         {onToggleSidebar && (
           <button
             onClick={onToggleSidebar}
-            className="text-neutral-500 hover:text-white transition-colors p-1"
+            className="p-1 transition-colors text-neutral-500 hover:text-white"
             title={t('menu.toggle_sidebar')}
           >
             {/* RTL awareness handled by parent or Lucide */}
@@ -72,16 +71,16 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onOpenProjectSe
         )}
       </div>
 
-      <div className="flex-1 overflow-y-auto py-4 flex flex-col gap-6">
+      <div className="flex flex-col flex-1 gap-6 py-4 overflow-y-auto">
         <nav>
-          <div className="px-4 mb-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">Authoring</div>
+          <div className="px-4 mb-2 text-xs font-semibold tracking-wider uppercase text-neutral-500">Authoring</div>
           <ul className="space-y-0.5 px-2">
             {authoringItems.map(renderItem)}
           </ul>
         </nav>
 
         <nav>
-          <div className="px-4 mb-2 text-xs font-semibold text-neutral-500 uppercase tracking-wider">System</div>
+          <div className="px-4 mb-2 text-xs font-semibold tracking-wider uppercase text-neutral-500">System</div>
           <ul className="space-y-0.5 px-2">
             {systemItems.map(renderItem)}
           </ul>
@@ -91,7 +90,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onOpenProjectSe
       <div className="p-3 border-t border-neutral-700 bg-[var(--bg-panel)]">
         <button
           onClick={onOpenProjectSettings}
-          className="flex items-center gap-3 text-neutral-400 hover:text-white text-sm font-medium w-full px-3 py-2 rounded hover:bg-neutral-800 transition-colors"
+          className="flex items-center w-full gap-3 px-3 py-2 text-sm font-medium transition-colors rounded text-neutral-400 hover:text-white hover:bg-neutral-800"
         >
           <Settings size={16} />
           {t('settings.title')}
