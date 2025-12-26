@@ -75,6 +75,8 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
   const startHeightRef = useRef(height);
 
   const prevHeightRef = useRef(height);
+  const lastMaximizeAtRef = useRef<number>(0);
+  const maximizeCountRef = useRef<number>(0);
 
   // match the app footer bar height (Tailwind h-6 = 1.5rem = 24px)
   const MINIMIZED_HEIGHT = 24;
@@ -124,6 +126,65 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
       setIsMinimized(false);
     }
   }, [isOpen]);
+
+  // Listen for programmatic shortcuts (dispatched from App) to maximize/minimize
+  useEffect(() => {
+    const handler = (ev: Event) => {
+      try {
+        if (!isOpen) return; // only act when console is open
+        const detail = (ev as CustomEvent).detail as { action?: string } | undefined;
+        const action = detail?.action;
+        if (!action) return;
+
+        if (action === "maximize") {
+          // Support double-press to go full height: if maximize is triggered twice
+          // within a short interval, expand to near-fullscreen.
+          const now = Date.now();
+          if (now - lastMaximizeAtRef.current < 800) {
+            maximizeCountRef.current += 1;
+          } else {
+            maximizeCountRef.current = 1;
+          }
+          lastMaximizeAtRef.current = now;
+
+          if (maximizeCountRef.current >= 2) {
+            // go full height
+            try {
+              prevHeightRef.current = height;
+            } catch {}
+            const full = Math.max(200, window.innerHeight - 40);
+            setIsMinimized(false);
+            setHeight(full);
+            maximizeCountRef.current = 0;
+          } else {
+            // Restore last-used non-minimized height (prefer persisted value)
+            try {
+              const saved = localStorage.getItem("console_panel_height");
+              const parsed = saved ? parseInt(saved, 10) : prevHeightRef.current || 320;
+              const restore = Math.max(120, Math.min(window.innerHeight - 100, parsed));
+              setIsMinimized(false);
+              setHeight(restore);
+            } catch (e) {
+              const restore = Math.max(120, Math.min(window.innerHeight - 100, prevHeightRef.current || 320));
+              setIsMinimized(false);
+              setHeight(restore);
+            }
+          }
+        } else if (action === "minimize") {
+          try {
+            prevHeightRef.current = height;
+          } catch {}
+          setHeight(MINIMIZED_HEIGHT);
+          setIsMinimized(true);
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+
+    window.addEventListener("console-shortcut", handler as EventListener);
+    return () => window.removeEventListener("console-shortcut", handler as EventListener);
+  }, [isOpen, height]);
 
   useEffect(() => {
     try {
@@ -216,11 +277,11 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
               className="p-1 transition-colors rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white"
               aria-label={isMinimized ? "Restore console" : "Minimize console"}
             >
-              {isMinimized ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              {isMinimized ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
             </button>
 
             <button onClick={onClose} className="p-1 transition-colors rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white">
-              <X size={18} />
+              <X size={10} />
             </button>
           </div>
         </div>

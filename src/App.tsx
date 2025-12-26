@@ -190,6 +190,57 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Shortcuts handling:
+  // - Alt+C: open console (ignore when focus is in input/textarea or contentEditable)
+  // - Alt+C+ArrowUp: maximize console (only when console already open)
+  // - Alt+C+ArrowDown: minimize console (only when console already open)
+  useEffect(() => {
+    const pressed = new Set<string>();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      try {
+        // keep track of pressed keys
+        pressed.add(e.key.toLowerCase());
+
+        const active = document.activeElement as HTMLElement | null;
+        const inInput = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+
+        if (e.altKey && !e.ctrlKey && !e.metaKey) {
+          // Open console on Alt+C
+          if (e.key.toLowerCase() === 'c' && !inInput) {
+            e.preventDefault();
+            setIsConsoleOpen(true);
+            return;
+          }
+
+          // When Console is already open, support Alt+C+ArrowUp/ArrowDown combos.
+          // We detect C being held by checking our pressed set for 'c'.
+          if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && pressed.has('c') && isConsoleOpen) {
+            e.preventDefault();
+            const action = e.key === 'ArrowUp' ? 'maximize' : 'minimize';
+            window.dispatchEvent(new CustomEvent('console-shortcut', { detail: { action } }));
+            return;
+          }
+        }
+      } catch (err) {
+        // ignore
+      }
+    };
+
+    const onKeyUp = (e: KeyboardEvent) => {
+      try {
+        pressed.delete(e.key.toLowerCase());
+      } catch {}
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+    };
+  }, [isConsoleOpen]);
+
   useEffect(() => {
     const themeData =
       settings.theme === "custom" && settings.customTheme

@@ -139,7 +139,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
           label: t("menu.console"),
           icon: Terminal,
           action: onOpenConsole,
-          shortcut: "",
+          shortcut: "Alt+C",
         },
       ],
     },
@@ -249,17 +249,8 @@ const MenuBar: React.FC<MenuBarProps> = ({
                         key={idx}
                         className="w-full text-left px-4 py-1.5 text-sm text-neutral-300 hover:bg-blue-600 hover:text-white flex items-center justify-between group"
                         onClick={() => {
-                          try {
-                            // debug: log menu action invocation
-                            // tslint:disable-next-line: no-console
-                            console.log('[MenuBar] action:', item.label);
-                            item.action();
-                          } catch (e) {
-                            // tslint:disable-next-line: no-console
-                            console.error('[MenuBar] action error:', e);
-                          } finally {
-                            setActiveMenu(null);
-                          }
+                          item.action();
+                          setActiveMenu(null);
                         }}
                       >
                         <span className="flex items-center gap-2">
