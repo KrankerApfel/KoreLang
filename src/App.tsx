@@ -7,6 +7,7 @@ import GenEvolve from "./components/GenEvolve";
 import PhonologyEditor from "./components/PhonologyEditor";
 import Dashboard from "./components/Dashboard";
 import ConsoleConfig from "./components/ConsoleConfig";
+import ConsoleModal from "./components/ConsoleModal";
 import ScriptEditor from "./components/ScriptEditor";
 import Notebook from "./components/Notebook";
 import ProjectWizard from "./components/ProjectWizard";
@@ -34,7 +35,6 @@ import {
   BookA,
   Languages,
   GitBranch,
-  Terminal,
   Feather,
   BookOpen,
 } from "lucide-react";
@@ -578,6 +578,7 @@ const AppContent: React.FC = () => {
         onClose={() => setIsWizardOpen(false)}
         onSubmit={handleWizardSubmit}
       />
+      <ConsoleModal isOpen={isConsoleOpen} onClose={() => setIsConsoleOpen(false)} />
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
       <WhatsNewModal isOpen={isWhatsNewOpen} onClose={closeWhatsNew} />
     </div>

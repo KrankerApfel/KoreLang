@@ -249,8 +249,17 @@ const MenuBar: React.FC<MenuBarProps> = ({
                         key={idx}
                         className="w-full text-left px-4 py-1.5 text-sm text-neutral-300 hover:bg-blue-600 hover:text-white flex items-center justify-between group"
                         onClick={() => {
-                          item.action();
-                          setActiveMenu(null);
+                          try {
+                            // debug: log menu action invocation
+                            // tslint:disable-next-line: no-console
+                            console.log('[MenuBar] action:', item.label);
+                            item.action();
+                          } catch (e) {
+                            // tslint:disable-next-line: no-console
+                            console.error('[MenuBar] action error:', e);
+                          } finally {
+                            setActiveMenu(null);
+                          }
                         }}
                       >
                         <span className="flex items-center gap-2">
