@@ -305,7 +305,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
                 onClick={() => inputRef.current?.focus()}
             >
                 {history.map((log, i) => (
-                    <div key={i} className={`flex flex - col ${log.type === 'error' ? 'text-red-500' : log.type === 'success' ? 'text-emerald-400' : log.type === 'command' ? 'text-[var(--text-1)] font-bold' : 'text-[var(--text-2)]'} `}>
+                    <div key={i} className={`flex flex-col ${log.type === 'error' ? 'text-red-500' : log.type === 'success' ? 'text-emerald-400' : log.type === 'command' ? 'text-[var(--text-1)] font-bold' : 'text-[var(--text-2)]'} `}>
                         <div className="flex gap-3 leading-relaxed">
                             {log.type === 'command' && <span className="text-emerald-500">KoreLang-@{author}:~$</span>}
                             <span className={log.content === TERMINAL_HEADER ? "whitespace-pre text-blue-400 font-bold leading-none" : ""}>{log.content}</span>
