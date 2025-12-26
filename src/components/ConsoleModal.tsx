@@ -1,5 +1,6 @@
+import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "../i18n";
-import { X } from "lucide-react";
+import { X, ChevronDown, ChevronUp, Terminal } from "lucide-react";
 
 interface ConsoleModalProps {
   isOpen: boolean;
@@ -9,39 +10,176 @@ interface ConsoleModalProps {
 const ConsoleModal: React.FC<ConsoleModalProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
 
+  const [height, setHeight] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem("console_panel_height");
+      if (saved) return Math.max(120, Math.min(window.innerHeight - 100, parseInt(saved, 10)));
+    } catch (e) {
+    }
+    return 320;
+  });
+
+  const resizingRef = useRef(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const startYRef = useRef(0);
+  const startHeightRef = useRef(height);
+
+  const prevHeightRef = useRef(height);
+
+  // match the app footer bar height (Tailwind h-6 = 1.5rem = 24px)
+  const MINIMIZED_HEIGHT = 24;
+  const [isMinimized, setIsMinimized] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem("console_panel_minimized") === "1";
+    } catch (e) {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      if (!isMinimized) {
+        localStorage.setItem("console_panel_height", String(height));
+      }
+    } catch (e) {
+    }
+  }, [height, isMinimized]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("console_panel_minimized", isMinimized ? "1" : "0");
+    } catch (e) {
+    }
+  }, [isMinimized]);
+
+  useEffect(() => {
+    if (isMinimized) {
+      try {
+        prevHeightRef.current = height;
+        setHeight(MINIMIZED_HEIGHT);
+      } catch (e) {
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      try {
+        const saved = localStorage.getItem("console_panel_height");
+        const parsed = saved ? parseInt(saved, 10) : prevHeightRef.current || 320;
+        const restore = Math.max(120, Math.min(window.innerHeight - 100, parsed));
+        setHeight(restore);
+      } catch (e) {
+      }
+      setIsMinimized(false);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    try {
+      if (isOpen) {
+        document.documentElement.style.setProperty("--console-height", `${height}px`);
+      } else {
+        document.documentElement.style.setProperty("--console-height", `0px`);
+      }
+    } catch (e) {
+    }
+    return () => {
+      try {
+        document.documentElement.style.setProperty("--console-height", `0px`);
+      } catch (e) {}
+    };
+  }, [height, isOpen]);
+
+  const onStartResize = (e: React.PointerEvent) => {
+    e.preventDefault();
+    if (isMinimized) return; 
+    resizingRef.current = true;
+    startYRef.current = e.clientY;
+    startHeightRef.current = height;
+
+    const onMove = (ev: PointerEvent) => {
+      if (!resizingRef.current) return;
+      const dy = startYRef.current - ev.clientY; 
+      const newHeight = Math.min(Math.max(120, startHeightRef.current + dy), Math.max(120, window.innerHeight - 80));
+      setHeight(newHeight);
+    };
+
+    const onUp = () => {
+      resizingRef.current = false;
+      setIsResizing(false);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    setIsResizing(true);
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed left-0 right-0 bottom-0 z-[100]">
       <div
-        className="absolute inset-0 duration-200 bg-black/60 backdrop-blur-sm animate-in fade-in"
-        onClick={onClose}
-      />
-      <div className="relative bg-[#1e1e1e] border border-white/10 rounded-xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between p-4 border-b border-white/5 bg-white/5">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-white">
-            <span>🚀</span> {t("msg.about_title")}
+        className="relative bg-[#1e1e1e] border-t border-white/10 shadow-2xl"
+        style={{ height, transition: isResizing ? "none" : "height 220ms cubic-bezier(.2,.8,.2,1)", willChange: "height" }}
+      >
+        {!isMinimized && (
+          <div
+            className="absolute left-0 right-0 h-3 -top-2 cursor-ns-resize"
+            onPointerDown={onStartResize}
+            aria-hidden
+          />
+        )}
+
+        <div className="h-6 bg-[var(--bg-panel)] border-b border-neutral-700 flex items-center justify-between px-4 text-xs text-[var(--text-2)] relative">
+          <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: "rgba(255,255,255,0.03)" }} />
+          <h2 className="flex items-center gap-2 text-xs font-bold text-[var(--text-2)] relative z-10">
+            <Terminal size={16} className="text-[var(--text-2)]" />
+            <span className="leading-none">{t("menu.console")}</span>
           </h2>
-          <button
-            onClick={onClose}
-            className="p-1 transition-colors rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white"
-          >
-            <X size={20} />
-          </button>
+          <div className="relative z-10 flex items-center gap-2">
+            <button
+              onClick={() => {
+                if (!isMinimized) {
+                  prevHeightRef.current = height;
+                  try {
+                    localStorage.setItem("console_panel_height", String(prevHeightRef.current));
+                  } catch (e) {
+                  }
+                  setHeight(MINIMIZED_HEIGHT);
+                  setIsMinimized(true);
+                } else {
+                  try {
+                    const saved = localStorage.getItem("console_panel_height");
+                    const parsed = saved ? parseInt(saved, 10) : prevHeightRef.current || 320;
+                    const restore = Math.max(120, Math.min(window.innerHeight - 100, parsed));
+                    setHeight(restore);
+                  } catch (e) {
+                    const restore = Math.max(120, Math.min(window.innerHeight - 100, prevHeightRef.current || 320));
+                    setHeight(restore);
+                  }
+                  setIsMinimized(false);
+                }
+              }}
+              className="p-1 transition-colors rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white"
+              aria-label={isMinimized ? "Restore console" : "Minimize console"}
+            >
+              {isMinimized ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            </button>
+
+            <button onClick={onClose} className="p-1 transition-colors rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white">
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
-        <div className="p-6 space-y-6 text-center">
-          <div className="flex items-center justify-center w-24 h-24 mx-auto border bg-blue-600/20 rounded-2xl border-blue-500/30">
-            <span className="text-4xl font-black text-blue-400">KL</span>
+        {!isMinimized && (
+          <div className="h-full overflow-hidden bg-[var(--bg-main)] relative" aria-hidden>
+            <div className="absolute inset-0" style={{ backgroundColor: "rgba(0,0,0,0.4)" }} />
           </div>
-
-          <div className="space-y-2">
-            <h3 className="text-xl font-bold text-white">KoreLang Core</h3>
-            <p className="text-sm text-neutral-400">
-              Professional Linguistic Development Environment
-            </p>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

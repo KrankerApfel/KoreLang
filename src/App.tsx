@@ -450,7 +450,10 @@ const AppContent: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-[var(--bg-main)] text-[var(--text-1)] font-sans overflow-hidden transition-colors duration-200">
+    <div
+      className="flex flex-col h-screen w-screen bg-[var(--bg-main)] text-[var(--text-1)] font-sans overflow-hidden transition-colors duration-200"
+      style={{ paddingBottom: isConsoleOpen ? "var(--console-height, 0px)" : undefined }}
+    >
       <MenuBar
         onNewProject={() => {
           setWizardMode("create");
