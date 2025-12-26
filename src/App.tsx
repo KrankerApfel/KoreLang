@@ -412,28 +412,6 @@ const AppContent: React.FC = () => {
             {...commonProps}
           />
         );
-      case "CONSOLE":
-        return (
-          <ConsoleConfig
-            constraints={constraints}
-            setConstraints={setConstraints}
-            settings={settings}
-            setSettings={setSettings}
-            entries={lexicon}
-            setEntries={setLexicon}
-            history={consoleHistory}
-            setHistory={setConsoleHistory}
-            setProjectName={setProjectName}
-            setProjectDescription={setProjectDescription}
-            setProjectAuthor={setProjectAuthor}
-            setIsSidebarOpen={setIsSidebarOpen}
-            setView={setCurrentView}
-            setJumpToTerm={setJumpToTerm}
-            setDraftEntry={setDraftEntry}
-            author={projectAuthor}
-            {...commonProps}
-          />
-        );
       case "SCRIPT":
         return (
           <ScriptEditor

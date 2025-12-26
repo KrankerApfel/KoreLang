@@ -22,10 +22,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onToggleSidebar
     { id: 'NOTEBOOK', label: t('nav.notebook'), icon: BookOpen },
   ];
 
-  const systemItems = [
-    { id: 'CONSOLE', label: t('nav.console'), icon: Terminal },
-  ];
-
   const renderItem = (item: any) => {
     const Icon = item.icon;
     const isActive = currentView === item.id;
@@ -75,13 +71,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onToggleSidebar
           <div className="px-4 mb-2 text-xs font-semibold tracking-wider uppercase text-neutral-500">Authoring</div>
           <ul className="space-y-0.5 px-2">
             {authoringItems.map(renderItem)}
-          </ul>
-        </nav>
-
-        <nav>
-          <div className="px-4 mb-2 text-xs font-semibold tracking-wider uppercase text-neutral-500">System</div>
-          <ul className="space-y-0.5 px-2">
-            {systemItems.map(renderItem)}
           </ul>
         </nav>
       </div>
