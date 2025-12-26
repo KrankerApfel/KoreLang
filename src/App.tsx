@@ -7,7 +7,7 @@ import GenEvolve from "./components/GenEvolve";
 import PhonologyEditor from "./components/PhonologyEditor";
 import Dashboard from "./components/Dashboard";
 import ConsoleConfig from "./components/ConsoleConfig";
-import ConsoleModal from "./components/ConsoleModal";
+import ConsoleView from "./components/ConsoleView";
 import ScriptEditor from "./components/ScriptEditor";
 import Notebook from "./components/Notebook";
 import ProjectWizard from "./components/ProjectWizard";
@@ -586,7 +586,7 @@ const AppContent: React.FC = () => {
         onClose={() => setIsWizardOpen(false)}
         onSubmit={handleWizardSubmit}
       />
-      <ConsoleModal
+      <ConsoleView
         isOpen={isConsoleOpen}
         onClose={() => setIsConsoleOpen(false)}
         constraints={constraints}

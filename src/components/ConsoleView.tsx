@@ -11,7 +11,7 @@ import {
   ViewState,
 } from "../types";
 
-interface ConsoleModalProps {
+interface ConsoleViewProps {
   isOpen: boolean;
   onClose: () => void;
 
@@ -36,7 +36,7 @@ interface ConsoleModalProps {
   author?: string;
 }
 
-const ConsoleModal: React.FC<ConsoleModalProps> = ({
+const ConsoleView: React.FC<ConsoleViewProps> = ({
   isOpen,
   onClose,
   constraints,
@@ -254,4 +254,4 @@ const ConsoleModal: React.FC<ConsoleModalProps> = ({
   );
 };
 
-export default ConsoleModal;
+export default ConsoleView;
