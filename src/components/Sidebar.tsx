@@ -1,16 +1,15 @@
 import React from 'react';
-import { BookA, GitBranch, Languages, LayoutDashboard, Settings, Activity, Terminal, Feather, BookOpen } from 'lucide-react';
+import { BookA, GitBranch, Languages, LayoutDashboard, Activity, Terminal, Feather, BookOpen } from 'lucide-react';
 import { ViewState } from '../types';
 import { useTranslation } from '../i18n';
 
 interface SidebarProps {
   currentView: ViewState;
   setView: (view: ViewState) => void;
-  onOpenProjectSettings: () => void;
   onToggleSidebar?: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onOpenProjectSettings, onToggleSidebar }) => {
+const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onToggleSidebar }) => {
   const { t } = useTranslation();
 
   const authoringItems = [
@@ -85,16 +84,6 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setView, onOpenProjectSe
             {systemItems.map(renderItem)}
           </ul>
         </nav>
-      </div>
-
-      <div className="p-3 border-t border-neutral-700 bg-[var(--bg-panel)]">
-        <button
-          onClick={onOpenProjectSettings}
-          className="flex items-center w-full gap-3 px-3 py-2 text-sm font-medium transition-colors rounded text-neutral-400 hover:text-white hover:bg-neutral-800"
-        >
-          <Settings size={16} />
-          {t('settings.title')}
-        </button>
       </div>
     </aside>
   );

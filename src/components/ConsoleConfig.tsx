@@ -58,7 +58,7 @@ const RepairReviewTable: React.FC<RepairTableProps> = ({ repairs, originalEntrie
 
     if (isApplied) {
         return (
-            <div className="py-2 px-4 bg-emerald-950/20 border border-emerald-900/50 rounded flex items-center gap-2 text-emerald-400 text-xs font-bold">
+            <div className="flex items-center gap-2 px-4 py-2 text-xs font-bold border rounded bg-emerald-950/20 border-emerald-900/50 text-emerald-400">
                 <CheckCircle2 size={14} /> {t('console.refactor_complete') || 'Refactoring complete and integrated.'}
             </div>
         );
@@ -66,20 +66,20 @@ const RepairReviewTable: React.FC<RepairTableProps> = ({ repairs, originalEntrie
 
     return (
         <div
-            className="my-4 bg-zinc-900 border border-zinc-700 rounded-lg overflow-hidden max-w-3xl shadow-2xl animate-in zoom-in-95 duration-200"
+            className="max-w-3xl my-4 overflow-hidden duration-200 border rounded-lg shadow-2xl bg-zinc-900 border-zinc-700 animate-in zoom-in-95"
             onClick={(e) => e.stopPropagation()}
         >
-            <div className="bg-zinc-800 px-4 py-2 border-b border-zinc-700 flex justify-between items-center">
-                <span className="text-xs font-bold text-zinc-300 uppercase tracking-widest flex items-center gap-2">
+            <div className="flex items-center justify-between px-4 py-2 border-b bg-zinc-800 border-zinc-700">
+                <span className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-zinc-300">
                     <ShieldAlert size={12} className="text-amber-500" /> STAGING v4.6: {t('console.review_proposals') || 'REVIEW PROPOSALS'}
                 </span>
                 <span className="text-[10px] text-zinc-500">{selectedIds.size} {t('lexicon.results_count') || 'selected'}</span>
             </div>
-            <div className="max-h-80 overflow-y-auto custom-scrollbar">
+            <div className="overflow-y-auto max-h-80 custom-scrollbar">
                 <table className="w-full text-[11px]">
-                    <thead className="bg-black/20 text-zinc-500 sticky top-0 z-10">
+                    <thead className="sticky top-0 z-10 bg-black/20 text-zinc-500">
                         <tr>
-                            <th className="p-2 text-center w-8"></th>
+                            <th className="w-8 p-2 text-center"></th>
                             <th className="p-2 text-left">Original</th>
                             <th className="p-2 text-center">Fidelidad</th>
                             <th className="p-2 text-left text-amber-400">Propuesta IA (Editable)</th>
@@ -94,7 +94,7 @@ const RepairReviewTable: React.FC<RepairTableProps> = ({ repairs, originalEntrie
                             return (
                                 <tr key={repair.id} className={`hover: bg - zinc - 800 / 50 transition - colors ${!isSelected ? 'opacity-30' : ''} `}>
                                     <td className="p-2 text-center">
-                                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelection(repair.id)} className="rounded bg-black border-zinc-700 text-purple-600" />
+                                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelection(repair.id)} className="text-purple-600 bg-black rounded border-zinc-700" />
                                     </td>
                                     <td className="p-2">
                                         <div className="font-bold text-zinc-400">{original?.word}</div>
@@ -125,7 +125,7 @@ const RepairReviewTable: React.FC<RepairTableProps> = ({ repairs, originalEntrie
                     </tbody>
                 </table>
             </div>
-            <div className="p-3 bg-black/40 border-t border-zinc-700 flex justify-end gap-2">
+            <div className="flex justify-end gap-2 p-3 border-t bg-black/40 border-zinc-700">
                 <button onClick={onCancel} className="px-3 py-1.5 text-[10px] font-bold text-zinc-500 hover:text-zinc-300">{t('common.cancel')}</button>
                 <button
                     onClick={() => {
@@ -265,7 +265,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
                         if (!isApiKeySet()) {
                             addLog('error', 'AI Command Failed: No API Key configured.');
                             addLog('info', 'Configure your API Key in the Preferences menu (Settings icon) to enable AI features.', (
-                                <div className="mt-2 p-3 bg-amber-950/20 border border-amber-900/50 rounded-lg text-xs text-amber-200 flex items-start gap-3">
+                                <div className="flex items-start gap-3 p-3 mt-2 text-xs border rounded-lg bg-amber-950/20 border-amber-900/50 text-amber-200">
                                     <ShieldAlert size={16} className="shrink-0 text-amber-500" />
                                     <div>
                                         Go to <b>Preferences (Settings) {' > '} General</b> and enter your Gemini API Key.
@@ -296,12 +296,12 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
             <div className="p-2 bg-[var(--bg-panel)] border-b border-white/5 flex justify-between items-center text-xs text-[var(--text-2)]">
                 <span className="flex items-center gap-2"><Terminal size={14} /> KoreLang kernel_v1.1_stable</span>
                 <span className="flex items-center gap-2">
-                    {loadingAI && <Zap size={12} className="animate-pulse text-purple-500" />}
+                    {loadingAI && <Zap size={12} className="text-purple-500 animate-pulse" />}
                     SYSTEM_READY
                 </span>
             </div>
             <div
-                className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar"
+                className="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar"
                 onClick={() => inputRef.current?.focus()}
             >
                 {history.map((log, i) => (
@@ -316,7 +316,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
                 <div ref={bottomRef} />
             </div>
             <div className="p-4 bg-[var(--bg-main)] border-t border-white/5 flex items-center gap-3">
-                <span className="text-emerald-500 font-bold">KoreLang-@{author}:~$</span>
+                <span className="font-bold text-emerald-500">KoreLang-@{author}:~$</span>
                 <input
                     ref={inputRef}
                     value={input}
