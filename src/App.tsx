@@ -28,16 +28,6 @@ import {
   ScriptConfig,
 } from "./types";
 import { LanguageProvider, useTranslation, i18n } from "./i18n";
-import {
-  PanelLeftOpen,
-  LayoutDashboard,
-  Activity,
-  BookA,
-  Languages,
-  GitBranch,
-  Feather,
-  BookOpen,
-} from "lucide-react";
 
 const STORAGE_KEY = "conlang_studio_autosave";
 const EXPORT_SNAPSHOT_KEY = "conlang_studio_last_export_snapshot";
@@ -533,16 +523,6 @@ const AppContent: React.FC = () => {
     }
   };
 
-  const navItems = [
-    { id: "DASHBOARD", icon: LayoutDashboard },
-    { id: "PHONOLOGY", icon: Activity },
-    { id: "SCRIPT", icon: Feather },
-    { id: "LEXICON", icon: BookA },
-    { id: "GRAMMAR", icon: Languages },
-    { id: "GENEVOLVE", icon: GitBranch },
-    { id: "NOTEBOOK", icon: BookOpen },
-  ];
-
   return (
     <div className="flex flex-col h-screen w-screen bg-[var(--bg-main)] text-[var(--text-1)] font-sans overflow-hidden transition-colors duration-200">
       <MenuBar
@@ -608,46 +588,19 @@ const AppContent: React.FC = () => {
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
-        {isSidebarOpen ? (
-          <div
-            className={`flex-shrink-0 bg-[var(--bg-panel)] w-64 border-e border-neutral-700 transition-all h-full ${
-              isMobile ? "absolute z-40 shadow-2xl" : "relative"
-            }`}
-          >
-            <Sidebar
-              currentView={currentView}
-              setView={setCurrentView}
-              onToggleSidebar={() => setIsSidebarOpen(false)}
-            />
-          </div>
-        ) : (
-          <div className="flex-shrink-0 bg-[var(--bg-panel)] w-12 border-e border-neutral-700 flex flex-col items-center py-2 gap-1.5 z-20 overflow-y-auto no-scrollbar">
-            <button
-              onClick={() => setIsSidebarOpen(true)}
-              className="p-2 mb-1 transition-colors rounded text-neutral-500 hover:text-white hover:bg-neutral-800"
-            >
-              <PanelLeftOpen
-                size={18}
-                className={i18n.dir() === "rtl" ? "rotate-180" : ""}
-              />
-            </button>
-            <div className="w-6 h-px bg-neutral-700 mb-1.5"></div>
-            {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setCurrentView(item.id as ViewState)}
-                className={`p-2 rounded transition-colors ${
-                  currentView === item.id
-                    ? "text-blue-400 bg-neutral-800"
-                    : "text-neutral-500 hover:text-neutral-200"
-                }`}
-                title={item.id}
-              >
-                <item.icon size={18} />
-              </button>
-            ))}
-          </div>
-        )}
+        <div
+          className={`flex-shrink-0 transition-all h-full ${
+            isMobile ? "absolute z-40 shadow-2xl" : "relative"
+          }`}
+        >
+          <Sidebar
+            currentView={currentView}
+            setView={setCurrentView}
+            isOpen={isSidebarOpen}
+            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+          />
+        </div>
+
         <main className="flex flex-col w-full h-full">
           {/* View displayed by the side */}
           <div
