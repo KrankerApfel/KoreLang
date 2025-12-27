@@ -15,7 +15,6 @@ interface ConsoleViewProps {
   isOpen: boolean;
   onClose: () => void;
 
-  // forwarded to ConsoleConfig
   constraints: ProjectConstraints;
   setConstraints: (c: ProjectConstraints) => void;
   settings: AppSettings;
@@ -63,9 +62,12 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
   const [height, setHeight] = useState<number>(() => {
     try {
       const saved = localStorage.getItem("console_panel_height");
-      if (saved) return Math.max(120, Math.min(window.innerHeight - 100, parseInt(saved, 10)));
-    } catch (e) {
-    }
+      if (saved)
+        return Math.max(
+          120,
+          Math.min(window.innerHeight - 100, parseInt(saved, 10))
+        );
+    } catch (e) {}
     return 320;
   });
 
@@ -93,15 +95,13 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
       if (!isMinimized) {
         localStorage.setItem("console_panel_height", String(height));
       }
-    } catch (e) {
-    }
+    } catch (e) {}
   }, [height, isMinimized]);
 
   useEffect(() => {
     try {
       localStorage.setItem("console_panel_minimized", isMinimized ? "1" : "0");
-    } catch (e) {
-    }
+    } catch (e) {}
   }, [isMinimized]);
 
   useEffect(() => {
@@ -109,8 +109,7 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
       try {
         prevHeightRef.current = height;
         setHeight(MINIMIZED_HEIGHT);
-      } catch (e) {
-      }
+      } catch (e) {}
     }
   }, []);
 
@@ -118,11 +117,15 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
     if (isOpen) {
       try {
         const saved = localStorage.getItem("console_panel_height");
-        const parsed = saved ? parseInt(saved, 10) : prevHeightRef.current || 320;
-        const restore = Math.max(120, Math.min(window.innerHeight - 100, parsed));
+        const parsed = saved
+          ? parseInt(saved, 10)
+          : prevHeightRef.current || 320;
+        const restore = Math.max(
+          120,
+          Math.min(window.innerHeight - 100, parsed)
+        );
         setHeight(restore);
-      } catch (e) {
-      }
+      } catch (e) {}
       setIsMinimized(false);
     }
   }, [isOpen]);
@@ -132,7 +135,9 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
     const handler = (ev: Event) => {
       try {
         if (!isOpen) return; // only act when console is open
-        const detail = (ev as CustomEvent).detail as { action?: string } | undefined;
+        const detail = (ev as CustomEvent).detail as
+          | { action?: string }
+          | undefined;
         const action = detail?.action;
         if (!action) return;
 
@@ -152,7 +157,7 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
             try {
               prevHeightRef.current = height;
             } catch {}
-            const full = Math.max(200, window.innerHeight - 40);
+            const full = Math.max(200, window.innerHeight - 80);
             setIsMinimized(false);
             setHeight(full);
             maximizeCountRef.current = 0;
@@ -160,12 +165,20 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
             // Restore last-used non-minimized height (prefer persisted value)
             try {
               const saved = localStorage.getItem("console_panel_height");
-              const parsed = saved ? parseInt(saved, 10) : prevHeightRef.current || 320;
-              const restore = Math.max(120, Math.min(window.innerHeight - 100, parsed));
+              const parsed = saved
+                ? parseInt(saved, 10)
+                : prevHeightRef.current || 320;
+              const restore = Math.max(
+                120,
+                Math.min(window.innerHeight - 100, parsed)
+              );
               setIsMinimized(false);
               setHeight(restore);
             } catch (e) {
-              const restore = Math.max(120, Math.min(window.innerHeight - 100, prevHeightRef.current || 320));
+              const restore = Math.max(
+                120,
+                Math.min(window.innerHeight - 100, prevHeightRef.current || 320)
+              );
               setIsMinimized(false);
               setHeight(restore);
             }
@@ -183,18 +196,21 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
     };
 
     window.addEventListener("console-shortcut", handler as EventListener);
-    return () => window.removeEventListener("console-shortcut", handler as EventListener);
+    return () =>
+      window.removeEventListener("console-shortcut", handler as EventListener);
   }, [isOpen, height]);
 
   useEffect(() => {
     try {
       if (isOpen) {
-        document.documentElement.style.setProperty("--console-height", `${height}px`);
+        document.documentElement.style.setProperty(
+          "--console-height",
+          `${height}px`
+        );
       } else {
         document.documentElement.style.setProperty("--console-height", `0px`);
       }
-    } catch (e) {
-    }
+    } catch (e) {}
     return () => {
       try {
         document.documentElement.style.setProperty("--console-height", `0px`);
@@ -204,15 +220,18 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
 
   const onStartResize = (e: React.PointerEvent) => {
     e.preventDefault();
-    if (isMinimized) return; 
+    if (isMinimized) return;
     resizingRef.current = true;
     startYRef.current = e.clientY;
     startHeightRef.current = height;
 
     const onMove = (ev: PointerEvent) => {
       if (!resizingRef.current) return;
-      const dy = startYRef.current - ev.clientY; 
-      const newHeight = Math.min(Math.max(120, startHeightRef.current + dy), Math.max(120, window.innerHeight - 80));
+      const dy = startYRef.current - ev.clientY;
+      const newHeight = Math.min(
+        Math.max(120, startHeightRef.current + dy),
+        Math.max(120, window.innerHeight - 80)
+      );
       setHeight(newHeight);
     };
 
@@ -231,10 +250,16 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed left-0 right-0 bottom-0 z-[100]">
+    <div className="bottom-0 left-0 right-0 flex-none">
       <div
-        className="relative bg-[#1e1e1e] border-t border-white/10 shadow-2xl"
-        style={{ height, transition: isResizing ? "none" : "height 220ms cubic-bezier(.2,.8,.2,1)", willChange: "height" }}
+        className="relative bg-[#1e1e1e] border-t border-white/10 shadow-2xl flex flex-col"
+        style={{
+          height,
+          transition: isResizing
+            ? "none"
+            : "height 220ms cubic-bezier(.2,.8,.2,1)",
+          willChange: "height",
+        }}
       >
         {!isMinimized && (
           <div
@@ -244,8 +269,12 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
           />
         )}
 
+        {/* Header */}
         <div className="h-6 bg-[var(--bg-panel)] border-b border-neutral-700 flex items-center justify-between px-4 text-xs text-[var(--text-2)] relative">
-          <div className="absolute inset-0 pointer-events-none" style={{ backgroundColor: "rgba(255,255,255,0.03)" }} />
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ backgroundColor: "rgba(255,255,255,0.03)" }}
+          />
           <h2 className="flex items-center gap-2 text-xs font-bold text-[var(--text-2)] relative z-10">
             <Terminal size={16} className="text-[var(--text-2)]" />
             <span className="leading-none">{t("menu.console")}</span>
@@ -256,19 +285,32 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
                 if (!isMinimized) {
                   prevHeightRef.current = height;
                   try {
-                    localStorage.setItem("console_panel_height", String(prevHeightRef.current));
-                  } catch (e) {
-                  }
+                    localStorage.setItem(
+                      "console_panel_height",
+                      String(prevHeightRef.current)
+                    );
+                  } catch (e) {}
                   setHeight(MINIMIZED_HEIGHT);
                   setIsMinimized(true);
                 } else {
                   try {
                     const saved = localStorage.getItem("console_panel_height");
-                    const parsed = saved ? parseInt(saved, 10) : prevHeightRef.current || 320;
-                    const restore = Math.max(120, Math.min(window.innerHeight - 100, parsed));
+                    const parsed = saved
+                      ? parseInt(saved, 10)
+                      : prevHeightRef.current || 320;
+                    const restore = Math.max(
+                      120,
+                      Math.min(window.innerHeight - 100, parsed)
+                    );
                     setHeight(restore);
                   } catch (e) {
-                    const restore = Math.max(120, Math.min(window.innerHeight - 100, prevHeightRef.current || 320));
+                    const restore = Math.max(
+                      120,
+                      Math.min(
+                        window.innerHeight - 100,
+                        prevHeightRef.current || 320
+                      )
+                    );
                     setHeight(restore);
                   }
                   setIsMinimized(false);
@@ -277,17 +319,24 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
               className="p-1 transition-colors rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white"
               aria-label={isMinimized ? "Restore console" : "Minimize console"}
             >
-              {isMinimized ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+              {isMinimized ? (
+                <ChevronUp size={12} />
+              ) : (
+                <ChevronDown size={12} />
+              )}
             </button>
 
-            <button onClick={onClose} className="p-1 transition-colors rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white">
+            <button
+              onClick={onClose}
+              className="p-1 transition-colors rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white"
+            >
               <X size={10} />
             </button>
           </div>
         </div>
 
         {!isMinimized && (
-          <div className="h-full overflow-hidden bg-[var(--bg-main)] relative">
+          <div className="flex-1 flex flex-col overflow-hidden bg-[var(--bg-main)]">
             <ConsoleConfig
               constraints={constraints}
               setConstraints={setConstraints}

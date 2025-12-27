@@ -315,7 +315,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({
                 ))}
                 <div ref={bottomRef} />
             </div>
-            <div className="p-4 bg-[var(--bg-main)] border-t border-white/5 flex items-center gap-3">
+            <div className="p-2 bg-[var(--bg-main)] border-t border-white/5 flex items-center">
                 <span className="font-bold text-emerald-500">KoreLang-@{author}:~$</span>
                 <input
                     ref={inputRef}

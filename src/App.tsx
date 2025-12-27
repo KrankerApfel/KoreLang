@@ -66,7 +66,7 @@ const THEMES = {
     bgPanel: "#1e1e1e",
     text1: "#f1f5f9",
     text2: "#94a3b8",
-      textInfo: "10px",
+    textInfo: "10px",
     accent: "#3b82f6",
   },
   light: {
@@ -74,7 +74,7 @@ const THEMES = {
     bgPanel: "#ffffff",
     text1: "#0f172a",
     text2: "#475569",
-      textInfo: "10px",
+    textInfo: "10px",
     accent: "#2563eb",
   },
   "tokyo-night": {
@@ -82,7 +82,7 @@ const THEMES = {
     bgPanel: "#24283b",
     text1: "#a9b1d6",
     text2: "#565f89",
-      textInfo: "10px",
+    textInfo: "10px",
     accent: "#7aa2f7",
   },
   "tokyo-light": {
@@ -90,7 +90,7 @@ const THEMES = {
     bgPanel: "#cbccd1",
     text1: "#343b58",
     text2: "#565a6e",
-      textInfo: "10px",
+    textInfo: "10px",
     accent: "#34548a",
   },
 };
@@ -203,24 +203,33 @@ const AppContent: React.FC = () => {
         pressed.add(e.key.toLowerCase());
 
         const active = document.activeElement as HTMLElement | null;
-        const inInput = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+        const inInput =
+          active &&
+          (active.tagName === "INPUT" ||
+            active.tagName === "TEXTAREA" ||
+            active.isContentEditable);
 
         if (e.altKey && !e.ctrlKey && !e.metaKey) {
-          if (e.key.toLowerCase() === 'c' && !inInput) {
+          if (e.key.toLowerCase() === "c" && !inInput) {
             e.preventDefault();
             setIsConsoleOpen(true);
             return;
           }
 
-          if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && pressed.has('c') && isConsoleOpen) {
+          if (
+            (e.key === "ArrowUp" || e.key === "ArrowDown") &&
+            pressed.has("c") &&
+            isConsoleOpen
+          ) {
             e.preventDefault();
-            const action = e.key === 'ArrowUp' ? 'maximize' : 'minimize';
-            window.dispatchEvent(new CustomEvent('console-shortcut', { detail: { action } }));
+            const action = e.key === "ArrowUp" ? "maximize" : "minimize";
+            window.dispatchEvent(
+              new CustomEvent("console-shortcut", { detail: { action } })
+            );
             return;
           }
         }
-      } catch (err) {
-      }
+      } catch (err) {}
     };
 
     const onKeyUp = (e: KeyboardEvent) => {
@@ -229,11 +238,11 @@ const AppContent: React.FC = () => {
       } catch {}
     };
 
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
     return () => {
-      window.removeEventListener('keydown', onKeyDown);
-      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
     };
   }, [isConsoleOpen]);
 
@@ -248,7 +257,10 @@ const AppContent: React.FC = () => {
     root.style.setProperty("--bg-panel", themeData.bgPanel);
     root.style.setProperty("--text-1", themeData.text1);
     root.style.setProperty("--text-2", themeData.text2);
-    root.style.setProperty("--text-info", (themeData as any).textInfo || "10px");
+    root.style.setProperty(
+      "--text-info",
+      (themeData as any).textInfo || "10px"
+    );
     root.style.setProperty("--accent", themeData.accent);
   }, [settings.theme, settings.customTheme]);
 
@@ -262,7 +274,7 @@ const AppContent: React.FC = () => {
           if (!s) return null;
           try {
             const obj = JSON.parse(s);
-            if (obj && typeof obj === 'object') delete obj.lastModified;
+            if (obj && typeof obj === "object") delete obj.lastModified;
             return JSON.stringify(obj);
           } catch (err) {
             return s;
@@ -275,16 +287,15 @@ const AppContent: React.FC = () => {
 
         if (!exportedNorm || exportedNorm !== savedNorm) {
           e.preventDefault();
-          (e as BeforeUnloadEvent).returnValue = '';
-          return '';
+          (e as BeforeUnloadEvent).returnValue = "";
+          return "";
         }
         return undefined;
-      } catch (err) {
-      }
+      } catch (err) {}
       return undefined;
     };
-    window.addEventListener('beforeunload', onBeforeUnload);
-    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
   }, []);
 
   useEffect(() => {
@@ -536,10 +547,7 @@ const AppContent: React.FC = () => {
   ];
 
   return (
-    <div
-      className="flex flex-col h-screen w-screen bg-[var(--bg-main)] text-[var(--text-1)] font-sans overflow-hidden transition-colors duration-200"
-      style={{ paddingBottom: isConsoleOpen ? "var(--console-height, 0px)" : undefined }}
-    >
+    <div className="flex flex-col h-screen w-screen bg-[var(--bg-main)] text-[var(--text-1)] font-sans overflow-hidden transition-colors duration-200">
       <MenuBar
         onNewProject={() => {
           setWizardMode("create");
@@ -565,7 +573,7 @@ const AppContent: React.FC = () => {
               const normalize = (s: string) => {
                 try {
                   const obj = JSON.parse(s);
-                  if (obj && typeof obj === 'object') delete obj.lastModified;
+                  if (obj && typeof obj === "object") delete obj.lastModified;
                   return JSON.stringify(obj);
                 } catch (e) {
                   return s;
@@ -582,7 +590,10 @@ const AppContent: React.FC = () => {
           r.readAsText(file);
         }}
         onOpenSettings={() => setIsSettingsOpen(true)}
-        onOpenProjectSettings={() => { setWizardMode('edit'); setIsWizardOpen(true); }}
+        onOpenProjectSettings={() => {
+          setWizardMode("edit");
+          setIsWizardOpen(true);
+        }}
         onOpenConstraints={() => setIsConstraintsOpen(true)}
         onOpenConsole={() => setIsConsoleOpen(true)}
         onZoomIn={() => setZoomLevel((p) => Math.min(p + 10, 150))}
@@ -640,11 +651,40 @@ const AppContent: React.FC = () => {
             ))}
           </div>
         )}
-        <main
-          className="flex-1 overflow-auto bg-[var(--bg-main)] relative w-full"
-          style={{ zoom: zoomLevel / 100 }}
-        >
-          {renderView()}
+        <main className="flex flex-col w-full h-full">
+          {/* View displayed by the side */}
+          <div
+            className="flex-1 overflow-auto"
+            style={{ zoom: zoomLevel / 100 }}
+          >
+            {renderView()}
+          </div>
+
+          {/* Console */}
+          {isConsoleOpen && (
+            <ConsoleView
+              isOpen={isConsoleOpen}
+              onClose={() => setIsConsoleOpen(false)}
+              constraints={constraints}
+              setConstraints={setConstraints}
+              settings={settings}
+              setSettings={setSettings}
+              entries={lexicon}
+              setEntries={setLexicon}
+              history={consoleHistory}
+              setHistory={setConsoleHistory}
+              setProjectName={setProjectName}
+              setProjectDescription={setProjectDescription}
+              setProjectAuthor={setProjectAuthor}
+              setIsSidebarOpen={setIsSidebarOpen}
+              setView={setCurrentView}
+              setJumpToTerm={setJumpToTerm}
+              setDraftEntry={setDraftEntry}
+              scriptConfig={scriptConfig}
+              isScriptMode={isScriptMode}
+              author={projectAuthor}
+            />
+          )}
         </main>
       </div>
       <footer className="h-6 bg-[var(--bg-panel)] border-t border-neutral-700 flex items-center px-4 text-xs text-[var(--text-2)] gap-4 shrink-0 z-50 relative">
@@ -682,28 +722,6 @@ const AppContent: React.FC = () => {
         }}
         onClose={() => setIsWizardOpen(false)}
         onSubmit={handleWizardSubmit}
-      />
-      <ConsoleView
-        isOpen={isConsoleOpen}
-        onClose={() => setIsConsoleOpen(false)}
-        constraints={constraints}
-        setConstraints={setConstraints}
-        settings={settings}
-        setSettings={setSettings}
-        entries={lexicon}
-        setEntries={setLexicon}
-        history={consoleHistory}
-        setHistory={setConsoleHistory}
-        setProjectName={setProjectName}
-        setProjectDescription={setProjectDescription}
-        setProjectAuthor={setProjectAuthor}
-        setIsSidebarOpen={setIsSidebarOpen}
-        setView={setCurrentView}
-        setJumpToTerm={setJumpToTerm}
-        setDraftEntry={setDraftEntry}
-        scriptConfig={scriptConfig}
-        isScriptMode={isScriptMode}
-        author={projectAuthor}
       />
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
       <WhatsNewModal isOpen={isWhatsNewOpen} onClose={closeWhatsNew} />
