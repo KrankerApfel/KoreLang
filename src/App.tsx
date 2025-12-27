@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 
 const STORAGE_KEY = "conlang_studio_autosave";
+const EXPORT_SNAPSHOT_KEY = "conlang_studio_last_export_snapshot";
 const SETTINGS_STORAGE_KEY = "conlang_studio_settings";
 
 const INITIAL_CONSTRAINTS_TEMPLATE: ProjectConstraints = {
@@ -199,22 +200,18 @@ const AppContent: React.FC = () => {
 
     const onKeyDown = (e: KeyboardEvent) => {
       try {
-        // keep track of pressed keys
         pressed.add(e.key.toLowerCase());
 
         const active = document.activeElement as HTMLElement | null;
         const inInput = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
 
         if (e.altKey && !e.ctrlKey && !e.metaKey) {
-          // Open console on Alt+C
           if (e.key.toLowerCase() === 'c' && !inInput) {
             e.preventDefault();
             setIsConsoleOpen(true);
             return;
           }
 
-          // When Console is already open, support Alt+C+ArrowUp/ArrowDown combos.
-          // We detect C being held by checking our pressed set for 'c'.
           if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && pressed.has('c') && isConsoleOpen) {
             e.preventDefault();
             const action = e.key === 'ArrowUp' ? 'maximize' : 'minimize';
@@ -223,7 +220,6 @@ const AppContent: React.FC = () => {
           }
         }
       } catch (err) {
-        // ignore
       }
     };
 
@@ -255,6 +251,41 @@ const AppContent: React.FC = () => {
     root.style.setProperty("--text-info", (themeData as any).textInfo || "10px");
     root.style.setProperty("--accent", themeData.accent);
   }, [settings.theme, settings.customTheme]);
+
+  useEffect(() => {
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      try {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        if (!savedData) return undefined;
+
+        const normalize = (s: string | null) => {
+          if (!s) return null;
+          try {
+            const obj = JSON.parse(s);
+            if (obj && typeof obj === 'object') delete obj.lastModified;
+            return JSON.stringify(obj);
+          } catch (err) {
+            return s;
+          }
+        };
+
+        const savedNorm = normalize(savedData);
+        const exported = localStorage.getItem(EXPORT_SNAPSHOT_KEY);
+        const exportedNorm = normalize(exported);
+
+        if (!exportedNorm || exportedNorm !== savedNorm) {
+          e.preventDefault();
+          (e as BeforeUnloadEvent).returnValue = '';
+          return '';
+        }
+        return undefined;
+      } catch (err) {
+      }
+      return undefined;
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
@@ -294,7 +325,6 @@ const AppContent: React.FC = () => {
     }
     setIsLoaded(true);
 
-    // Logic for What's New Panel (v1.1)
     const WHATS_NEW_KEY = "whats_new_v1.1_seen";
     const hasSeen = sessionStorage.getItem(WHATS_NEW_KEY);
     if (!hasSeen) {
@@ -517,9 +547,11 @@ const AppContent: React.FC = () => {
         }}
         onSaveProject={() => {
           if (typeof window !== "undefined") {
+            const data = getFullProjectData();
+            const text = JSON.stringify(data, null, 2);
             const a = document.createElement("a");
             a.href = URL.createObjectURL(
-              new Blob([JSON.stringify(getFullProjectData(), null, 2)], {
+              new Blob([text], {
                 type: "application/json",
               })
             );
@@ -527,6 +559,20 @@ const AppContent: React.FC = () => {
               .toLowerCase()
               .replace(/\s/g, "-")}.json`;
             a.click();
+            try {
+              // store a normalized snapshot (without lastModified) so we can
+              // detect if the project has changed since the last export
+              const normalize = (s: string) => {
+                try {
+                  const obj = JSON.parse(s);
+                  if (obj && typeof obj === 'object') delete obj.lastModified;
+                  return JSON.stringify(obj);
+                } catch (e) {
+                  return s;
+                }
+              };
+              localStorage.setItem(EXPORT_SNAPSHOT_KEY, normalize(text));
+            } catch (e) {}
           }
         }}
         onOpenProject={(file) => {
