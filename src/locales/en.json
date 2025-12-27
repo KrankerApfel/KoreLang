@@ -1,5 +1,7 @@
 {
-    "genword.title": "Generate Words",
+   "menu.console": "Console",
+   "menu.project": "Project",
+   "genword.title": "Generate Words",
     "genword.desc": "Generate words based on your input.",
     "genword.config": "Configuration",
     "genword.constraints": "Constraints",
