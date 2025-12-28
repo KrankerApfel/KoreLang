@@ -11,6 +11,32 @@
     --accent: #3b82f6;
 }
 
+/* Scrollbars personnalisées avec couleurs du thème */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-panel);
+  border-radius: 5px;
+  border: 2px solid var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-2);
+}
+
+/* Firefox scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-panel) var(--bg-main);
+}
+
 /* Override Tailwind utility classes to use theme CSS variables */
 @layer components {
   /* Background colors */

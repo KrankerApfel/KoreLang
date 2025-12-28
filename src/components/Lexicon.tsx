@@ -385,17 +385,17 @@ const Lexicon: React.FC<LexiconProps> = ({
                             {/* OMNI-GLYPH LOGIC */}
                             {isScriptMode ? (
                                 <div className="flex flex-col">
-                                    <div className="text-4xl text-purple-200 leading-none mb-1">
+                                    <div className="text-4xl leading-none mb-1" style={{ color: 'var(--accent)' }}>
                                         <ConScriptText text={entry.word} scriptConfig={scriptConfig} />
                                     </div>
-                                    <span className="text-xs font-mono text-neutral-500">{entry.word}</span>
+                                    <span className="text-xs font-mono" style={{ color: 'var(--text-2)' }}>{entry.word}</span>
                                 </div>
                             ) : (
-                                <h3 className="text-2xl font-serif text-neutral-100 font-bold">{entry.word}</h3>
+                                <h3 className="text-2xl font-serif font-bold" style={{ color: 'var(--text-1)' }}>{entry.word}</h3>
                             )}
 
-                            <span className="text-neutral-400 font-mono text-sm bg-neutral-800 px-2 py-0.5 rounded">/{entry.ipa}/</span>
-                            <span className="text-blue-400 text-xs uppercase font-bold tracking-wider border border-blue-900 bg-blue-950/30 px-1.5 rounded">{getPosLabel(entry.pos)}</span>
+                            <span className="font-mono text-sm bg-neutral-800 px-2 py-0.5 rounded" style={{ color: 'var(--text-2)' }}>/{entry.ipa}/</span>
+                            <span className="text-xs uppercase font-bold tracking-wider border px-1.5 rounded" style={{ color: 'var(--accent)', borderColor: 'var(--accent)', backgroundColor: 'rgba(var(--accent-rgb), 0.2)' }}>{getPosLabel(entry.pos)}</span>
                             {isInvalid && (
                                 <div className="group/badge relative">
                                     <span className="flex items-center gap-1 text-red-400 text-[10px] uppercase font-bold tracking-wider border border-dashed border-red-500/30 bg-red-950/20 px-1.5 rounded cursor-help">
@@ -409,7 +409,7 @@ const Lexicon: React.FC<LexiconProps> = ({
                             )}
                         </div>
 
-                        <p className="text-neutral-300 text-lg mb-3 mt-1">{entry.definition}</p>
+                        <p className="text-lg mb-3 mt-1" style={{ color: 'var(--text-1)' }}>{entry.definition}</p>
 
                         {(parent || descendants.length > 0 || entry.etymology) && (
                             <div className="bg-neutral-950/50 rounded-md p-3 border border-neutral-800/50 space-y-2">
@@ -448,7 +448,10 @@ const Lexicon: React.FC<LexiconProps> = ({
                         {/* Copy Text Button */}
                         <button
                             onClick={() => handleCopyText(entry)}
-                            className="p-2 text-neutral-400 hover:bg-neutral-800 hover:text-white rounded-md transition-colors relative border border-transparent hover:border-neutral-700"
+                            className="p-2 rounded-md transition-colors relative border border-transparent"
+                            style={{ color: 'var(--text-2)' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--bg-panel)'; e.currentTarget.style.color = 'var(--text-1)'; e.currentTarget.style.borderColor = 'var(--text-2)'; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-2)'; e.currentTarget.style.borderColor = 'transparent'; }}
                             title={t('lexicon.copy_latin') || "Copy Latin Text"}
                         >
                             {copiedId === `${entry.id}-text` ? <Check size={16} className="text-emerald-500" /> : <Type size={16} />}
@@ -458,14 +461,17 @@ const Lexicon: React.FC<LexiconProps> = ({
                         {isScriptMode && (
                             <button
                                 onClick={() => handleCopyScript(entry)}
-                                className="p-2 text-purple-400 hover:bg-purple-900/30 hover:text-purple-200 rounded-md transition-colors relative border border-transparent hover:border-purple-500/50"
+                                className="p-2 rounded-md transition-colors relative border border-transparent"
+                                style={{ color: 'var(--accent)' }}
+                                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(var(--accent-rgb), 0.2)'; e.currentTarget.style.borderColor = 'var(--accent)'; }}
+                                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.borderColor = 'transparent'; }}
                                 title={t('lexicon.copy_native') || "Copy Native Script Symbols (PUA)"}
                             >
                                 {copiedId === `${entry.id}-script` ? <Check size={16} className="text-emerald-500" /> : <Feather size={16} />}
                             </button>
                         )}
 
-                        <button onClick={() => openEditModal(entry)} className="p-2 text-neutral-400 hover:bg-neutral-800 hover:text-white rounded-md transition-colors" title={t('lexicon.edit')}>
+                        <button onClick={() => openEditModal(entry)} className="p-2 rounded-md transition-colors" style={{ color: 'var(--text-2)' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--bg-panel)'; e.currentTarget.style.color = 'var(--text-1)'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-2)'; }} title={t('lexicon.edit')}>
                             <Edit size={16} />
                         </button>
                         <button onClick={(e) => requestDelete(entry, e)} className="p-2 text-red-400 hover:bg-red-950/30 rounded-md" title={t('common.delete')}><Trash2 size={16} /></button>
@@ -518,7 +524,8 @@ const Lexicon: React.FC<LexiconProps> = ({
                                 placeholder={t('lexicon.search')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full bg-neutral-900 border border-neutral-700 text-neutral-200 ps-10 pe-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-neutral-600 transition-all shadow-sm"
+                                className="w-full bg-neutral-900 border border-neutral-700 ps-10 pe-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 placeholder-neutral-600 transition-all shadow-sm"
+                                style={{ color: 'var(--text-1)', borderColor: 'var(--accent)' }}
                             />
                             {searchTerm && <button onClick={() => setSearchTerm('')} className="absolute end-3 top-1/2 -tranneutral-y-1/2 text-neutral-500 hover:text-neutral-100"><X size={14} /></button>}
                         </div>
@@ -549,7 +556,7 @@ const Lexicon: React.FC<LexiconProps> = ({
                                 <span className="text-lg font-mono">*</span><span className="hidden sm:inline">{t('lexicon.ai_gen_btn')}</span>
                             </button>
                         )}
-                        <button onClick={openAddModal} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors shadow-lg shadow-blue-900/20">
+                        <button onClick={openAddModal} className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors shadow-lg" style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}>
                             <Plus size={18} /><span className="hidden sm:inline">{t('lexicon.new')}</span>
                         </button>
                     </div>
@@ -750,7 +757,7 @@ const Lexicon: React.FC<LexiconProps> = ({
                                 <textarea value={newDefinition} onChange={(e) => setNewDefinition(e.target.value)} className="w-full bg-neutral-950 border border-neutral-700 rounded p-2 text-neutral-100 h-24 focus:border-blue-500 focus:outline-none resize-none focus:ring-1 focus:ring-blue-500" placeholder="..." />
                             </div>
                             <div className="border-t border-neutral-800 pt-4 mt-2">
-                                <label className="text-xs font-bold text-neutral-500 uppercase mb-3 block flex items-center gap-2"><GitFork size={12} /> {t('lexicon.etymology')}</label>
+                                <label className="text-xs font-bold uppercase mb-3 flex items-center gap-2" style={{ color: 'var(--text-2)' }}><GitFork size={12} /> {t('lexicon.etymology')}</label>
                                 <div className="space-y-3">
                                     <div className="space-y-1">
                                         <label className="text-[10px] font-semibold text-neutral-500 uppercase">{t('lexicon.derivedFrom')}</label>

@@ -127,8 +127,8 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                 {/* AI GENERATOR PANEL (Conditional) */}
                 {enableAI ? (
                     <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-5 shadow-lg">
-                        <h2 className="text-lg font-bold text-neutral-100 flex items-center gap-2 mb-4">
-                            <Wand2 className="text-purple-500" size={20} />
+                        <h2 className="text-lg font-bold flex items-center gap-2 mb-4" style={{ color: 'var(--text-1)' }}>
+                            <Wand2 style={{ color: 'var(--accent)' }} size={20} />
                             {t('phonology.ai_generator')}
                         </h2>
                         <div className="space-y-4">
@@ -152,7 +152,8 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             <button
                                 onClick={handleGenerate}
                                 disabled={loading || !prompt}
-                                className="w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg shadow-purple-900/20"
+                                className="w-full disabled:opacity-50 font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg"
+                                style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
                             >
                                 {loading ? <RefreshCw className="animate-spin" /> : <Wand2 size={18} />}
                                 {loading ? t('phonology.analyze_btn') : t('phonology.generate_btn')}
@@ -160,7 +161,8 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             {pendingPhonology && (
                                 <button
                                     onClick={() => setShowPreview(!showPreview)}
-                                    className="w-full mt-2 bg-neutral-800 hover:bg-neutral-700 text-neutral-300 font-bold py-2 rounded-lg flex items-center justify-center gap-2 transition-all border border-neutral-700"
+                                    className="w-full mt-2 font-bold py-2 rounded-lg flex items-center justify-center gap-2 transition-all border"
+                                    style={{ backgroundColor: 'var(--bg-panel)', borderColor: 'var(--accent)', color: 'var(--text-2)' }}
                                 >
                                     <Eye size={16} />
                                     {showPreview ? t('phonology.hide_preview') : t('phonology.show_preview')}
@@ -170,15 +172,15 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                     </div>
                 ) : (
                     <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-5 shadow-lg flex flex-col items-center justify-center text-center opacity-50">
-                        <EyeOff size={32} className="mb-2 text-neutral-500" />
-                        <h3 className="font-bold text-neutral-300">{t('phonology.ai_disabled_title')}</h3>
-                        <p className="text-xs text-neutral-500 mt-1">{t('phonology.ai_disabled_desc')}</p>
+                        <EyeOff size={32} className="mb-2" style={{ color: 'var(--text-2)' }} />
+                        <h3 className="font-bold" style={{ color: 'var(--text-2)' }}>{t('phonology.ai_disabled_title')}</h3>
+                        <p className="text-xs mt-1" style={{ color: 'var(--text-2)' }}>{t('phonology.ai_disabled_desc')}</p>
                     </div>
                 )}
 
                 <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-5 shadow-lg flex-1 overflow-y-auto">
-                    <h2 className="text-lg font-bold text-neutral-100 flex items-center gap-2 mb-4">
-                        <Info className="text-blue-500" size={20} />
+                    <h2 className="text-lg font-bold flex items-center gap-2 mb-4" style={{ color: 'var(--text-1)' }}>
+                        <Info style={{ color: 'var(--accent)' }} size={20} />
                         {t('phonology.stats')}
                     </h2>
                     <div className="space-y-4 text-sm">
@@ -426,11 +428,12 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             )}
                         </div>
                         <div className="px-6 py-4 bg-neutral-950 border-t border-neutral-800 flex justify-end gap-3">
-                            <button onClick={() => setEditingPhoneme(null)} className="px-4 py-2 text-neutral-400 hover:text-white text-sm">{t('common.cancel')}</button>
+                            <button onClick={() => setEditingPhoneme(null)} className="px-4 py-2 text-sm" style={{ color: 'var(--text-2)' }}>{t('common.cancel')}</button>
                             <button
                                 onClick={handleSavePhoneme}
                                 disabled={!symbol}
-                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-bold rounded flex items-center gap-2"
+                                className="px-4 py-2 disabled:opacity-50 text-sm font-bold rounded flex items-center gap-2"
+                                style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
                             >
                                 <Check size={16} /> {t('common.save')}
                             </button>
@@ -515,7 +518,8 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                 </button>
                                 <button
                                     onClick={confirmReplace}
-                                    className="flex-[2] py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded flex items-center justify-center gap-2 transition-all"
+                                    className="flex-[2] py-2 text-xs font-bold rounded flex items-center justify-center gap-2 transition-all"
+                                    style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
                                 >
                                     <Check size={14} /> {t('phonology.apply_replace')}
                                 </button>

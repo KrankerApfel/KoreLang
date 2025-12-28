@@ -102,57 +102,61 @@ const GenWord: React.FC<GenWordProps> = ({ onAddWords, onEditEntry, initialState
   return (
     <div className="h-full flex flex-col p-8 max-w-6xl mx-auto w-full">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-          <Wand2 className="text-purple-400" />
+        <h2 className="text-3xl font-bold mb-2 flex items-center gap-3" style={{ color: 'var(--text-1)' }}>
+          <Wand2 style={{ color: 'var(--accent)' }} />
           {t('genword.title')}
         </h2>
-        <p className="text-slate-400">{t('genword.desc')}</p>
+        <p style={{ color: 'var(--text-2)' }}>{t('genword.desc')}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full">
         {/* Controls */}
         <div className="lg:col-span-1 space-y-6">
           <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg">
-            <h3 className="text-lg font-semibold text-slate-200 mb-4 border-b border-slate-800 pb-2">{t('genword.config')}</h3>
+            <h3 className="text-lg font-semibold mb-4 border-b border-slate-800 pb-2" style={{ color: 'var(--text-1)' }}>{t('genword.config')}</h3>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">{t('genword.constraints')}</label>
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-2)' }}>{t('genword.constraints')}</label>
                 <textarea
                   value={constraints}
                   onChange={(e) => updateState({ constraints: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:ring-2 focus:ring-purple-500 outline-none h-24 resize-none placeholder-slate-600"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm focus:ring-2 outline-none h-24 resize-none placeholder-slate-600"
+                  style={{ color: 'var(--text-1)', borderColor: 'var(--accent)' }}
                   placeholder={t('genword.constraints_ph')}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">{t('genword.vibe')}</label>
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-2)' }}>{t('genword.vibe')}</label>
                 <input
                   type="text"
                   value={vibe}
                   onChange={(e) => updateState({ vibe: e.target.value })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:ring-2 focus:ring-purple-500 outline-none placeholder-slate-600"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm focus:ring-2 outline-none placeholder-slate-600"
+                  style={{ color: 'var(--text-1)', borderColor: 'var(--accent)' }}
                   placeholder={t('genword.vibe_ph')}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">{t('genword.count')} (Max 15)</label>
+                <label className="block text-sm font-medium mb-1" style={{ color: 'var(--text-2)' }}>{t('genword.count')} (Max 15)</label>
                 <input
                   type="number"
                   min="1"
                   max="15"
                   value={count}
                   onChange={(e) => updateState({ count: Math.min(15, Math.max(1, Number(e.target.value))) })}
-                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:ring-2 focus:ring-purple-500 outline-none"
+                  className="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-sm focus:ring-2 outline-none"
+                  style={{ color: 'var(--text-1)', borderColor: 'var(--accent)' }}
                 />
               </div>
 
               <button
                 onClick={handleGenerate}
                 disabled={loading}
-                className="w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-all mt-4"
+                className="w-full disabled:opacity-50 font-medium py-3 rounded-lg flex items-center justify-center gap-2 transition-all mt-4"
+                style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
               >
                 {loading ? <RefreshCw className="animate-spin" /> : <Wand2 size={18} />}
                 {loading ? loadingMessage : t('genword.generate')}
@@ -164,11 +168,11 @@ const GenWord: React.FC<GenWordProps> = ({ onAddWords, onEditEntry, initialState
         {/* Results */}
         <div className="lg:col-span-2 bg-slate-900 rounded-xl border border-slate-800 flex flex-col overflow-hidden shadow-lg">
           <div className="p-4 bg-slate-800/50 border-b border-slate-700 flex justify-between items-center">
-            <h3 className="font-semibold text-slate-200">{t('genword.results')}</h3>
+            <h3 className="font-semibold" style={{ color: 'var(--text-1)' }}>{t('genword.results')}</h3>
             <div className="flex items-center gap-3">
-              <span className="text-xs text-slate-500 bg-slate-900 px-2 py-1 rounded">{generated.length} {t('genword.keep')}</span>
+              <span className="text-xs bg-slate-900 px-2 py-1 rounded" style={{ color: 'var(--text-2)' }}>{generated.length} {t('genword.keep')}</span>
               {generated.length > 0 && (
-                <button onClick={handleClear} className="text-xs text-red-400 hover:text-red-300 flex items-center gap-1">
+                <button onClick={handleClear} className="text-xs flex items-center gap-1" style={{ color: 'var(--accent)' }}>
                   <Trash size={12} /> {t('genword.clear')}
                 </button>
               )}
@@ -176,8 +180,8 @@ const GenWord: React.FC<GenWordProps> = ({ onAddWords, onEditEntry, initialState
           </div>
 
           {errorMessage && (
-            <div className="p-4 bg-red-950/20 border-b border-red-900/50 text-red-200 text-sm flex items-start gap-3">
-              <ShieldAlert size={16} className="shrink-0 text-red-400" />
+            <div className="p-4 bg-red-950/20 border-b border-red-900/50 text-sm flex items-start gap-3" style={{ color: 'var(--text-1)' }}>
+              <ShieldAlert size={16} className="shrink-0" style={{ color: 'var(--accent)' }} />
               <span>{errorMessage}</span>
             </div>
           )}
@@ -195,14 +199,17 @@ const GenWord: React.FC<GenWordProps> = ({ onAddWords, onEditEntry, initialState
                 {generated.map((item, idx) => (
                   <div key={idx} className="bg-slate-950 border border-slate-800 p-3 rounded flex justify-between items-center group hover:border-purple-500/50 transition-colors">
                     <div>
-                      <div className={`text-lg font-bold ${isScriptMode ? 'text-purple-300' : 'text-slate-200'}`}>
+                      <div className="text-lg font-bold" style={{ color: isScriptMode ? 'var(--accent)' : 'var(--text-1)' }}>
                         <ConScriptText text={item.word} scriptConfig={isScriptMode ? scriptConfig : undefined} />
                       </div>
                       <div className="text-sm text-slate-500 font-mono">/{item.ipa}/</div>
                     </div>
                     <button
                       onClick={() => handleAdd(item.word, item.ipa)}
-                      className="p-2 bg-slate-800 hover:bg-green-600 text-slate-400 hover:text-white rounded transition-colors"
+                      className="p-2 bg-slate-800 rounded transition-colors"
+                      style={{ color: 'var(--text-2)' }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--text-1)'; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-2)'; }}
                       title={t('genword.edit_add') || "Edit & Add to Dictionary"}
                     >
                       <Download size={16} />

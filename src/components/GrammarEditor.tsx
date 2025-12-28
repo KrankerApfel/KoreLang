@@ -39,11 +39,11 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
         <div className="h-full flex flex-col p-6 max-w-7xl mx-auto w-full gap-6">
             <div className="flex justify-between items-end">
                 <div>
-                    <h2 className="text-3xl font-bold text-slate-100 mb-2 flex items-center gap-3">
-                        <Languages className="text-emerald-400" />
+                    <h2 className="text-3xl font-bold mb-2 flex items-center gap-3" style={{ color: 'var(--text-1)' }}>
+                        <Languages style={{ color: 'var(--accent)' }} />
                         {t('grammar.title')}
                     </h2>
-                    <p className="text-slate-400">{t('grammar.desc')}</p>
+                    <p style={{ color: 'var(--text-2)' }}>{t('grammar.desc')}</p>
                 </div>
 
                 {/* View Switcher Tabs */}
@@ -51,18 +51,24 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                     <button
                         onClick={() => setActiveTab('SYNTAX')}
                         className={`px-4 py-2 rounded-md text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'SYNTAX'
-                            ? 'bg-emerald-600 text-white shadow-lg'
-                            : 'text-slate-400 hover:text-white'
+                            ? 'shadow-lg'
+                            : ''
                             }`}
+                        style={activeTab === 'SYNTAX' ? { backgroundColor: 'var(--accent)', color: 'var(--text-1)' } : { color: 'var(--text-2)' }}
+                        onMouseEnter={(e) => { if (activeTab !== 'SYNTAX') e.currentTarget.style.color = 'var(--text-1)'; }}
+                        onMouseLeave={(e) => { if (activeTab !== 'SYNTAX') e.currentTarget.style.color = 'var(--text-2)'; }}
                     >
                         <Code size={16} /> {t('grammar.tab.syntax')}
                     </button>
                     <button
                         onClick={() => setActiveTab('MORPHOLOGY')}
                         className={`px-4 py-2 rounded-md text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'MORPHOLOGY'
-                            ? 'bg-blue-600 text-white shadow-lg'
-                            : 'text-slate-400 hover:text-white'
+                            ? 'shadow-lg'
+                            : ''
                             }`}
+                        style={activeTab === 'MORPHOLOGY' ? { backgroundColor: 'var(--accent)', color: 'var(--text-1)' } : { color: 'var(--text-2)' }}
+                        onMouseEnter={(e) => { if (activeTab !== 'MORPHOLOGY') e.currentTarget.style.color = 'var(--text-1)'; }}
+                        onMouseLeave={(e) => { if (activeTab !== 'MORPHOLOGY') e.currentTarget.style.color = 'var(--text-2)'; }}
                     >
                         <Table size={16} /> {t('grammar.tab.morphology')}
                     </button>
@@ -77,7 +83,7 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                             <div className="flex items-center gap-2">
                                 <span className="text-xs font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">{t('grammar.bnfc')}</span>
                             </div>
-                            <span className="text-xs text-emerald-500 flex items-center gap-1"><CheckCircle size={10} /> {t('grammar.saved')}</span>
+                            <span className="text-xs flex items-center gap-1" style={{ color: 'var(--accent)' }}><CheckCircle size={10} /> {t('grammar.saved')}</span>
                         </div>
 
                         {/* PROFESSIONAL EDITOR IMPLEMENTATION */}
@@ -96,7 +102,7 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
 
                         {/* VISUAL VALIDATION OF MORPHOLOGY CONNECTION */}
                         <div className="bg-slate-950/50 border border-slate-800 rounded-xl p-3 flex items-center gap-3">
-                            <div className="p-2 bg-blue-900/20 rounded-lg text-blue-400">
+                            <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(var(--accent-rgb), 0.2)', color: 'var(--accent)' }}>
                                 <Box size={16} />
                             </div>
                             <div className="flex-1">
@@ -108,11 +114,11 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                                 </div>
                             </div>
                             {totalRules > 0 ? (
-                                <div className="text-xs text-emerald-400 font-bold px-2 py-1 bg-emerald-950/30 rounded border border-emerald-900/50 flex items-center gap-1">
+                                <div className="text-xs font-bold px-2 py-1 rounded border flex items-center gap-1" style={{ color: 'var(--accent)', backgroundColor: 'rgba(var(--accent-rgb), 0.1)', borderColor: 'var(--accent)' }}>
                                     <Link size={10} /> {t('grammar.linked')}
                                 </div>
                             ) : (
-                                <div className="text-xs text-slate-600 font-bold px-2 py-1 bg-slate-900 rounded border border-slate-800">{t('grammar.no_rules')}</div>
+                                <div className="text-xs font-bold px-2 py-1 bg-slate-900 rounded border border-slate-800" style={{ color: 'var(--text-2)' }}>{t('grammar.no_rules')}</div>
                             )}
                         </div>
 
@@ -133,7 +139,8 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                                 <button
                                     onClick={handleAnalyze}
                                     disabled={loading}
-                                    className="bg-emerald-600 hover:bg-emerald-700 text-white p-2 rounded transition-colors disabled:opacity-50 shadow-lg shadow-emerald-900/20"
+                                    className="p-2 rounded transition-colors disabled:opacity-50 shadow-lg"
+                                    style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
                                 >
                                     <Play size={18} fill="currentColor" />
                                 </button>

@@ -17,12 +17,15 @@ const AboutModal: React.FC = () => {
             <div className="relative bg-[#1e1e1e] border border-white/10 rounded-xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
                 
                 <div className="flex items-center justify-between p-4 border-b border-white/5 bg-white/5">
-                    <h2 className="flex items-center gap-2 text-lg font-bold text-white">
+                    <h2 className="flex items-center gap-2 text-lg font-bold" style={{ color: 'var(--text-1)' }}>
                         <span>🚀</span> About KoreLang
                     </h2>
                     <button
                         onClick={() => ui.close('about')}
-                        className="p-1 transition-colors rounded-lg hover:bg-white/10 text-neutral-400 hover:text-white"
+                        className="p-1 transition-colors rounded-lg hover:bg-white/10"
+                        style={{ color: 'var(--text-2)' }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-1)'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-2)'}
                     >
                         <X size={20} />
                     </button>
@@ -30,17 +33,17 @@ const AboutModal: React.FC = () => {
 
                 <div className="p-6 space-y-6 text-center">
 
-                    <div className="flex items-center justify-center w-24 h-24 mx-auto border bg-blue-600/20 rounded-2xl border-blue-500/30">
-                        <span className="text-4xl font-black text-blue-400">KL</span>
+                    <div className="flex items-center justify-center w-24 h-24 mx-auto border rounded-2xl" style={{ backgroundColor: 'rgba(var(--accent-rgb), 0.2)', borderColor: 'var(--accent)' }}>
+                        <span className="text-4xl font-black" style={{ color: 'var(--accent)' }}>KL</span>
                     </div>
 
                     <div className="space-y-2">
-                        <h3 className="text-xl font-bold text-white">KoreLang Core</h3>
-                        <p className="text-sm text-neutral-400">Professional Linguistic Development Environment</p>
+                        <h3 className="text-xl font-bold" style={{ color: 'var(--text-1)' }}>KoreLang Core</h3>
+                        <p className="text-sm" style={{ color: 'var(--text-2)' }}>Professional Linguistic Development Environment</p>
                     </div>
 
                     <div className="p-4 space-y-3 border rounded-lg bg-white/5 border-white/5">
-                        <p className="text-sm text-neutral-300">
+                        <p className="text-sm" style={{ color: 'var(--text-2)' }}>
                             KoreLang is a modern tool for creating and managing conlangs, offering advanced linguistic features for phonology, morphology, orthography, and more.
                         </p>
                         <div className="flex justify-center gap-4">
@@ -48,7 +51,8 @@ const AboutModal: React.FC = () => {
                                 href="https://github.com/zRinexD/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-xs font-bold text-blue-400 transition-colors hover:text-blue-300"
+                                className="flex items-center gap-2 text-xs font-bold transition-colors"
+                                style={{ color: 'var(--accent)' }}
                             >
                                 <Github size={14} /> GitHub
                             </a>
@@ -56,7 +60,8 @@ const AboutModal: React.FC = () => {
                                 href="https://github.com/zRinexD/KoreLang/"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-xs font-bold transition-colors text-neutral-400 hover:text-neutral-200"
+                                className="flex items-center gap-2 text-xs font-bold transition-colors"
+                                style={{ color: 'var(--text-2)' }}
                             >
                                 <ExternalLink size={14} /> Source
                             </a>

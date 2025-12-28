@@ -318,14 +318,20 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                     <div className="flex gap-1 bg-neutral-900 border border-neutral-800 rounded p-1">
                         <button
                             onClick={toggleSpacingMode}
-                            className={`flex items-center gap-2 px-3 py-1 text-[10px] font-bold uppercase rounded transition-all ${scriptConfig.spacingMode === 'proportional' ? 'bg-amber-600 text-white shadow' : 'text-slate-500 hover:text-slate-200'}`}
+                            className={`flex items-center gap-2 px-3 py-1 text-[10px] font-bold uppercase rounded transition-all ${
+                                scriptConfig.spacingMode === 'proportional' ? 'shadow' : ''
+                            }`}
+                            style={scriptConfig.spacingMode === 'proportional' ? { backgroundColor: 'var(--accent)', color: 'var(--text-1)' } : { color: 'var(--text-2)' }}
                             title="Proportional Spacing (Dynamic Width)"
                         >
                             <Type size={14} /> Proportional
                         </button>
                         <button
                             onClick={toggleSpacingMode}
-                            className={`flex items-center gap-2 px-3 py-1 text-[10px] font-bold uppercase rounded transition-all ${scriptConfig.spacingMode === 'mono' ? 'bg-blue-600 text-white shadow' : 'text-slate-500 hover:text-slate-200'}`}
+                            className={`flex items-center gap-2 px-3 py-1 text-[10px] font-bold uppercase rounded transition-all ${
+                                scriptConfig.spacingMode === 'mono' ? 'shadow' : ''
+                            }`}
+                            style={scriptConfig.spacingMode === 'mono' ? { backgroundColor: 'var(--accent)', color: 'var(--text-1)' } : { color: 'var(--text-2)' }}
                             title="Monospaced (Fixed Grid)"
                         >
                             <Grid size={14} /> Monospace
@@ -333,16 +339,16 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                     </div>
 
                     <div className="flex gap-1 bg-neutral-900 border border-neutral-800 rounded p-1">
-                        <button onClick={() => setDrawMode('free')} className={`p-1.5 rounded ${drawMode === 'free' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title={t('script.tool_freehand_title')}><Spline size={16} /></button>
-                        <button onClick={() => setDrawMode('line')} className={`p-1.5 rounded ${drawMode === 'line' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title={t('script.tool_line_title')}><Minus size={16} /></button>
-                        <button onClick={() => setDrawMode('rect')} className={`p-1.5 rounded ${drawMode === 'rect' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title={t('script.tool_rect_title')}><Square size={16} /></button>
-                        <button onClick={() => setDrawMode('circle')} className={`p-1.5 rounded ${drawMode === 'circle' ? 'bg-purple-600' : 'hover:bg-neutral-800'}`} title={t('script.tool_circle_title')}><Circle size={16} /></button>
+                        <button onClick={() => setDrawMode('free')} className={`p-1.5 rounded ${drawMode === 'free' ? '' : ''}`} style={{ backgroundColor: drawMode === 'free' ? 'var(--accent)' : '' }} title={t('script.tool_freehand_title')}><Spline size={16} /></button>
+                        <button onClick={() => setDrawMode('line')} className={`p-1.5 rounded ${drawMode === 'line' ? '' : ''}`} style={{ backgroundColor: drawMode === 'line' ? 'var(--accent)' : '' }} title={t('script.tool_line_title')}><Minus size={16} /></button>
+                        <button onClick={() => setDrawMode('rect')} className={`p-1.5 rounded ${drawMode === 'rect' ? '' : ''}`} style={{ backgroundColor: drawMode === 'rect' ? 'var(--accent)' : '' }} title={t('script.tool_rect_title')}><Square size={16} /></button>
+                        <button onClick={() => setDrawMode('circle')} className={`p-1.5 rounded ${drawMode === 'circle' ? '' : ''}`} style={{ backgroundColor: drawMode === 'circle' ? 'var(--accent)' : '' }} title={t('script.tool_circle_title')}><Circle size={16} /></button>
                     </div>
                     <div className="flex items-center gap-1 bg-neutral-900 border border-neutral-800 rounded px-2 py-1">
                         <button onClick={performUndo} disabled={undoStack.length === 0} className="p-1.5 hover:bg-neutral-800 text-neutral-500 disabled:opacity-20" title="Undo (Ctrl+Z)"><RotateCcw size={16} /></button>
                         <button onClick={performRedo} disabled={redoStack.length === 0} className="p-1.5 hover:bg-neutral-800 text-neutral-500 disabled:opacity-20" title="Redo (Ctrl+Y)"><RotateCw size={16} /></button>
                     </div>
-                    <button onClick={saveGlyph} className={`px-4 py-2 rounded font-bold flex items-center gap-2 shadow-lg transition-all ${isDirty ? 'bg-purple-600 hover:bg-purple-700 scale-105' : 'bg-neutral-800 text-neutral-600'}`}>
+                    <button onClick={saveGlyph} className={`px-4 py-2 rounded font-bold flex items-center gap-2 shadow-lg transition-all ${isDirty ? 'scale-105' : ''}`} style={{ backgroundColor: isDirty ? 'var(--accent)' : 'var(--bg-panel)', color: isDirty ? 'var(--text-1)' : 'var(--text-2)' }}>
                         <Save size={18} /> {isDirty ? 'Commit Changes' : 'Synced'}
                     </button>
                 </div>

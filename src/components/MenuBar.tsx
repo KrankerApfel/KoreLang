@@ -198,7 +198,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
         className="hidden"
         accept=".json"
       />
-      <div className="flex items-center gap-2 px-2 font-bold text-blue-500 me-4">
+      <div className="flex items-center gap-2 px-2 font-bold me-4" style={{ color: 'var(--accent)' }}>
         <span>⚡ KL</span>
       </div>
 
@@ -210,11 +210,13 @@ const MenuBar: React.FC<MenuBarProps> = ({
             onMouseEnter={() => activeMenu && setActiveMenu(menu.id)}
           >
             <button
-              className={`h-full px-3 text-sm flex items-center gap-1 transition-colors ${
-                activeMenu === menu.id
-                  ? "bg-blue-700 text-white"
-                  : "text-neutral-300 hover:bg-neutral-800"
-              }`}
+              className={`h-full px-3 text-sm flex items-center gap-1 transition-colors`}
+              style={{
+                backgroundColor: activeMenu === menu.id ? 'var(--accent)' : undefined,
+                color: activeMenu === menu.id ? 'var(--text-1)' : 'var(--text-2)'
+              }}
+              onMouseEnter={(e) => activeMenu !== menu.id && (e.currentTarget.style.backgroundColor = 'var(--bg-panel)')}
+              onMouseLeave={(e) => activeMenu !== menu.id && (e.currentTarget.style.backgroundColor = 'transparent')}
               onClick={() =>
                 setActiveMenu(activeMenu === menu.id ? null : menu.id)
               }
@@ -240,7 +242,16 @@ const MenuBar: React.FC<MenuBarProps> = ({
                     return (
                       <button
                         key={idx}
-                        className="w-full text-left px-4 py-1.5 text-sm text-neutral-300 hover:bg-blue-600 hover:text-white flex items-center justify-between group"
+                        className="w-full text-left px-4 py-1.5 text-sm flex items-center justify-between group"
+                        style={{ color: 'var(--text-1)' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'var(--accent)';
+                          e.currentTarget.style.color = 'var(--text-1)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'var(--text-1)';
+                        }}
                         onClick={() => {
                           item.action();
                           setActiveMenu(null);
@@ -250,13 +261,13 @@ const MenuBar: React.FC<MenuBarProps> = ({
                           {Icon && (
                             <Icon
                               size={14}
-                              className="text-neutral-500 group-hover:text-white"
+                              style={{ color: 'var(--text-2)' }}
                             />
                           )}
                           {item.label}
                         </span>
                         {item.shortcut && (
-                          <span className="text-xs text-neutral-500 group-hover:text-blue-100">
+                          <span className="text-xs" style={{ color: 'var(--text-2)' }}>
                             {item.shortcut}
                           </span>
                         )}

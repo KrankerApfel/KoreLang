@@ -109,7 +109,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
       <div className="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-slate-800" style={{ backgroundColor: 'var(--bg-header)' }}>
-          <h2 className="text-lg font-bold text-white">{t('settings.preferences_title')}</h2>
+          <h2 className="text-lg font-bold" style={{ color: 'var(--text-1)' }}>{t('settings.preferences_title')}</h2>
           <button onClick={() => ui.close('settings')} className="text-slate-500 hover:text-white"><X size={20} /></button>
         </div>
 
@@ -248,7 +248,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
 
         {/* Footer */}
         <div className="flex justify-end p-4 border-t border-slate-800" style={{ backgroundColor: 'var(--bg-header)' }}>
-          <button onClick={() => ui.close('settings')} className="px-4 py-2 text-sm font-bold text-white bg-blue-600 rounded shadow-lg hover:bg-blue-700">OK</button>
+          <button onClick={() => ui.close('settings')} className="px-4 py-2 text-sm font-bold rounded shadow-lg" style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}>OK</button>
         </div>
       </div>
     </div>

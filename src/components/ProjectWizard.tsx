@@ -48,7 +48,7 @@ const ProjectWizard: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-slate-800" style={{ backgroundColor: 'var(--bg-header)' }}>
           <div>
-            <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+            <h2 className="flex items-center gap-2 text-xl font-bold" style={{ color: 'var(--text-1)' }}>
               <Box className="text-blue-500" size={20} />
               {isCreateMode ? t('wizard.create_title') : t('wizard.edit_title')}
             </h2>
@@ -134,7 +134,8 @@ const ProjectWizard: React.FC = () => {
             </button>
             <button 
               type="submit"
-              className="flex items-center gap-2 px-6 py-2 text-sm font-bold text-white transition-all bg-blue-600 rounded-lg shadow-lg hover:bg-blue-700 shadow-blue-900/20 active:scale-95"
+              className="flex items-center gap-2 px-6 py-2 text-sm font-bold transition-all rounded-lg shadow-lg shadow-blue-900/20 active:scale-95"
+              style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
             >
               <Check size={16} />
               {isCreateMode ? t('wizard.create_btn') : t('wizard.save_btn')}

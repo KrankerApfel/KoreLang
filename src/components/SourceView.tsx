@@ -38,22 +38,26 @@ const SourceView: React.FC<SourceViewProps> = ({ data, onApply }) => {
     <div className="h-full flex flex-col bg-slate-950">
         <div className="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
             <div>
-                <h2 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-                    <FileJson className="text-emerald-500" size={20} />
+                <h2 className="text-xl font-bold flex items-center gap-2" style={{ color: 'var(--text-1)' }}>
+                    <FileJson style={{ color: 'var(--accent)' }} size={20} />
                     {t('source.title')}
                 </h2>
-                <p className="text-xs text-slate-400">{t('source.desc')}</p>
+                <p className="text-xs" style={{ color: 'var(--text-2)' }}>{t('source.desc')}</p>
             </div>
             <div className="flex gap-2">
                 <button 
                     onClick={handleReset}
-                    className="flex items-center gap-2 px-3 py-2 text-slate-400 hover:text-white transition-colors text-sm font-medium"
+                    className="flex items-center gap-2 px-3 py-2 transition-colors text-sm font-medium"
+                    style={{ color: 'var(--text-2)' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-1)'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-2)'}
                 >
                     <RefreshCw size={16} /> {t('source.reset')}
                 </button>
                 <button 
                     onClick={handleApply}
-                    className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-bold transition-colors shadow-lg shadow-emerald-900/20"
+                    className="flex items-center gap-2 px-4 py-2 rounded font-bold transition-colors shadow-lg"
+                    style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
                 >
                     <Save size={16} fill="currentColor" /> {t('source.apply')}
                 </button>

@@ -113,9 +113,12 @@ const ConstraintsModal: React.FC = () => {
         }
         className={`p-3 rounded border flex flex-col items-center justify-center gap-2 transition-all ${
           isSelected
-            ? "bg-purple-600 border-purple-500 text-white shadow-lg ring-1 ring-purple-400"
-            : "bg-slate-900 border-slate-700 text-slate-400 hover:bg-slate-800 hover:border-slate-500"
+            ? 'shadow-lg ring-1'
+            : ''
         }`}
+        style={isSelected ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'var(--text-1)' } : { backgroundColor: 'var(--bg-panel)', borderColor: 'var(--text-2)', color: 'var(--text-2)' }}
+        onMouseEnter={(e) => { if (!isSelected) { e.currentTarget.style.backgroundColor = 'var(--bg-header)'; e.currentTarget.style.borderColor = 'var(--accent)'; } }}
+        onMouseLeave={(e) => { if (!isSelected) { e.currentTarget.style.backgroundColor = 'var(--bg-panel)'; e.currentTarget.style.borderColor = 'var(--text-2)'; } }}
       >
         {icon}
         <span className="text-xs font-bold tracking-wider uppercase">
@@ -131,11 +134,11 @@ const ConstraintsModal: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-slate-800 bg-slate-950">
           <div>
-            <h2 className="flex items-center gap-2 text-xl font-bold text-white">
-              <ShieldCheck className="text-emerald-500" size={24} />
+            <h2 className="flex items-center gap-2 text-xl font-bold" style={{ color: 'var(--text-1)' }}>
+              <ShieldCheck style={{ color: 'var(--accent)' }} size={24} />
               {t("menu.validation")}
             </h2>
-            <p className="mt-1 text-sm text-slate-400">{t("val.desc")}</p>
+            <p className="mt-1 text-sm" style={{ color: 'var(--text-2)' }}>{t("val.desc")}</p>
           </div>
           <button
             onClick={() => ui.close("constraints")}
@@ -162,9 +165,12 @@ const ConstraintsModal: React.FC = () => {
               onClick={() => setActiveTab(tab.id as any)}
               className={`flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${
                 activeTab === tab.id
-                  ? "border-emerald-500 text-emerald-400 bg-emerald-950/10"
-                  : "border-transparent text-slate-500 hover:text-slate-200 hover:bg-slate-800"
+                  ? ''
+                  : ''
               }`}
+              style={activeTab === tab.id ? { borderColor: 'var(--accent)', color: 'var(--accent)', backgroundColor: 'rgba(var(--accent-rgb), 0.1)' } : { borderColor: 'transparent', color: 'var(--text-2)' }}
+              onMouseEnter={(e) => { if (activeTab !== tab.id) { e.currentTarget.style.backgroundColor = 'var(--bg-panel)'; e.currentTarget.style.color = 'var(--text-1)'; } }}
+              onMouseLeave={(e) => { if (activeTab !== tab.id) { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-2)'; } }}
             >
               <tab.icon size={16} />{" "}
               <span className="hidden sm:inline">{tab.label}</span>
@@ -280,7 +286,8 @@ const ConstraintsModal: React.FC = () => {
                       allowedGraphemes: e.target.value,
                     })
                   }
-                  className="w-full h-24 p-3 font-mono text-sm border rounded resize-none bg-slate-950 border-slate-700 text-emerald-400 focus:border-emerald-500 focus:outline-none"
+                  className="w-full h-24 p-3 font-mono text-sm border rounded resize-none bg-slate-950 border-slate-700 focus:outline-none"
+                  style={{ color: 'var(--accent)', borderColor: 'var(--accent)' }}
                   placeholder="e.g. a-zàáeèéìíòóùúmnñ"
                 />
                 <p className="text-[10px] text-slate-500">
@@ -439,7 +446,8 @@ const ConstraintsModal: React.FC = () => {
                     </select>
                     <button
                       onClick={() => handleAddConditionalRule("mustStartWith")}
-                      className="px-3 font-bold text-white bg-blue-600 rounded hover:bg-blue-700"
+                      className="px-3 font-bold rounded"
+                      style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
                     >
                       +
                     </button>
@@ -508,7 +516,8 @@ const ConstraintsModal: React.FC = () => {
                     </select>
                     <button
                       onClick={() => handleAddConditionalRule("mustEndWith")}
-                      className="px-3 font-bold text-white bg-blue-600 rounded hover:bg-blue-700"
+                      className="px-3 font-bold rounded"
+                      style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
                     >
                       +
                     </button>
@@ -604,7 +613,8 @@ const ConstraintsModal: React.FC = () => {
         <div className="flex justify-end p-4 border-t bg-slate-950 border-slate-800">
           <button
             onClick={() => ui.close("constraints")}
-            className="flex items-center gap-2 px-6 py-2 text-sm font-bold text-white transition-all rounded-lg shadow-lg bg-emerald-600 hover:bg-emerald-700 shadow-emerald-900/20 active:scale-95"
+            className="flex items-center gap-2 px-6 py-2 text-sm font-bold transition-all rounded-lg shadow-lg active:scale-95"
+            style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
           >
             <CheckCircle size={16} />
             {t("settings.done")}

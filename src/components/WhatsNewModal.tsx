@@ -61,7 +61,8 @@ const WhatsNewModal: React.FC = () => {
 
                     <button
                         onClick={() => ui.close('whatsNew')}
-                        className="w-full py-4 bg-[var(--accent)] hover:brightness-110 text-white rounded-2xl text-sm font-black shadow-xl shadow-[var(--accent)]/20 flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        className="w-full py-4 rounded-2xl text-sm font-black shadow-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)', boxShadow: '0 0 40px rgba(var(--accent-rgb), 0.2)' }}
                     >
                         {t('whats_new.button')}
                         <ArrowRight size={18} />
