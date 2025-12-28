@@ -127,7 +127,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                 {/* AI GENERATOR PANEL (Conditional) */}
                 {enableAI ? (
                     <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-5 shadow-lg">
-                        <h2 className="text-lg font-bold flex items-center gap-2 mb-4" style={{ color: 'var(--text-1)' }}>
+                        <h2 className="text-lg font-bold flex items-center gap-2 mb-4" style={{ color: 'var(--text-primary)' }}>
                             <Wand2 style={{ color: 'var(--accent)' }} size={20} />
                             {t('phonology.ai_generator')}
                         </h2>
@@ -153,7 +153,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                 onClick={handleGenerate}
                                 disabled={loading || !prompt}
                                 className="w-full disabled:opacity-50 font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg"
-                                style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
+                                style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
                             >
                                 {loading ? <RefreshCw className="animate-spin" /> : <Wand2 size={18} />}
                                 {loading ? t('phonology.analyze_btn') : t('phonology.generate_btn')}
@@ -162,7 +162,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                 <button
                                     onClick={() => setShowPreview(!showPreview)}
                                     className="w-full mt-2 font-bold py-2 rounded-lg flex items-center justify-center gap-2 transition-all border"
-                                    style={{ backgroundColor: 'var(--bg-panel)', borderColor: 'var(--accent)', color: 'var(--text-2)' }}
+                                    style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--accent)', color: 'var(--text-secondary)' }}
                                 >
                                     <Eye size={16} />
                                     {showPreview ? t('phonology.hide_preview') : t('phonology.show_preview')}
@@ -172,14 +172,14 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                     </div>
                 ) : (
                     <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-5 shadow-lg flex flex-col items-center justify-center text-center opacity-50">
-                        <EyeOff size={32} className="mb-2" style={{ color: 'var(--text-2)' }} />
-                        <h3 className="font-bold" style={{ color: 'var(--text-2)' }}>{t('phonology.ai_disabled_title')}</h3>
-                        <p className="text-xs mt-1" style={{ color: 'var(--text-2)' }}>{t('phonology.ai_disabled_desc')}</p>
+                        <EyeOff size={32} className="mb-2" style={{ color: 'var(--text-secondary)' }} />
+                        <h3 className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('phonology.ai_disabled_title')}</h3>
+                        <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{t('phonology.ai_disabled_desc')}</p>
                     </div>
                 )}
 
                 <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-5 shadow-lg flex-1 overflow-y-auto">
-                    <h2 className="text-lg font-bold flex items-center gap-2 mb-4" style={{ color: 'var(--text-1)' }}>
+                    <h2 className="text-lg font-bold flex items-center gap-2 mb-4" style={{ color: 'var(--text-primary)' }}>
                         <Info style={{ color: 'var(--accent)' }} size={20} />
                         {t('phonology.stats')}
                     </h2>
@@ -428,12 +428,12 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             )}
                         </div>
                         <div className="px-6 py-4 bg-neutral-950 border-t border-neutral-800 flex justify-end gap-3">
-                            <button onClick={() => setEditingPhoneme(null)} className="px-4 py-2 text-sm" style={{ color: 'var(--text-2)' }}>{t('common.cancel')}</button>
+                            <button onClick={() => setEditingPhoneme(null)} className="px-4 py-2 text-sm" style={{ color: 'var(--text-secondary)' }}>{t('common.cancel')}</button>
                             <button
                                 onClick={handleSavePhoneme}
                                 disabled={!symbol}
                                 className="px-4 py-2 disabled:opacity-50 text-sm font-bold rounded flex items-center gap-2"
-                                style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
+                                style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
                             >
                                 <Check size={16} /> {t('common.save')}
                             </button>
@@ -519,7 +519,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                                 <button
                                     onClick={confirmReplace}
                                     className="flex-[2] py-2 text-xs font-bold rounded flex items-center justify-center gap-2 transition-all"
-                                    style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
+                                    style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
                                 >
                                     <Check size={14} /> {t('phonology.apply_replace')}
                                 </button>

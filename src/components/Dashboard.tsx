@@ -57,13 +57,13 @@ const Dashboard: React.FC<DashboardProps> = ({
     <div className="p-8 max-w-7xl mx-auto space-y-8 h-full overflow-y-auto">
       <div className="flex justify-between items-start border-b border-slate-700 pb-6">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--text-1)' }}>{displayProjectName}</h2>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-2)' }}>{t('dashboard.by')} <span className="font-medium" style={{ color: 'var(--accent)' }}>{displayAuthor}</span></p>
-          {description && <p className="text-sm mt-2 max-w-2xl" style={{ color: 'var(--text-2)' }}>{description}</p>}
+          <h2 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--text-primary)' }}>{displayProjectName}</h2>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.by')} <span className="font-medium" style={{ color: 'var(--accent)' }}>{displayAuthor}</span></p>
+          {description && <p className="text-sm mt-2 max-w-2xl" style={{ color: 'var(--text-secondary)' }}>{description}</p>}
         </div>
         <div className="text-right bg-slate-800 p-4 rounded-lg border border-slate-700 min-w-[150px]">
-          <div className="text-3xl font-bold text-center" style={{ color: 'var(--text-1)' }}>{totalWords}</div>
-          <div className="text-[10px] uppercase tracking-wider font-bold text-center mt-1" style={{ color: 'var(--text-2)' }}>{t('dashboard.lexiconsize')}</div>
+          <div className="text-3xl font-bold text-center" style={{ color: 'var(--text-primary)' }}>{totalWords}</div>
+          <div className="text-[10px] uppercase tracking-wider font-bold text-center mt-1" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.lexiconsize')}</div>
         </div>
       </div>
 
@@ -79,10 +79,10 @@ const Dashboard: React.FC<DashboardProps> = ({
             <div className="p-2 rounded-md" style={{ backgroundColor: 'rgba(var(--accent-rgb), 0.2)' }}>
               <BookA style={{ color: 'var(--accent)' }} className="group-hover:scale-110 transition-transform" />
             </div>
-            <ArrowRight size={18} style={{ color: 'var(--text-2)' }} />
+            <ArrowRight size={18} style={{ color: 'var(--text-secondary)' }} />
           </div>
-          <div className="font-bold text-lg" style={{ color: 'var(--text-1)' }}>{t('dashboard.manage_lexicon')}</div>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-2)' }}>{t('dashboard.manage_lexicon_desc')}</p>
+          <div className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>{t('dashboard.manage_lexicon')}</div>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.manage_lexicon_desc')}</p>
         </button>
 
         <button
@@ -95,10 +95,10 @@ const Dashboard: React.FC<DashboardProps> = ({
             <div className="p-2 rounded-md" style={{ backgroundColor: 'rgba(var(--accent-rgb), 0.2)' }}>
               <Languages style={{ color: 'var(--accent)' }} className="group-hover:scale-110 transition-transform" />
             </div>
-            <ArrowRight size={18} style={{ color: 'var(--text-2)' }} />
+            <ArrowRight size={18} style={{ color: 'var(--text-secondary)' }} />
           </div>
-          <div className="font-bold text-lg" style={{ color: 'var(--text-1)' }}>{t('dashboard.define_grammar')}</div>
-          <p className="text-sm mt-1" style={{ color: 'var(--text-2)' }}>{t('dashboard.define_grammar_desc')}</p>
+          <div className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>{t('dashboard.define_grammar')}</div>
+          <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.define_grammar_desc')}</p>
         </button>
       </div>
 
@@ -107,7 +107,7 @@ const Dashboard: React.FC<DashboardProps> = ({
         {/* Recent Activity - RESTRICTED HEIGHT */}
         <div className="lg:col-span-2 bg-slate-800 border border-slate-700 rounded-xl p-6 shadow-md flex flex-col max-h-[400px]">
           <div className="flex justify-between items-center mb-4 shrink-0">
-            <h3 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2" style={{ color: 'var(--text-2)' }}>
+            <h3 className="text-sm font-bold uppercase tracking-wider flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
               <FileText size={16} />
               {t('dashboard.recent_words')}
             </h3>
@@ -131,10 +131,10 @@ const Dashboard: React.FC<DashboardProps> = ({
                     ) : (
                       <span className="font-mono font-bold text-lg" style={{ color: 'var(--accent)' }}>{entry.word}</span>
                     )}
-                    <span className="text-sm" style={{ color: 'var(--text-2)' }}>/{entry.ipa}/</span>
+                    <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>/{entry.ipa}/</span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-[10px] uppercase font-bold bg-slate-900 px-2 py-1 rounded border border-slate-700" style={{ color: 'var(--text-2)' }}>
+                    <span className="text-[10px] uppercase font-bold bg-slate-900 px-2 py-1 rounded border border-slate-700" style={{ color: 'var(--text-secondary)' }}>
                       {getPosLabel(entry.pos)}
                     </span>
                   </div>
@@ -152,7 +152,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
         {/* Stats Chart */}
         <div className="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-md flex flex-col h-[400px]">
-          <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--text-2)' }}>{t('dashboard.pos_dist')}</h3>
+          <h3 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--text-secondary)' }}>{t('dashboard.pos_dist')}</h3>
           <div className="flex-1 min-h-[250px]">
             {totalWords > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -172,8 +172,8 @@ const Dashboard: React.FC<DashboardProps> = ({
                     ))}
                   </Pie>
                   <Tooltip
-                    contentStyle={{ backgroundColor: 'var(--bg-panel)', borderColor: 'var(--border-dim)', color: 'var(--text-1)', borderRadius: '8px' }}
-                    itemStyle={{ color: 'var(--text-2)' }}
+                    contentStyle={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border-dim)', color: 'var(--text-primary)', borderRadius: '8px' }}
+                    itemStyle={{ color: 'var(--text-secondary)' }}
                   />
                 </PieChart>
               </ResponsiveContainer>

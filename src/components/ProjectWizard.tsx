@@ -46,9 +46,9 @@ const ProjectWizard: React.FC = () => {
       <div className="w-full max-w-lg overflow-hidden duration-200 border shadow-2xl bg-slate-900 border-slate-700 rounded-xl animate-in fade-in zoom-in">
         
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-800" style={{ backgroundColor: 'var(--bg-header)' }}>
+        <div className="flex items-center justify-between p-5 border-b border-slate-800" style={{ backgroundColor: 'var(--elevated)' }}>
           <div>
-            <h2 className="flex items-center gap-2 text-xl font-bold" style={{ color: 'var(--text-1)' }}>
+            <h2 className="flex items-center gap-2 text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
               <Box className="text-blue-500" size={20} />
               {isCreateMode ? t('wizard.create_title') : t('wizard.edit_title')}
             </h2>
@@ -135,7 +135,7 @@ const ProjectWizard: React.FC = () => {
             <button 
               type="submit"
               className="flex items-center gap-2 px-6 py-2 text-sm font-bold transition-all rounded-lg shadow-lg shadow-blue-900/20 active:scale-95"
-              style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
+              style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
             >
               <Check size={16} />
               {isCreateMode ? t('wizard.create_btn') : t('wizard.save_btn')}

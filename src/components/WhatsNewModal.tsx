@@ -34,13 +34,13 @@ const WhatsNewModal: React.FC = () => {
                 onClick={() => ui.close('whatsNew')}
             />
 
-            <div className="relative bg-[var(--bg-panel)] border border-[var(--accent)]/30 rounded-3xl w-full max-w-sm overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.8)] animate-in zoom-in-95 duration-500">
+            <div className="relative bg-[var(--surface)] border border-[var(--accent)]/30 rounded-3xl w-full max-w-sm overflow-hidden shadow-[0_0_80px_rgba(0,0,0,0.8)] animate-in zoom-in-95 duration-500">
                 <div className="p-8 space-y-6">
                     <div className="space-y-2">
                         <div className="w-12 h-12 rounded-2xl bg-[var(--accent)]/20 flex items-center justify-center mb-4">
                             <Sparkles size={24} className="text-[var(--accent)] animate-pulse" />
                         </div>
-                        <h2 className="text-2xl font-black text-[var(--text-1)] tracking-tight">
+                        <h2 className="text-2xl font-black text-[var(--text-primary)] tracking-tight">
                             {t('whats_new.title')}
                         </h2>
                     </div>
@@ -52,8 +52,8 @@ const WhatsNewModal: React.FC = () => {
                                     <feature.icon size={20} className={feature.color} />
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-sm font-bold text-[var(--text-1)]">{feature.title}</p>
-                                    <p className="text-xs text-[var(--text-2)] leading-relaxed">{feature.desc}</p>
+                                    <p className="text-sm font-bold text-[var(--text-primary)]">{feature.title}</p>
+                                    <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{feature.desc}</p>
                                 </div>
                             </div>
                         ))}
@@ -62,7 +62,7 @@ const WhatsNewModal: React.FC = () => {
                     <button
                         onClick={() => ui.close('whatsNew')}
                         className="w-full py-4 rounded-2xl text-sm font-black shadow-xl flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98]"
-                        style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)', boxShadow: '0 0 40px rgba(var(--accent-rgb), 0.2)' }}
+                        style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)', boxShadow: '0 0 40px rgba(var(--accent-rgb), 0.2)' }}
                     >
                         {t('whats_new.button')}
                         <ArrowRight size={18} />

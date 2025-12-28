@@ -154,12 +154,24 @@ export interface ProjectConstraints {
 export type ViewState = 'DASHBOARD' | 'LEXICON' | 'GRAMMAR' | 'PHONOLOGY' | 'GENEVOLVE' | 'CONSOLE' | 'SCRIPT' | 'NOTEBOOK';
 
 export interface CustomTheme {
-  bgMain: string;
-  bgPanel: string;
-  text1: string;
-  text2: string;
+  primary: string;
+  secondary: string;
   accent: string;
-  bgHeader: string;
+  background: string;
+  surface: string;
+  elevated: string;
+  textPrimary: string;
+  textSecondary: string;
+  textTertiary: string;
+  border: string;
+  divider: string;
+  success: string;
+  warning: string;
+  error: string;
+  info: string;
+  hover: string;
+  active: string;
+  disabled: string;
 }
 
 export interface AppSettings {

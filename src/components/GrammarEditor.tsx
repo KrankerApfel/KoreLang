@@ -39,11 +39,11 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
         <div className="h-full flex flex-col p-6 max-w-7xl mx-auto w-full gap-6">
             <div className="flex justify-between items-end">
                 <div>
-                    <h2 className="text-3xl font-bold mb-2 flex items-center gap-3" style={{ color: 'var(--text-1)' }}>
+                    <h2 className="text-3xl font-bold mb-2 flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
                         <Languages style={{ color: 'var(--accent)' }} />
                         {t('grammar.title')}
                     </h2>
-                    <p style={{ color: 'var(--text-2)' }}>{t('grammar.desc')}</p>
+                    <p style={{ color: 'var(--text-secondary)' }}>{t('grammar.desc')}</p>
                 </div>
 
                 {/* View Switcher Tabs */}
@@ -54,9 +54,9 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                             ? 'shadow-lg'
                             : ''
                             }`}
-                        style={activeTab === 'SYNTAX' ? { backgroundColor: 'var(--accent)', color: 'var(--text-1)' } : { color: 'var(--text-2)' }}
-                        onMouseEnter={(e) => { if (activeTab !== 'SYNTAX') e.currentTarget.style.color = 'var(--text-1)'; }}
-                        onMouseLeave={(e) => { if (activeTab !== 'SYNTAX') e.currentTarget.style.color = 'var(--text-2)'; }}
+                        style={activeTab === 'SYNTAX' ? { backgroundColor: 'var(--accent)', color: 'var(--text-primary)' } : { color: 'var(--text-secondary)' }}
+                        onMouseEnter={(e) => { if (activeTab !== 'SYNTAX') e.currentTarget.style.color = 'var(--text-primary)'; }}
+                        onMouseLeave={(e) => { if (activeTab !== 'SYNTAX') e.currentTarget.style.color = 'var(--text-secondary)'; }}
                     >
                         <Code size={16} /> {t('grammar.tab.syntax')}
                     </button>
@@ -66,9 +66,9 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                             ? 'shadow-lg'
                             : ''
                             }`}
-                        style={activeTab === 'MORPHOLOGY' ? { backgroundColor: 'var(--accent)', color: 'var(--text-1)' } : { color: 'var(--text-2)' }}
-                        onMouseEnter={(e) => { if (activeTab !== 'MORPHOLOGY') e.currentTarget.style.color = 'var(--text-1)'; }}
-                        onMouseLeave={(e) => { if (activeTab !== 'MORPHOLOGY') e.currentTarget.style.color = 'var(--text-2)'; }}
+                        style={activeTab === 'MORPHOLOGY' ? { backgroundColor: 'var(--accent)', color: 'var(--text-primary)' } : { color: 'var(--text-secondary)' }}
+                        onMouseEnter={(e) => { if (activeTab !== 'MORPHOLOGY') e.currentTarget.style.color = 'var(--text-primary)'; }}
+                        onMouseLeave={(e) => { if (activeTab !== 'MORPHOLOGY') e.currentTarget.style.color = 'var(--text-secondary)'; }}
                     >
                         <Table size={16} /> {t('grammar.tab.morphology')}
                     </button>
@@ -118,7 +118,7 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                                     <Link size={10} /> {t('grammar.linked')}
                                 </div>
                             ) : (
-                                <div className="text-xs font-bold px-2 py-1 bg-slate-900 rounded border border-slate-800" style={{ color: 'var(--text-2)' }}>{t('grammar.no_rules')}</div>
+                                <div className="text-xs font-bold px-2 py-1 bg-slate-900 rounded border border-slate-800" style={{ color: 'var(--text-secondary)' }}>{t('grammar.no_rules')}</div>
                             )}
                         </div>
 
@@ -140,7 +140,7 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                                     onClick={handleAnalyze}
                                     disabled={loading}
                                     className="p-2 rounded transition-colors disabled:opacity-50 shadow-lg"
-                                    style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
+                                    style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
                                 >
                                     <Play size={18} fill="currentColor" />
                                 </button>

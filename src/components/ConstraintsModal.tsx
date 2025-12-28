@@ -116,9 +116,9 @@ const ConstraintsModal: React.FC = () => {
             ? 'shadow-lg ring-1'
             : ''
         }`}
-        style={isSelected ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'var(--text-1)' } : { backgroundColor: 'var(--bg-panel)', borderColor: 'var(--text-2)', color: 'var(--text-2)' }}
-        onMouseEnter={(e) => { if (!isSelected) { e.currentTarget.style.backgroundColor = 'var(--bg-header)'; e.currentTarget.style.borderColor = 'var(--accent)'; } }}
-        onMouseLeave={(e) => { if (!isSelected) { e.currentTarget.style.backgroundColor = 'var(--bg-panel)'; e.currentTarget.style.borderColor = 'var(--text-2)'; } }}
+        style={isSelected ? { backgroundColor: 'var(--accent)', borderColor: 'var(--accent)', color: 'var(--text-primary)' } : { backgroundColor: 'var(--surface)', borderColor: 'var(--text-secondary)', color: 'var(--text-secondary)' }}
+        onMouseEnter={(e) => { if (!isSelected) { e.currentTarget.style.backgroundColor = 'var(--elevated)'; e.currentTarget.style.borderColor = 'var(--accent)'; } }}
+        onMouseLeave={(e) => { if (!isSelected) { e.currentTarget.style.backgroundColor = 'var(--surface)'; e.currentTarget.style.borderColor = 'var(--text-secondary)'; } }}
       >
         {icon}
         <span className="text-xs font-bold tracking-wider uppercase">
@@ -134,11 +134,11 @@ const ConstraintsModal: React.FC = () => {
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-slate-800 bg-slate-950">
           <div>
-            <h2 className="flex items-center gap-2 text-xl font-bold" style={{ color: 'var(--text-1)' }}>
+            <h2 className="flex items-center gap-2 text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
               <ShieldCheck style={{ color: 'var(--accent)' }} size={24} />
               {t("menu.validation")}
             </h2>
-            <p className="mt-1 text-sm" style={{ color: 'var(--text-2)' }}>{t("val.desc")}</p>
+            <p className="mt-1 text-sm" style={{ color: 'var(--text-secondary)' }}>{t("val.desc")}</p>
           </div>
           <button
             onClick={() => ui.close("constraints")}
@@ -168,9 +168,9 @@ const ConstraintsModal: React.FC = () => {
                   ? ''
                   : ''
               }`}
-              style={activeTab === tab.id ? { borderColor: 'var(--accent)', color: 'var(--accent)', backgroundColor: 'rgba(var(--accent-rgb), 0.1)' } : { borderColor: 'transparent', color: 'var(--text-2)' }}
-              onMouseEnter={(e) => { if (activeTab !== tab.id) { e.currentTarget.style.backgroundColor = 'var(--bg-panel)'; e.currentTarget.style.color = 'var(--text-1)'; } }}
-              onMouseLeave={(e) => { if (activeTab !== tab.id) { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-2)'; } }}
+              style={activeTab === tab.id ? { borderColor: 'var(--accent)', color: 'var(--accent)', backgroundColor: 'rgba(var(--accent-rgb), 0.1)' } : { borderColor: 'transparent', color: 'var(--text-secondary)' }}
+              onMouseEnter={(e) => { if (activeTab !== tab.id) { e.currentTarget.style.backgroundColor = 'var(--surface)'; e.currentTarget.style.color = 'var(--text-primary)'; } }}
+              onMouseLeave={(e) => { if (activeTab !== tab.id) { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-secondary)'; } }}
             >
               <tab.icon size={16} />{" "}
               <span className="hidden sm:inline">{tab.label}</span>
@@ -447,7 +447,7 @@ const ConstraintsModal: React.FC = () => {
                     <button
                       onClick={() => handleAddConditionalRule("mustStartWith")}
                       className="px-3 font-bold rounded"
-                      style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
+                      style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
                     >
                       +
                     </button>
@@ -517,7 +517,7 @@ const ConstraintsModal: React.FC = () => {
                     <button
                       onClick={() => handleAddConditionalRule("mustEndWith")}
                       className="px-3 font-bold rounded"
-                      style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
+                      style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
                     >
                       +
                     </button>
@@ -614,7 +614,7 @@ const ConstraintsModal: React.FC = () => {
           <button
             onClick={() => ui.close("constraints")}
             className="flex items-center gap-2 px-6 py-2 text-sm font-bold transition-all rounded-lg shadow-lg active:scale-95"
-            style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}
+            style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
           >
             <CheckCircle size={16} />
             {t("settings.done")}

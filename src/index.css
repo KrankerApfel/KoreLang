@@ -3,12 +3,24 @@
 @tailwind utilities;
 
 :root {
-    --bg-main: #121212;
-    --bg-panel: #1e1e1e;
-    --bg-header: #0a0a0a;
-    --text-1: #f8fafc;
-    --text-2: #94a3b8;
-    --accent: #3b82f6;
+    --primary: #6B8AFF;
+    --secondary: #0A0A0A;
+    --accent: #3B82F6;
+    --background: #121212;
+    --surface: #1E1E1E;
+    --elevated: #2A2A2A;
+    --text-primary: #F1F5F9;
+    --text-secondary: #94A3B8;
+    --text-tertiary: #64748B;
+    --border: #2A2A2A;
+    --divider: #1E1E1E;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --info: #3B82F6;
+    --hover: #5B7BFF;
+    --active: #4B6BEF;
+    --disabled: #404040;
 }
 
 /* Scrollbars personnalisées avec couleurs du thème */
@@ -18,165 +30,165 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-main);
+  background: var(--background);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--bg-panel);
+  background: var(--surface);
   border-radius: 5px;
-  border: 2px solid var(--bg-main);
+  border: 2px solid var(--background);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-2);
+  background: var(--text-secondary);
 }
 
 /* Firefox scrollbars */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--bg-panel) var(--bg-main);
+  scrollbar-color: var(--surface) var(--background);
 }
 
 /* Override Tailwind utility classes to use theme CSS variables */
 @layer components {
   /* Background colors */
   .bg-slate-800 {
-    background-color: var(--bg-panel) !important;
+    background-color: var(--surface) !important;
   }
   
   .bg-slate-900 {
-    background-color: var(--bg-main) !important;
+    background-color: var(--background) !important;
   }
   
   .bg-slate-700 {
-    background-color: var(--bg-panel) !important;
+    background-color: var(--surface) !important;
   }
   
   .bg-slate-600 {
-    background-color: var(--bg-panel) !important;
+    background-color: var(--surface) !important;
   }
   
   .bg-slate-950 {
-    background-color: var(--bg-main) !important;
+    background-color: var(--background) !important;
   }
   
   .bg-neutral-800 {
-    background-color: var(--bg-panel) !important;
+    background-color: var(--surface) !important;
   }
   
   .bg-neutral-900 {
-    background-color: var(--bg-main) !important;
+    background-color: var(--background) !important;
   }
   
   .bg-neutral-950 {
-    background-color: var(--bg-main) !important;
+    background-color: var(--background) !important;
   }
   
   .bg-neutral-700 {
-    background-color: rgb(from var(--bg-panel) r g b / 0.8) !important;
+    background-color: rgb(from var(--surface) r g b / 0.8) !important;
   }
   
   /* Hover backgrounds */
   .hover\:bg-slate-700:hover {
-    background-color: rgb(from var(--bg-panel) r g b / 0.8) !important;
+    background-color: rgb(from var(--surface) r g b / 0.8) !important;
   }
   
   .hover\:bg-slate-600:hover {
-    background-color: rgb(from var(--bg-panel) r g b / 0.9) !important;
+    background-color: rgb(from var(--surface) r g b / 0.9) !important;
   }
   
   .hover\:bg-slate-800:hover {
-    background-color: var(--bg-panel) !important;
+    background-color: var(--surface) !important;
   }
   
   .hover\:bg-neutral-800:hover {
-    background-color: rgb(from var(--bg-panel) r g b / 0.8) !important;
+    background-color: rgb(from var(--surface) r g b / 0.8) !important;
   }
   
   .hover\:bg-white\/10:hover {
-    background-color: rgb(from var(--text-1) r g b / 0.1) !important;
+    background-color: rgb(from var(--text-primary) r g b / 0.1) !important;
   }
   
   /* Border colors */
   .border-slate-700 {
-    border-color: rgb(from var(--text-2) r g b / 0.3) !important;
+    border-color: rgb(from var(--text-secondary) r g b / 0.3) !important;
   }
   
   .border-slate-800 {
-    border-color: rgb(from var(--text-2) r g b / 0.2) !important;
+    border-color: rgb(from var(--text-secondary) r g b / 0.2) !important;
   }
   
   .border-neutral-700 {
-    border-color: rgb(from var(--text-2) r g b / 0.3) !important;
+    border-color: rgb(from var(--text-secondary) r g b / 0.3) !important;
   }
   
   .border-neutral-800 {
-    border-color: rgb(from var(--text-2) r g b / 0.2) !important;
+    border-color: rgb(from var(--text-secondary) r g b / 0.2) !important;
   }
   
   .border-white\/5 {
-    border-color: rgb(from var(--text-1) r g b / 0.05) !important;
+    border-color: rgb(from var(--text-primary) r g b / 0.05) !important;
   }
   
   /* Text colors */
   .text-slate-400 {
-    color: var(--text-2) !important;
+    color: var(--text-secondary) !important;
   }
   
   .text-slate-500 {
-    color: var(--text-2) !important;
+    color: var(--text-secondary) !important;
   }
   
   .text-slate-300 {
-    color: var(--text-1) !important;
+    color: var(--text-primary) !important;
   }
   
   .text-slate-200 {
-    color: var(--text-1) !important;
+    color: var(--text-primary) !important;
   }
   
   .text-slate-600 {
-    color: var(--text-2) !important;
+    color: var(--text-secondary) !important;
   }
   
   .text-slate-700 {
-    color: var(--text-2) !important;
+    color: var(--text-secondary) !important;
   }
   
   .hover\:text-slate-200:hover {
-    color: var(--text-1) !important;
+    color: var(--text-primary) !important;
   }
   
   .hover\:text-slate-300:hover {
-    color: var(--text-1) !important;
+    color: var(--text-primary) !important;
   }
   
   .placeholder-slate-700::placeholder {
-    color: rgb(from var(--text-2) r g b / 0.5) !important;
+    color: rgb(from var(--text-secondary) r g b / 0.5) !important;
   }
   
   .text-neutral-400 {
-    color: var(--text-2) !important;
+    color: var(--text-secondary) !important;
   }
   
   .text-neutral-500 {
-    color: var(--text-2) !important;
+    color: var(--text-secondary) !important;
   }
   
   .text-neutral-100 {
-    color: var(--text-1) !important;
+    color: var(--text-primary) !important;
   }
   
   .text-white {
-    color: var(--text-1) !important;
+    color: var(--text-primary) !important;
   }
   
   .hover\:text-neutral-100:hover {
-    color: var(--text-1) !important;
+    color: var(--text-primary) !important;
   }
   
   .hover\:text-white:hover {
-    color: var(--text-1) !important;
+    color: var(--text-primary) !important;
   }
   
   .text-blue-400 {
@@ -247,27 +259,27 @@
   
   /* Red colors (error states, keep semantic but muted) */
   .bg-red-900\/20 {
-    background-color: rgb(from var(--text-2) r g b / 0.1) !important;
+    background-color: rgb(from var(--text-secondary) r g b / 0.1) !important;
   }
   
   .border-red-500\/30 {
-    border-color: rgb(from var(--text-2) r g b / 0.2) !important;
+    border-color: rgb(from var(--text-secondary) r g b / 0.2) !important;
   }
   
   .text-red-200 {
-    color: var(--text-2) !important;
+    color: var(--text-secondary) !important;
   }
   
   .text-red-500 {
-    color: var(--text-2) !important;
+    color: var(--text-secondary) !important;
   }
   
   .hover\:text-red-500:hover {
-    color: var(--text-2) !important;
+    color: var(--text-secondary) !important;
   }
   
   .hover\:bg-red-900\/20:hover {
-    background-color: rgb(from var(--text-2) r g b / 0.15) !important;
+    background-color: rgb(from var(--text-secondary) r g b / 0.15) !important;
   }
   
   /* Amber/orange colors (warning/info states) */
@@ -284,7 +296,7 @@
   }
   
   .text-amber-200 {
-    color: var(--text-2) !important;
+    color: var(--text-secondary) !important;
   }
   
   .bg-amber-600 {

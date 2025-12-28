@@ -111,10 +111,10 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
       {/* Sidebar: Paradigms */}
       <div className="w-64 border-r border-slate-800 flex flex-col bg-slate-950">
         <div className="p-4 border-b border-slate-800 flex justify-between items-center">
-             <h3 className="font-bold flex items-center gap-2" style={{ color: 'var(--text-1)' }}>
+             <h3 className="font-bold flex items-center gap-2" style={{ color: 'var(--text-primary)' }}>
                  <Table size={16} style={{ color: 'var(--accent)' }} /> {t('morph.paradigms')}
              </h3>
-             <button onClick={addParadigm} className="transition-colors" style={{ color: 'var(--accent)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-1)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--accent)'}   >
+             <button onClick={addParadigm} className="transition-colors" style={{ color: 'var(--accent)' }} onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'} onMouseLeave={(e) => e.currentTarget.style.color = 'var(--accent)'}   >
                  <Plus size={18} />
              </button>
         </div>
@@ -126,8 +126,8 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                         className={`flex-1 text-left px-3 py-2 rounded-l text-sm font-medium transition-all ${
                             activeParadigmId === p.id ? 'border-l-2' : ''
                         }`}
-                        style={activeParadigmId === p.id ? { backgroundColor: 'rgba(var(--accent-rgb), 0.2)', color: 'var(--accent)', borderColor: 'var(--accent)' } : { color: 'var(--text-2)' }}
-                        onMouseEnter={(e) => { if (activeParadigmId !== p.id) e.currentTarget.style.backgroundColor = 'var(--bg-panel)'; }}
+                        style={activeParadigmId === p.id ? { backgroundColor: 'rgba(var(--accent-rgb), 0.2)', color: 'var(--accent)', borderColor: 'var(--accent)' } : { color: 'var(--text-secondary)' }}
+                        onMouseEnter={(e) => { if (activeParadigmId !== p.id) e.currentTarget.style.backgroundColor = 'var(--surface)'; }}
                         onMouseLeave={(e) => { if (activeParadigmId !== p.id) e.currentTarget.style.backgroundColor = ''; }}
                     >
                         {p.name}
@@ -193,7 +193,7 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                 <div className="flex-1 overflow-auto p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h4 className="text-sm font-bold text-slate-400 uppercase tracking-wider">{t('grammar.morph_rules')}</h4>
-                        <button onClick={addRule} className="text-xs flex items-center gap-1 px-3 py-1.5 rounded transition-colors" style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}>
+                        <button onClick={addRule} className="text-xs flex items-center gap-1 px-3 py-1.5 rounded transition-colors" style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}>
                             <Plus size={12} /> {t('grammar.add_rule')}
                         </button>
                     </div>
@@ -202,9 +202,9 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                         <table className="w-full">
                             <thead>
                                 <tr className="border-b border-slate-800 bg-slate-900/50">
-                                    <th className="text-left py-3 px-4 text-xs font-bold uppercase w-[25%]" style={{ color: 'var(--text-2)' }}>{t('grammar.rule_name')}</th>
-                                    <th className="text-left py-3 px-4 text-xs font-bold uppercase w-[20%]" style={{ color: 'var(--text-2)' }}>{t('grammar.affix_pattern')}</th>
-                                    <th className="text-left py-3 px-4 text-xs font-bold uppercase w-[30%]" style={{ color: 'var(--text-2)' }}>Conditions (Logic)</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold uppercase w-[25%]" style={{ color: 'var(--text-secondary)' }}>{t('grammar.rule_name')}</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold uppercase w-[20%]" style={{ color: 'var(--text-secondary)' }}>{t('grammar.affix_pattern')}</th>
+                                    <th className="text-left py-3 px-4 text-xs font-bold uppercase w-[30%]" style={{ color: 'var(--text-secondary)' }}>Conditions (Logic)</th>
                                     <th className="text-left py-3 px-4 text-xs font-bold uppercase w-[20%]" style={{ color: 'var(--accent)' }}>{t('grammar.preview')}</th>
                                     <th className="w-[5%]"></th>
                                 </tr>
@@ -234,7 +234,7 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
                                                     onChange={(e) => updateRule(idx, 'name', e.target.value)}
                                                     placeholder={t('morph.plural_placeholder')}
                                                     className="w-full bg-transparent border-none focus:ring-0 text-sm font-medium placeholder-slate-600"
-                                                    style={{ color: 'var(--text-1)' }}
+                                                    style={{ color: 'var(--text-primary)' }}
                                                 />
                                             </td>
                                             <td className="p-3 align-top">

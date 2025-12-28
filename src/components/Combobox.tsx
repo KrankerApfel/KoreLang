@@ -70,16 +70,16 @@ const Combobox: React.FC<ComboboxProps> = ({ value, onChange, options, placehold
           onFocus={() => setIsOpen(true)}
           // CHANGED: pr-8 -> pe-8 to support RTL (padding-end)
           className="w-full bg-slate-950 border border-slate-700 rounded p-2 pe-8 focus:outline-none focus:ring-1 transition-all"
-          style={{ color: 'var(--text-1)', borderColor: isOpen ? 'var(--accent)' : '' }}
+          style={{ color: 'var(--text-primary)', borderColor: isOpen ? 'var(--accent)' : '' }}
           placeholder={placeholder}
         />
         <button 
           onClick={() => setIsOpen(!isOpen)}
           // CHANGED: right-2 -> end-2 to support RTL (position-end)
           className="absolute end-2 top-1/2 -translate-y-1/2"
-          style={{ color: 'var(--text-2)' }}
-          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-1)'}
-          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-2)'}    
+          style={{ color: 'var(--text-secondary)' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
+          onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}    
           tabIndex={-1}
         >
           <ChevronDown size={14} />
@@ -95,9 +95,9 @@ const Combobox: React.FC<ComboboxProps> = ({ value, onChange, options, placehold
                 onClick={() => handleSelect(opt)}
                 // CHANGED: text-left -> text-start to support RTL
                 className="w-full text-start px-3 py-2 text-sm flex items-center justify-between"
-                style={{ color: 'var(--text-2)' }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--text-1)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-2)'; }}
+                style={{ color: 'var(--text-secondary)' }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-secondary)'; }}
               >
                 <span>{renderOption ? renderOption(opt) : opt}</span>
                 {value === opt && <Check size={14} style={{ color: 'var(--accent)' }} />}

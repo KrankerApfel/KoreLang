@@ -10,28 +10,64 @@ import { useCommandExecutor } from '../state/commandStore';
 // Presets de thèmes pour copie dans custom
 const THEME_PRESETS = {
   dark: {
-    bgMain: "#121212",
-    bgPanel: "#1e1e1e",
-    text1: "#f1f5f9",
-    text2: "#94a3b8",
-    accent: "#3b82f6",
-    bgHeader: "#0a0a0a",
+    primary: "#6B8AFF",
+    secondary: "#0A0A0A",
+    accent: "#3B82F6",
+    background: "#121212",
+    surface: "#1E1E1E",
+    elevated: "#2A2A2A",
+    textPrimary: "#F1F5F9",
+    textSecondary: "#94A3B8",
+    textTertiary: "#64748B",
+    border: "#2A2A2A",
+    divider: "#1E1E1E",
+    success: "#10B981",
+    warning: "#F59E0B",
+    error: "#EF4444",
+    info: "#3B82F6",
+    hover: "#5B7BFF",
+    active: "#4B6BEF",
+    disabled: "#404040",
   },
   cappuccino: {
-    bgMain: "#f5f1ee",
-    bgPanel: "#ede8e3",
-    text1: "#3d3935",
-    text2: "#8b7d75",
-    accent: "#c17a4a",
-    bgHeader: "#e8e3df",
+    primary: "#CC9B7A",
+    secondary: "#191918",
+    accent: "#D97757",
+    background: "#F4F1ED",
+    surface: "#FFFFFF",
+    elevated: "#FFFFFF",
+    textPrimary: "#191918",
+    textSecondary: "#5C5C5A",
+    textTertiary: "#8E8E8C",
+    border: "#E6E3DE",
+    divider: "#D4CFC7",
+    success: "#2D9F7C",
+    warning: "#E89C3F",
+    error: "#D14343",
+    info: "#5B8DBE",
+    hover: "#B88762",
+    active: "#A67756",
+    disabled: "#BFBBB5",
   },
   "tokyo-night": {
-    bgMain: "#1a1b26",
-    bgPanel: "#24283b",
-    text1: "#a9b1d6",
-    text2: "#565f89",
-    accent: "#7aa2f7",
-    bgHeader: "#16161e",
+    primary: "#7AA2F7",
+    secondary: "#16161E",
+    accent: "#7AA2F7",
+    background: "#1A1B26",
+    surface: "#24283B",
+    elevated: "#414868",
+    textPrimary: "#A9B1D6",
+    textSecondary: "#565F89",
+    textTertiary: "#3B4261",
+    border: "#292E42",
+    divider: "#1F2335",
+    success: "#9ECE6A",
+    warning: "#E0AF68",
+    error: "#F7768E",
+    info: "#7AA2F7",
+    hover: "#5B7FD7",
+    active: "#4B6FC7",
+    disabled: "#3B4261",
   },
 };
 
@@ -108,8 +144,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
     <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center">
       <div className="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-slate-800" style={{ backgroundColor: 'var(--bg-header)' }}>
-          <h2 className="text-lg font-bold" style={{ color: 'var(--text-1)' }}>{t('settings.preferences_title')}</h2>
+        <div className="flex items-center justify-between p-4 border-b border-slate-800" style={{ backgroundColor: 'var(--elevated)' }}>
+          <h2 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>{t('settings.preferences_title')}</h2>
           <button onClick={() => ui.close('settings')} className="text-slate-500 hover:text-white"><X size={20} /></button>
         </div>
 
@@ -203,12 +239,24 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
                 
                 <div className="space-y-3 bg-slate-900/50 p-4 rounded-lg border border-slate-800">
                   {[
-                    { key: 'bgMain', label: t('settings.canvas_bg') || 'Arrière-plan du canvas' },
-                    { key: 'bgPanel', label: t('settings.sec_panels') || 'Panneaux secondaires' },
-                    { key: 'bgHeader', label: t('settings.header_bg') || 'En-têtes et barre de menu' },
-                    { key: 'text1', label: t('settings.prim_text') || 'Texte principal' },
-                    { key: 'text2', label: t('settings.sec_text') || 'Texte secondaire' },
-                    { key: 'accent', label: t('settings.active_accent') || 'Accent actif' }
+                    { key: 'primary', label: t('settings.primary_color') || 'Couleur primaire' },
+                    { key: 'secondary', label: t('settings.secondary_color') || 'Couleur secondaire' },
+                    { key: 'accent', label: t('settings.accent_color') || 'Couleur d\'accent' },
+                    { key: 'background', label: t('settings.background') || 'Arrière-plan principal' },
+                    { key: 'surface', label: t('settings.surface') || 'Surface / Panneaux' },
+                    { key: 'elevated', label: t('settings.elevated') || 'Élevé / En-têtes' },
+                    { key: 'textPrimary', label: t('settings.text_primary') || 'Texte principal' },
+                    { key: 'textSecondary', label: t('settings.text_secondary') || 'Texte secondaire' },
+                    { key: 'textTertiary', label: t('settings.text_tertiary') || 'Texte tertiaire' },
+                    { key: 'border', label: t('settings.border') || 'Bordures' },
+                    { key: 'divider', label: t('settings.divider') || 'Séparateurs' },
+                    { key: 'success', label: t('settings.success') || 'Succès' },
+                    { key: 'warning', label: t('settings.warning') || 'Avertissement' },
+                    { key: 'error', label: t('settings.error') || 'Erreur' },
+                    { key: 'info', label: t('settings.info') || 'Information' },
+                    { key: 'hover', label: t('settings.hover') || 'Survol' },
+                    { key: 'active', label: t('settings.active') || 'Actif' },
+                    { key: 'disabled', label: t('settings.disabled') || 'Désactivé' }
                   ].map(({ key, label }) => (
                     <div key={key} className="flex items-center justify-between gap-4">
                       <label className="text-sm text-slate-300 flex-1">{label}</label>
@@ -247,8 +295,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end p-4 border-t border-slate-800" style={{ backgroundColor: 'var(--bg-header)' }}>
-          <button onClick={() => ui.close('settings')} className="px-4 py-2 text-sm font-bold rounded shadow-lg" style={{ backgroundColor: 'var(--accent)', color: 'var(--text-1)' }}>OK</button>
+        <div className="flex justify-end p-4 border-t border-slate-800" style={{ backgroundColor: 'var(--elevated)' }}>
+          <button onClick={() => ui.close('settings')} className="px-4 py-2 text-sm font-bold rounded shadow-lg" style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}>OK</button>
         </div>
       </div>
     </div>

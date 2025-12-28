@@ -305,8 +305,8 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
     };
 
     return (
-        <div className="h-full flex flex-col bg-[var(--bg-main)] overflow-hidden text-slate-200">
-            <div className="p-4 border-b border-neutral-800 flex justify-between items-center bg-[var(--bg-panel)]/50 z-20">
+        <div className="h-full flex flex-col bg-[var(--background)] overflow-hidden text-slate-200">
+            <div className="p-4 border-b border-neutral-800 flex justify-between items-center bg-[var(--surface)]/50 z-20">
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-purple-900/20 rounded"><Feather className="text-purple-500" size={20} /></div>
                     <div>
@@ -321,7 +321,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                             className={`flex items-center gap-2 px-3 py-1 text-[10px] font-bold uppercase rounded transition-all ${
                                 scriptConfig.spacingMode === 'proportional' ? 'shadow' : ''
                             }`}
-                            style={scriptConfig.spacingMode === 'proportional' ? { backgroundColor: 'var(--accent)', color: 'var(--text-1)' } : { color: 'var(--text-2)' }}
+                            style={scriptConfig.spacingMode === 'proportional' ? { backgroundColor: 'var(--accent)', color: 'var(--text-primary)' } : { color: 'var(--text-secondary)' }}
                             title="Proportional Spacing (Dynamic Width)"
                         >
                             <Type size={14} /> Proportional
@@ -331,7 +331,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                             className={`flex items-center gap-2 px-3 py-1 text-[10px] font-bold uppercase rounded transition-all ${
                                 scriptConfig.spacingMode === 'mono' ? 'shadow' : ''
                             }`}
-                            style={scriptConfig.spacingMode === 'mono' ? { backgroundColor: 'var(--accent)', color: 'var(--text-1)' } : { color: 'var(--text-2)' }}
+                            style={scriptConfig.spacingMode === 'mono' ? { backgroundColor: 'var(--accent)', color: 'var(--text-primary)' } : { color: 'var(--text-secondary)' }}
                             title="Monospaced (Fixed Grid)"
                         >
                             <Grid size={14} /> Monospace
@@ -348,14 +348,14 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                         <button onClick={performUndo} disabled={undoStack.length === 0} className="p-1.5 hover:bg-neutral-800 text-neutral-500 disabled:opacity-20" title="Undo (Ctrl+Z)"><RotateCcw size={16} /></button>
                         <button onClick={performRedo} disabled={redoStack.length === 0} className="p-1.5 hover:bg-neutral-800 text-neutral-500 disabled:opacity-20" title="Redo (Ctrl+Y)"><RotateCw size={16} /></button>
                     </div>
-                    <button onClick={saveGlyph} className={`px-4 py-2 rounded font-bold flex items-center gap-2 shadow-lg transition-all ${isDirty ? 'scale-105' : ''}`} style={{ backgroundColor: isDirty ? 'var(--accent)' : 'var(--bg-panel)', color: isDirty ? 'var(--text-1)' : 'var(--text-2)' }}>
+                    <button onClick={saveGlyph} className={`px-4 py-2 rounded font-bold flex items-center gap-2 shadow-lg transition-all ${isDirty ? 'scale-105' : ''}`} style={{ backgroundColor: isDirty ? 'var(--accent)' : 'var(--surface)', color: isDirty ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
                         <Save size={18} /> {isDirty ? 'Commit Changes' : 'Synced'}
                     </button>
                 </div>
             </div>
 
             <div className="flex-1 flex overflow-hidden">
-                <div className={`border-r border-neutral-800 flex flex-col bg-[var(--bg-panel)]/50 transition-all duration-300 ${sidebarCollapsed ? 'w-12' : 'w-72'}`}>
+                <div className={`border-r border-neutral-800 flex flex-col bg-[var(--surface)]/50 transition-all duration-300 ${sidebarCollapsed ? 'w-12' : 'w-72'}`}>
                     <div className="p-3 border-b border-neutral-800 flex justify-between items-center bg-neutral-950">
                         {!sidebarCollapsed && <span className="text-xs font-bold text-neutral-500 uppercase">Symbol Map</span>}
                         <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)} className="p-1 hover:bg-neutral-800 rounded text-neutral-500">{sidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}</button>
@@ -389,7 +389,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                     </div>
                 </div>
 
-                <div className="flex-1 flex flex-col items-center justify-center p-8 relative bg-[var(--bg-main)] overflow-hidden" onWheel={handleCanvasWheel}>
+                <div className="flex-1 flex flex-col items-center justify-center p-8 relative bg-[var(--background)] overflow-hidden" onWheel={handleCanvasWheel}>
                     <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
                         <div className="bg-neutral-900/90 backdrop-blur border border-neutral-800 rounded-lg p-3 shadow-2xl flex flex-col gap-4 items-center min-w-[50px]">
                             <div className="flex flex-col gap-2 items-center">
@@ -458,7 +458,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                     </div>
                 </div>
 
-                <div className="w-80 border-l border-neutral-800 bg-[var(--bg-panel)]/50 flex flex-col">
+                <div className="w-80 border-l border-neutral-800 bg-[var(--surface)]/50 flex flex-col">
                     <div className="p-3 border-b border-neutral-800 flex items-center justify-between bg-neutral-950">
                         <div className="flex items-center gap-2">
                             <Layers size={14} className="text-purple-400" />

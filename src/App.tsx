@@ -91,7 +91,14 @@ const AppContent: React.FC = () => {
       },
       updateCustomTheme: (payload) => {
         if (!payload?.colorKey || !payload?.colorValue) return;
-        const current = project.settings.customTheme || { bgMain: "", bgPanel: "", text1: "", text2: "", accent: "", bgHeader: "" };
+        const current = project.settings.customTheme || {
+          primary: "", secondary: "", accent: "",
+          background: "", surface: "", elevated: "",
+          textPrimary: "", textSecondary: "", textTertiary: "",
+          border: "", divider: "",
+          success: "", warning: "", error: "", info: "",
+          hover: "", active: "", disabled: ""
+        };
         project.updateSettings({
           ...project.settings,
           theme: "custom",
@@ -119,7 +126,7 @@ const AppContent: React.FC = () => {
   });
 
   return (
-    <div className="flex flex-col h-screen w-screen bg-[var(--bg-main)]">
+    <div className="flex flex-col h-screen w-screen bg-[var(--background)]">
       <MenuBar 
         newProject={() => executeCommand("newProject")}
         openProject={() => executeCommand("openProject")}

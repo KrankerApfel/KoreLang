@@ -62,7 +62,7 @@ const Sidebar = forwardRef<SidebarHandle, SidebarProps>(
               padding: isOpen ? "8px 12px" : "8px 0",
               justifyContent: isOpen ? "flex-start" : "center",
             }}
-            onMouseEnter={(e) => !isActive && (e.currentTarget.style.backgroundColor = 'var(--bg-panel)')}
+            onMouseEnter={(e) => !isActive && (e.currentTarget.style.backgroundColor = 'var(--surface)')}
             onMouseLeave={(e) => !isActive && (e.currentTarget.style.backgroundColor = 'transparent')}
             title={!isOpen ? item.label : undefined}
           >
@@ -78,7 +78,7 @@ const Sidebar = forwardRef<SidebarHandle, SidebarProps>(
 
     return (
       <aside
-        className={`flex flex-col h-full shrink-0 bg-[var(--bg-panel)] border-e border-neutral-700 transition-all duration-200
+        className={`flex flex-col h-full shrink-0 bg-[var(--surface)] border-e border-neutral-700 transition-all duration-200
           ${isOpen ? "w-64" : "w-10"}`}
       >
         {/* Header */}

@@ -234,13 +234,13 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
         )}
 
         {/* Header */}
-        <div className="h-6 bg-[var(--bg-panel)] border-b border-neutral-700 flex items-center justify-between px-4 text-xs text-[var(--text-2)] relative">
+        <div className="h-6 bg-[var(--surface)] border-b border-neutral-700 flex items-center justify-between px-4 text-xs text-[var(--text-secondary)] relative">
           <div
             className="absolute inset-0 pointer-events-none"
             style={{ backgroundColor: "rgba(255,255,255,0.03)" }}
           />
-          <h2 className="flex items-center gap-2 text-xs font-bold text-[var(--text-2)] relative z-10">
-            <Terminal size={16} className="text-[var(--text-2)]" />
+          <h2 className="flex items-center gap-2 text-xs font-bold text-[var(--text-secondary)] relative z-10">
+            <Terminal size={16} className="text-[var(--text-secondary)]" />
             <span className="leading-none">{t("menu.console")}</span>
           </h2>
           <div className="relative z-10 flex items-center gap-2">
@@ -300,7 +300,7 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
         </div>
 
         {!isMinimized && (
-          <div className="flex-1 flex flex-col overflow-hidden bg-[var(--bg-main)]">
+          <div className="flex-1 flex flex-col overflow-hidden bg-[var(--background)]">
             <ConsoleConfig
               history={history}
               setHistory={setHistory}
