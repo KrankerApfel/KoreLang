@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import Sidebar from "./components/Sidebar";
+import React, { useState, useEffect, useRef } from "react";
+import Sidebar, { SidebarHandle } from "./components/Sidebar";
 import MenuBar from "./components/MenuBar";
 import Lexicon from "./components/Lexicon";
 import GrammarEditor from "./components/GrammarEditor";
@@ -35,7 +35,6 @@ const AppContent: React.FC = () => {
   /* ---------------- UI STATE ---------------- */
 
   const [currentView, setCurrentView] = useState<ViewState>("DASHBOARD");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isConstraintsOpen, setIsConstraintsOpen] = useState(false);
@@ -50,16 +49,17 @@ const AppContent: React.FC = () => {
   );
   const [consoleHistory, setConsoleHistory] = useState<LogEntry[]>([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const sidebarRef = useRef<SidebarHandle>(null);
 
   /*  ---------------- ACTION CALLBACKS ---------------- */
-const promptOpenProject = () => {
+  const promptOpenProject = () => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".json";
     input.onchange = () => {
       const file = input.files?.[0];
       if (!file) return;
-       const reader = new FileReader();
+      const reader = new FileReader();
       reader.onload = (e) => {
         loadProjectData(JSON.parse(e.target?.result as string));
       };
@@ -67,7 +67,6 @@ const promptOpenProject = () => {
     };
     input.click();
   };
-
 
   const menuBarActions = {
     newProject: () => {
@@ -93,7 +92,7 @@ const promptOpenProject = () => {
     openConsole: () => setIsConsoleOpen(true),
     zoomIn: () => setZoomLevel((z) => Math.min(z + 10, 150)),
     zoomOut: () => setZoomLevel((z) => Math.max(z - 10, 50)),
-    toggleSidebar: () => setIsSidebarOpen((o) => !o),
+    onToggleSidebar: () => sidebarRef.current?.toggle(),
     toggleScriptMode: () => setIsScriptMode((s) => !s),
     openAbout: () => setIsAboutOpen(true),
   };
@@ -161,7 +160,6 @@ const promptOpenProject = () => {
     const onResize = () => {
       const mobile = window.innerWidth < 1024;
       setIsMobile(mobile);
-      if (mobile) setIsSidebarOpen(false);
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
@@ -182,11 +180,11 @@ const promptOpenProject = () => {
   }, []);
 
   /* ---------------- SHORTCUTS ---------------- */
-  
+
   useShortcuts({
     isConsoleOpen,
     setIsConsoleOpen,
-    setIsSidebarOpen,
+    onToggleSidebar: menuBarActions.onToggleSidebar,
     onNewProject: menuBarActions.newProject,
     onOpenProject: menuBarActions.openProject,
     onExportProject: menuBarActions.exportProject,
@@ -328,10 +326,9 @@ const promptOpenProject = () => {
 
       <div className="flex flex-1 overflow-hidden">
         <Sidebar
+          ref={sidebarRef}
           currentView={currentView}
           setView={setCurrentView}
-          isOpen={isSidebarOpen}
-          onToggleSidebar={() => setIsSidebarOpen((o) => !o)}
         />
 
         <main className="flex flex-col w-full h-full">

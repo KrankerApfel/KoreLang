@@ -49,7 +49,7 @@ interface MenuBarProps {
     openConsole: () => void;
     zoomIn: () => void;
     zoomOut: () => void;
-    toggleSidebar: () => void;
+    onToggleSidebar: () => void;
     toggleScriptMode?: () => void;
     openAbout: () => void;
   };
@@ -108,7 +108,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
         {
           label: t("menu.toggle_sidebar"),
           icon: Command,
-          action: actions.toggleSidebar,
+          action: actions.onToggleSidebar,
           shortcut: "Alt+B",
         },
         { label: t("menu.zoom_in"), action: actions.zoomIn, shortcut: "Alt+" },

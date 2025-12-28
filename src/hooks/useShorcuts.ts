@@ -3,12 +3,10 @@ import { useEffect } from "react";
 type UseShortcutsParams = {
   isConsoleOpen: boolean;
   setIsConsoleOpen: (v: boolean | ((v: boolean) => boolean)) => void;
-  setIsSidebarOpen: (v: boolean | ((v: boolean) => boolean)) => void;
-
+  onToggleSidebar: () => void;
   onNewProject: () => void;
   onOpenProject: () => void;
   onExportProject: () => void;
-
   onZoomIn: () => void;
   onZoomOut: () => void;
 };
@@ -24,7 +22,7 @@ type Shortcut = {
 export function useShortcuts({
   isConsoleOpen,
   setIsConsoleOpen,
-  setIsSidebarOpen,
+  onToggleSidebar,
   onNewProject,
   onOpenProject,
   onExportProject,
@@ -36,7 +34,7 @@ export function useShortcuts({
 
     const shortcuts: Shortcut[] = [
       { keys: ["c"], alt: true, action: () => setIsConsoleOpen(true) },
-      { keys: ["b"], alt: true, action: () => setIsSidebarOpen((v) => !v) },
+      { keys: ["b"], alt: true, action: () => onToggleSidebar() },
       { keys: ["n"], alt: true, action: onNewProject },
       { keys: ["o"], alt: true, action: () => onOpenProject() },
       { keys: ["e"], alt: true, action: onExportProject },
@@ -86,7 +84,6 @@ export function useShortcuts({
   }, [
     isConsoleOpen,
     setIsConsoleOpen,
-    setIsSidebarOpen,
     onNewProject,
     onOpenProject,
     onExportProject,
