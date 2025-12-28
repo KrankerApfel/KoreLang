@@ -28,8 +28,11 @@ import {
 } from "./types";
 
 import { LanguageProvider, i18n } from "./i18n";
+import { UIProvider, useUI } from "./ui/UIContext";
 
 const SETTINGS_STORAGE_KEY = "conlang_studio_settings";
+
+const ui = useUI();
 
 const AppContent: React.FC = () => {
   /* ---------------- UI STATE ---------------- */
@@ -38,7 +41,6 @@ const AppContent: React.FC = () => {
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isConstraintsOpen, setIsConstraintsOpen] = useState(false);
-  const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isWhatsNewOpen, setIsWhatsNewOpen] = useState(false);
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [wizardMode, setWizardMode] = useState<"create" | "edit">("create");
@@ -94,7 +96,7 @@ const AppContent: React.FC = () => {
     zoomOut: () => setZoomLevel((z) => Math.max(z - 10, 50)),
     onToggleSidebar: () => sidebarRef.current?.toggle(),
     toggleScriptMode: () => setIsScriptMode((s) => !s),
-    openAbout: () => setIsAboutOpen(true),
+    openAbout: () => ui.open("about"),
   };
   /* ---------------- PROJECT STATE (HOOK) ---------------- */
 
@@ -392,7 +394,11 @@ const AppContent: React.FC = () => {
         onSubmit={handleWizardSubmit}
       />
 
-      <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+      <AboutModal
+        isOpen={ui.isOpen("about")}
+        onClose={() => ui.close("about")}
+      />
+
       <WhatsNewModal isOpen={isWhatsNewOpen} onClose={closeWhatsNew} />
     </div>
   );
@@ -400,7 +406,9 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => (
   <LanguageProvider i18n={i18n}>
-    <AppContent />
+    <UIProvider>
+      <AppContent />
+    </UIProvider>
   </LanguageProvider>
 );
 
