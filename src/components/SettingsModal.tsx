@@ -6,6 +6,7 @@ import { AppSettings } from '../types';
 import { DEFAULT_CUSTOM } from '../constants';
 import { isApiKeySet, getApiKey } from '../services/geminiService';
 import { useCommandExecutor } from '../state/commandStore';
+import { Card, Section } from './ui';
 
 // Presets de thèmes pour copie dans custom
 const THEME_PRESETS = {
@@ -204,17 +205,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center">
-      <div className="bg-slate-900 border border-slate-700 w-full max-w-lg rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="w-full max-w-lg rounded-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', border: '1px solid' }}>
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b" style={{ backgroundColor: 'var(--secondary)', borderColor: 'var(--border)' }}>
           <h2 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>{t('settings.preferences_title')}</h2>
-          <button onClick={() => ui.close('settings')} className="text-slate-500 hover:text-white"><X size={20} /></button>
+          <button onClick={() => ui.close('settings')} className="transition-colors" style={{ color: 'var(--text-secondary)' }}><X size={20} /></button>
         </div>
 
         {/* Tabs */}
         <div className="flex text-sm border-b" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--secondary)' }}>
-          <button onClick={() => setActiveTab('GENERAL')} className={`px-6 py-2 font-bold ${activeTab === 'GENERAL' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-500'}`}>{t('settings.tab_general')}</button>
-          <button onClick={() => setActiveTab('THEME')} className={`px-6 py-2 font-bold ${activeTab === 'THEME' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-500'}`}>{t('settings.tab_visual')}</button>
+          <button onClick={() => setActiveTab('GENERAL')} className="px-6 py-2 font-bold border-b-2 transition-colors" style={{ color: activeTab === 'GENERAL' ? 'var(--accent)' : 'var(--text-tertiary)', borderColor: activeTab === 'GENERAL' ? 'var(--accent)' : 'transparent' }}>{t('settings.tab_general')}</button>
+          <button onClick={() => setActiveTab('THEME')} className="px-6 py-2 font-bold border-b-2 transition-colors" style={{ color: activeTab === 'THEME' ? 'var(--accent)' : 'var(--text-tertiary)', borderColor: activeTab === 'THEME' ? 'var(--accent)' : 'transparent' }}>{t('settings.tab_visual')}</button>
         </div>
 
         {/* Content */}
@@ -222,20 +223,20 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
           {activeTab === 'GENERAL' ? (
             <>
               {/* AI toggle */}
-              <div className="flex items-center justify-between p-4 border rounded-lg bg-blue-900/10 border-blue-900/30">
+              <div className="flex items-center justify-between p-4 border rounded-lg" style={{ backgroundColor: 'rgba(var(--accent-rgb), 0.1)', borderColor: 'var(--accent)' }}>
                 <div>
-                  <div className="flex items-center gap-2 text-sm font-bold text-slate-200"><Cpu size={16} className="text-purple-400" /> {t('settings.cognitive_ai')}</div>
-                  <p className="text-[10px] text-slate-400">{t('settings.cognitive_ai_desc')}</p>
+                  <div className="flex items-center gap-2 text-sm font-bold" style={{ color: 'var(--text-primary)' }}><Cpu size={16} style={{ color: 'var(--accent)' }} /> {t('settings.cognitive_ai')}</div>
+                  <p className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>{t('settings.cognitive_ai_desc')}</p>
                 </div>
                 <input type="checkbox" checked={settings.enableAI} onChange={(e) => executeCommand('setAIEnabled', { aiEnabled: e.target.checked })} className="w-5 h-5 rounded" />
               </div>
 
               {/* API key */}
               <div className="space-y-3">
-                <label className="flex items-center gap-2 text-xs font-bold uppercase text-slate-500">{t('settings.api_key')}</label>
+                <label className="flex items-center gap-2 text-xs font-bold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('settings.api_key')}</label>
                 <div className="relative">
-                  <input type={showApiKey ? 'text' : 'password'} value={apiKey} onChange={(e) => handleApiKeyChange(e.target.value)} className="w-full px-3 py-2 pr-10 text-sm transition-colors border rounded outline-none bg-slate-950 border-slate-800 text-slate-100 focus:border-blue-500" placeholder={t('settings.api_key_ph')} />
-                  <button onClick={() => setShowApiKey(!showApiKey)} className="absolute -translate-y-1/2 right-3 top-1/2 text-slate-500 hover:text-slate-300">
+                  <input type={showApiKey ? 'text' : 'password'} value={apiKey} onChange={(e) => handleApiKeyChange(e.target.value)} className="w-full px-3 py-2 pr-10 text-sm transition-colors border rounded outline-none focus:ring-1" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)', caretColor: 'var(--accent)' }} placeholder={t('settings.api_key_ph')} />
+                  <button onClick={() => setShowApiKey(!showApiKey)} className="absolute -translate-y-1/2 right-3 top-1/2 transition-colors" style={{ color: 'var(--text-secondary)' }}>
                     {showApiKey ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                 </div>
@@ -243,10 +244,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
 
               {/* Language */}
               <div>
-                <label className="block mb-3 text-xs font-bold uppercase text-slate-500">{t('settings.language_label')}</label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 bg-slate-950 p-2 rounded max-h-[200px] overflow-y-auto custom-scrollbar">
+                <label className="block mb-3 text-xs font-bold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('settings.language_label')}</label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-2 rounded max-h-[200px] overflow-y-auto custom-scrollbar" style={{ backgroundColor: 'var(--elevated)' }}>
                   {languages.map(lang => (
-                    <button key={lang.code} onClick={() => setLanguage(lang.code)} className={`py-1.5 px-2 text-[10px] font-medium rounded truncate transition-all ${i18n.language === lang.code ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40 translate-y-[-1px]' : 'text-slate-500 hover:text-slate-200 hover:bg-slate-800'}`} title={lang.label}>{lang.label}</button>
+                    <button key={lang.code} onClick={() => setLanguage(lang.code)} className="py-1.5 px-2 text-[10px] font-medium rounded truncate transition-all" style={i18n.language === lang.code ? { backgroundColor: 'var(--accent)', color: 'var(--text-primary)' } : { color: 'var(--text-tertiary)' }} title={lang.label}>{lang.label}</button>
                   ))}
                 </div>
               </div>

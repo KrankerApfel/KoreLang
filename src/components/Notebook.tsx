@@ -3,6 +3,7 @@ import { BookOpen, Eraser, Save, Copy, ZoomIn, ZoomOut, Type } from 'lucide-reac
 import { ConScriptText } from './ConScriptRenderer';
 import { ScriptConfig } from '../types';
 import { useTranslation } from '../i18n';
+import { Card, Section } from './ui';
 
 interface NotebookProps {
     scriptConfig?: ScriptConfig;
@@ -25,9 +26,9 @@ const Notebook: React.FC<NotebookProps> = ({ scriptConfig, isScriptMode, text, s
     }, [scriptConfig?.direction, text]); // Re-run on text change to keep anchored? Maybe just direction switch is safer to avoid fighting user. Added text to keep it anchored if they are typing.
 
     return (
-        <div className="h-full flex flex-col bg-slate-950">
+        <div className="h-full flex flex-col" style={{ backgroundColor: 'var(--background)' }}>
             {/* Header */}
-            <div className="p-4 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center">
+            <div className="p-4 border-b flex justify-between items-center" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)' }}>
                 <div className="flex items-center gap-3">
                     <div className="p-2 rounded" style={{ backgroundColor: 'rgba(var(--accent-rgb), 0.2)' }}>
                         <BookOpen style={{ color: 'var(--accent)' }} size={20} />
@@ -68,12 +69,12 @@ const Notebook: React.FC<NotebookProps> = ({ scriptConfig, isScriptMode, text, s
             {/* Split View */}
             <div className="flex-1 flex overflow-hidden">
                 {/* Input Area */}
-                <div className="flex-1 border-r border-slate-800 relative" style={{ backgroundColor: 'var(--surface)' }}>
+                <div className="flex-1 border-r relative" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
                     <textarea
                         value={text}
                         onChange={(e) => setText(e.target.value)}
-                        className="w-full h-full bg-transparent p-6 font-mono text-base leading-relaxed focus:outline-none resize-none placeholder-slate-800"
-                        style={{ color: 'var(--text-secondary)' }}
+                        className="w-full h-full bg-transparent p-6 font-mono text-base leading-relaxed focus:outline-none resize-none"
+                        style={{ color: 'var(--text-secondary)', caretColor: 'var(--accent)' }}
                         placeholder={t('notebook.placeholder')}
                         spellCheck={false}
                     />

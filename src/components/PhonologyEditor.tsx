@@ -3,6 +3,7 @@ import { Wand2, RefreshCw, Volume2, Info, LayoutGrid, EyeOff, ShieldAlert, Plus,
 import { generatePhonology, isApiKeySet } from '../services/geminiService';
 import { PhonologyConfig, Phoneme } from '../types';
 import { useTranslation } from '../i18n';
+import { Card, Section } from './ui';
 
 interface PhonologyEditorProps {
     data: PhonologyConfig;
@@ -126,94 +127,90 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
 
                 {/* AI GENERATOR PANEL (Conditional) */}
                 {enableAI ? (
-                    <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-5 shadow-lg">
-                        <h2 className="text-lg font-bold flex items-center gap-2 mb-4" style={{ color: 'var(--text-secondary)' }}>
-                            <Wand2 style={{ color: 'var(--accent)' }} size={20} />
-                            {t('phonology.ai_generator')}
-                        </h2>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="text-xs font-bold uppercase tracking-wider mb-2 block" style={{ color: 'var(--text-tertiary)' }}>{t('phonology.vibe_label')}</label>
-                                <textarea
-                                    value={prompt}
-                                    onChange={(e) => setPrompt(e.target.value)}
-                                    placeholder={t('phonology.vibe_placeholder')}
-                                    className="w-full bg-neutral-900 border border-neutral-700 rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-500 outline-none h-32 resize-none placeholder:text-[var(--text-tertiary)] placeholder:opacity-50"
-                                    style={{ color: 'var(--text-tertiary)' }}
-                                />
-                                {!isApiKeySet() && (
-                                    <div className="mt-3 p-3 bg-amber-950/20 border border-amber-900/50 rounded-lg text-[11px] text-amber-200 flex items-start gap-3">
-                                        <ShieldAlert size={14} className="shrink-0 text-amber-500" />
-                                        <div>
-                                            {t('console.ai_failed_no_key')} <a href="https://github.com/zRinexD/KoreLang/" target="_blank" rel="noopener noreferrer" className="underline font-bold">{t('menu.docs')}</a>.
+                    <Card className="p-5">
+                        <Section title={t('phonology.ai_generator')} icon={<Wand2 size={20} />} className="mb-4">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-xs font-bold uppercase tracking-wider mb-2 block" style={{ color: 'var(--text-tertiary)' }}>{t('phonology.vibe_label')}</label>
+                                    <textarea
+                                        value={prompt}
+                                        onChange={(e) => setPrompt(e.target.value)}
+                                        placeholder={t('phonology.vibe_placeholder')}
+                                        className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-500 outline-none h-32 resize-none placeholder:text-[var(--text-tertiary)] placeholder:opacity-50"
+                                        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-tertiary)' }}
+                                    />
+                                    {!isApiKeySet() && (
+                                        <div className="mt-3 p-3 bg-amber-950/20 border border-amber-900/50 rounded-lg text-[11px] text-amber-200 flex items-start gap-3">
+                                            <ShieldAlert size={14} className="shrink-0 text-amber-500" />
+                                            <div>
+                                                {t('console.ai_failed_no_key')} <a href="https://github.com/zRinexD/KoreLang/" target="_blank" rel="noopener noreferrer" className="underline font-bold">{t('menu.docs')}</a>.
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
+                                </div>
+                                <button
+                                    onClick={handleGenerate}
+                                    disabled={loading || !prompt}
+                                    className="w-full disabled:opacity-50 font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg"
+                                    style={{ backgroundColor: (loading || !prompt) ? 'var(--disabled)' : 'var(--primary)', color: 'var(--text-primary)' }}
+                                >
+                                    {loading ? <RefreshCw className="animate-spin" style={{ color: 'var(--text-primary)' }} /> : <Wand2 size={18} style={{ color: 'var(--text-primary)' }} />}
+                                    {loading ? t('phonology.analyze_btn') : t('phonology.generate_btn')}
+                                </button>
+                                {pendingPhonology && (
+                                    <button
+                                        onClick={() => setShowPreview(!showPreview)}
+                                        className="w-full mt-2 font-bold py-2 rounded-lg flex items-center justify-center gap-2 transition-all border"
+                                        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--accent)', color: 'var(--text-secondary)' }}
+                                    >
+                                        <Eye size={16} />
+                                        {showPreview ? t('phonology.hide_preview') : t('phonology.show_preview')}
+                                    </button>
                                 )}
                             </div>
-                            <button
-                                onClick={handleGenerate}
-                                disabled={loading || !prompt}
-                                className="w-full disabled:opacity-50 font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg"
-                                style={{ backgroundColor: (loading || !prompt) ? 'var(--disabled)' : 'var(--primary)', color: 'var(--text-primary)' }}
-                            >
-                                {loading ? <RefreshCw className="animate-spin" style={{ color: 'var(--text-primary)' }} /> : <Wand2 size={18} style={{ color: 'var(--text-primary)' }} />}
-                                {loading ? t('phonology.analyze_btn') : t('phonology.generate_btn')}
-                            </button>
-                            {pendingPhonology && (
-                                <button
-                                    onClick={() => setShowPreview(!showPreview)}
-                                    className="w-full mt-2 font-bold py-2 rounded-lg flex items-center justify-center gap-2 transition-all border"
-                                    style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--accent)', color: 'var(--text-secondary)' }}
-                                >
-                                    <Eye size={16} />
-                                    {showPreview ? t('phonology.hide_preview') : t('phonology.show_preview')}
-                                </button>
-                            )}
-                        </div>
-                    </div>
+                        </Section>
+                    </Card>
                 ) : (
-                    <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-5 shadow-lg flex flex-col items-center justify-center text-center opacity-50">
+                    <Card className="p-5 flex flex-col items-center justify-center text-center opacity-50">
                         <EyeOff size={32} className="mb-2" style={{ color: 'var(--text-secondary)' }} />
                         <h3 className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('phonology.ai_disabled_title')}</h3>
                         <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{t('phonology.ai_disabled_desc')}</p>
-                    </div>
+                    </Card>
                 )}
 
                 <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-5 shadow-lg flex-1 overflow-y-auto">
-                    <h2 className="text-lg font-bold flex items-center gap-2 mb-4" style={{ color: 'var(--text-secondary)' }}>
-                        <Info style={{ color: 'var(--accent)' }} size={20} />
-                        {t('phonology.stats')}
-                    </h2>
-                    <div className="space-y-4 text-sm">
-                        <div className="flex justify-between border-b border-neutral-800 pb-2">
-                            <span style={{ color: 'var(--text-tertiary)' }}>{t('phonology.inventory')}</span>
-                            <span className="font-mono" style={{ color: 'var(--text-tertiary)' }}>{(data.consonants?.length || 0) + (data.vowels?.length || 0)}</span>
+                    <Section title={t('phonology.stats')} icon={<Info size={20} />} className="mb-4">
+                        <div className="space-y-4 text-sm">
+                            <div className="flex justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
+                                <span style={{ color: 'var(--text-tertiary)' }}>{t('phonology.inventory')}</span>
+                                <span className="font-mono" style={{ color: 'var(--text-tertiary)' }}>{(data.consonants?.length || 0) + (data.vowels?.length || 0)}</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
+                                <span style={{ color: 'var(--text-tertiary)' }}>{t('phonology.consonants')}</span>
+                                <span className="font-mono" style={{ color: 'var(--text-tertiary)' }}>{data.consonants?.length || 0}</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
+                                <span style={{ color: 'var(--text-tertiary)' }}>{t('phonology.vowels')}</span>
+                                <span className="font-mono" style={{ color: 'var(--text-tertiary)' }}>{data.vowels?.length || 0}</span>
+                            </div>
+                            <div>
+                                <span className="block mb-1" style={{ color: 'var(--text-tertiary)' }}>{t('phonology.syllable_struct')}</span>
+                                <input
+                                    value={data.syllableStructure || ''}
+                                    onChange={(e) => setData({ ...data, syllableStructure: e.target.value })}
+                                    placeholder={t('phonology.syllable_placeholder')}
+                                    className="w-full px-2 py-1 rounded font-mono text-xs border outline-none focus:ring-1 focus:ring-emerald-500 placeholder:text-[var(--text-tertiary)] placeholder:opacity-50"
+                                    style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-tertiary)' }}
+                                />
+                            </div>
+                            <button
+                                onClick={clearAll}
+                                className="w-full mt-4 flex items-center justify-center gap-2 text-xs text-red-500 hover:text-red-400 border border-red-900/30 py-2 rounded transition-colors"
+                            >
+                                <Trash2 size={12} /> {t('phonology.clear_inventory')}
+                            </button>
                         </div>
-                        <div className="flex justify-between border-b border-neutral-800 pb-2">
-                            <span style={{ color: 'var(--text-tertiary)' }}>{t('phonology.consonants')}</span>
-                            <span className="font-mono" style={{ color: 'var(--text-tertiary)' }}>{data.consonants?.length || 0}</span>
-                        </div>
-                        <div className="flex justify-between border-b border-neutral-800 pb-2">
-                            <span style={{ color: 'var(--text-tertiary)' }}>{t('phonology.vowels')}</span>
-                            <span className="font-mono" style={{ color: 'var(--text-tertiary)' }}>{data.vowels?.length || 0}</span>
-                        </div>
-                        <div>
-                            <span className="block mb-1" style={{ color: 'var(--text-tertiary)' }}>{t('phonology.syllable_struct')}</span>
-                            <input
-                                value={data.syllableStructure || ''}
-                                onChange={(e) => setData({ ...data, syllableStructure: e.target.value })}
-                                placeholder={t('phonology.syllable_placeholder')}
-                                className="w-full bg-neutral-900 px-2 py-1 rounded font-mono text-xs border border-neutral-800 outline-none focus:ring-1 focus:ring-emerald-500 placeholder:text-[var(--text-tertiary)] placeholder:opacity-50"
-                                style={{ color: 'var(--text-tertiary)' }}
-                            />
-                        </div>
-                        <button
-                            onClick={clearAll}
-                            className="w-full mt-4 flex items-center justify-center gap-2 text-xs text-red-500 hover:text-red-400 border border-red-900/30 py-2 rounded transition-colors"
-                        >
-                            <Trash2 size={12} /> {t('phonology.clear_inventory')}
-                        </button>
-                    </div>
+                    </Section>
                 </div>
             </div>
 
@@ -221,10 +218,8 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
             <div className="flex-1 overflow-y-auto space-y-8 pr-2 custom-scrollbar">
 
                 {/* Consonants Chart */}
-                <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-6 shadow-lg overflow-x-auto">
-                    <h3 className="text-lg font-bold mb-6 flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
-                        <LayoutGrid size={20} style={{ color: 'var(--text-secondary)' }} /> {t('phonology.consonants')}
-                    </h3>
+                <Card className="p-6 overflow-x-auto">
+                    <Section title={t('phonology.consonants')} icon={<LayoutGrid size={20} />} className="mb-6" />
 
                     {unclassifiedConsonants.length > 0 && (
                         <div className="mb-4 p-3 bg-neutral-900 border border-neutral-800 rounded text-sm text-neutral-200">
@@ -292,13 +287,11 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             ))}
                         </tbody>
                     </table>
-                </div>
+                </Card>
 
                 {/* Vowels Chart */}
-                <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-6 shadow-lg overflow-x-auto">
-                    <h3 className="text-lg font-bold mb-6 flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
-                        <Volume2 size={20} style={{ color: 'var(--text-secondary)' }} /> {t('phonology.vowels')}
-                    </h3>
+                <Card className="p-6 overflow-x-auto">
+                    <Section title={t('phonology.vowels')} icon={<Volume2 size={20} />} className="mb-6" />
 
                     <table className="w-full border-collapse min-w-[520px]">
                         <thead>
@@ -378,7 +371,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             </div>
                         </div>
                     )}
-                </div>
+                </Card>
 
             </div>
 

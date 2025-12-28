@@ -4,6 +4,7 @@ import { Feather, Save, Image as ImageIcon, Palette, Spline, RotateCw, RotateCcw
 import { ScriptConfig, ScriptGlyph, ProjectConstraints, GlyphStroke } from '../types';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
+import { Card, Section } from './ui';
 
 interface ScriptEditorProps {
     scriptConfig: ScriptConfig;

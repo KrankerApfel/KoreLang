@@ -7,6 +7,7 @@ import { ConScriptText } from './ConScriptRenderer';
 import { useTranslation } from '../i18n';
 import { searchLexicon, SearchResult } from '../services/searchService';
 import { isApiKeySet } from '../services/geminiService';
+import { Card, Section } from './ui';
 
 interface LexiconProps {
     entries: LexiconEntry[];
@@ -421,17 +422,10 @@ const Lexicon: React.FC<LexiconProps> = ({
             <div
                 key={entry.id}
                 onClick={(e) => handleCardCopy(entry, e)}
-                className={`p-4 cursor-pointer transition-all group relative overflow-hidden border bg-neutral-800 
-                    ${isInvalid ? 'border-red-900/30' : successMsgId === entry.id || copyFlashId === entry.id ? '' : 'border-neutral-700'} 
-                    ${successMsgId !== entry.id && copyFlashId !== entry.id ? 'hover:border-blue-500' : ''}`}
+                className="p-4 cursor-pointer transition-all group relative overflow-hidden rounded-lg border"
                 style={{
-                    ...(successMsgId === entry.id 
-                        ? { 
-                            borderColor: 'var(--success) !important'
-                          }
-                        : copyFlashId === entry.id 
-                        ? { borderColor: 'var(--success) !important' }
-                        : {}),
+                    backgroundColor: 'var(--surface)',
+                    borderColor: isInvalid ? 'var(--error)' : successMsgId === entry.id || copyFlashId === entry.id ? 'var(--accent)' : 'var(--border)',
                     transform: clickAnimId === entry.id ? 'scale(0.98)' : 'scale(1)',
                     transition: 'transform 0.15s ease, border-color 0.5s ease-out'
                 }}
@@ -503,27 +497,27 @@ const Lexicon: React.FC<LexiconProps> = ({
                         <p className="mb-2 text-sm text-neutral-500">{entry.definition}</p>
 
                         {(parent || descendants.length > 0 || entry.etymology) && (
-                            <div className="p-3 space-y-2 border rounded-md bg-neutral-950/50 border-neutral-800/50">
-                                {entry.etymology && <div className="mb-1 text-sm italic text-neutral-500">"{ entry.etymology}"</div>}
+                            <div className="p-3 space-y-2 border rounded-md" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--divider)' }}>
+                                {entry.etymology && <div className="mb-1 text-sm italic" style={{ color: 'var(--text-secondary)' }}>"{ entry.etymology}"</div>}
                                 <div className="flex flex-wrap items-center text-sm gap-y-2">
                                     {parent ? (
-                                        <div className="flex items-center gap-2 text-neutral-400">
+                                        <div className="flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
                                             <Link size={12} />
                                             <span>{t('lexicon.derived_from') || 'Derived From'}:</span>
-                                            <button onClick={() => jumpToWord(parent.word)} className="flex items-center gap-1 font-bold text-amber-500 hover:text-amber-400 hover:underline">{parent.word}</button>
+                                            <button onClick={() => jumpToWord(parent.word)} className="flex items-center gap-1 font-bold hover:underline" style={{ color: 'var(--accent)' }}>{parent.word}</button>
                                         </div>
                                     ) : (
-                                        <span className="px-1 text-xs font-bold tracking-widest uppercase border rounded border-neutral-700 text-neutral-600">{t('lexicon.root') || 'Root'}</span>
+                                        <span className="px-1 text-xs font-bold tracking-widest uppercase border rounded" style={{ borderColor: 'var(--border)', color: 'var(--text-tertiary)' }}>{t('lexicon.root') || 'Root'}</span>
                                     )}
                                     {descendants.length > 0 && (
                                         <>
-                                            {parent && <span className="mx-2 text-neutral-700">|</span>}
-                                            <div className="flex items-center gap-2 text-neutral-400">
+                                            {parent && <span className="mx-2" style={{ color: 'var(--divider)' }}>|</span>}
+                                            <div className="flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
                                                 <GitFork size={12} />
                                                 <span>{t('lexicon.descendants') || 'Descendants'}:</span>
                                                 <div className="flex flex-wrap gap-2">
                                                     {descendants.map(desc => (
-                                                        <button key={desc.id} onClick={() => jumpToWord(desc.word)} className="bg-neutral-800 hover:bg-neutral-700 text-blue-300 px-2 py-0.5 rounded text-xs transition-colors">{desc.word}</button>
+                                                        <button key={desc.id} onClick={() => jumpToWord(desc.word)} className="px-2 py-0.5 rounded text-xs transition-colors" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)', border: '1px solid', color: 'var(--accent)' }}>{desc.word}</button>
                                                     ))}
                                                 </div>
                                             </div>
@@ -588,7 +582,7 @@ const Lexicon: React.FC<LexiconProps> = ({
         <div className="flex flex-col h-full" style={{ backgroundColor: 'var(--background)' }}>
             <div className="sticky top-0 z-20 flex flex-col backdrop-blur-md" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
 
-                <div className="flex items-center justify-between gap-3 px-4 py-1 border-b" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', boxShadow: 'inset 0 1px 1px var(--shadow-light), inset 0 -1px 1px var(--shadow-dark), inset 1px 0 1px var(--shadow-light), inset -1px 0 1px var(--shadow-dark)' }}>
+                <div className="flex items-center justify-between gap-3 px-4 py-1 border-b" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)' }}>
                     <div className="flex items-center flex-1 max-w-2xl gap-2">
                         <div className="relative flex-1">
                             <Search className="absolute -translate-y-1/2 start-3 top-1/2" size={18} style={{ color: 'var(--text-secondary)' }} />
@@ -642,24 +636,24 @@ const Lexicon: React.FC<LexiconProps> = ({
                 </div>
                 {(showFilters || posFilter !== 'ALL') && (
                     <div className="px-4 pb-4 duration-200 animate-in slide-in-from-top-2">
-                        <div className="flex flex-wrap items-center gap-4 p-3 border rounded-lg shadow-inner bg-neutral-950 border-neutral-800">
-                            <div className="flex items-center gap-2 pr-4 border-r border-neutral-800 rtl:border-r-0 rtl:border-l rtl:pr-0 rtl:pl-4">
-                                <Filter size={14} className="text-neutral-500" />
-                                <span className="text-xs font-bold uppercase text-neutral-500">{t('lexicon.pos')}:</span>
-                                <select value={posFilter} onChange={(e) => setPosFilter(e.target.value)} className="px-2 py-1 text-xs border rounded outline-none bg-neutral-900 border-neutral-700 text-neutral-200 focus:border-blue-500">
+                        <div className="flex flex-wrap items-center gap-4 p-3 border rounded-lg" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
+                            <div className="flex items-center gap-2 pr-4 border-r rtl:border-r-0 rtl:border-l rtl:pr-0 rtl:pl-4" style={{ borderColor: 'var(--divider)' }}>
+                                <Filter size={14} style={{ color: 'var(--text-tertiary)' }} />
+                                <span className="text-xs font-bold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('lexicon.pos')}:</span>
+                                <select value={posFilter} onChange={(e) => setPosFilter(e.target.value)} className="px-2 py-1 text-xs border rounded outline-none focus:ring-1" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)', caretColor: 'var(--accent)', outlineColor: 'var(--accent)' }}>
                                     <option value="ALL">{t('val.any_pos') || 'Any POS'}</option>
                                     {POS_SUGGESTIONS.map(pos => <option key={pos} value={pos}>{getPosLabel(pos)}</option>)}
                                 </select>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className="text-xs font-bold uppercase text-neutral-500">{t('lexicon.search_in')}:</span>
-                                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-neutral-300 hover:text-white"><input type="checkbox" checked={searchFields.word} onChange={() => toggleField('word')} className="text-blue-600 rounded border-neutral-700 bg-neutral-900" />{t('lexicon.word')}</label>
-                                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-neutral-300 hover:text-white"><input type="checkbox" checked={searchFields.definition} onChange={() => toggleField('definition')} className="text-blue-600 rounded border-neutral-700 bg-neutral-900" />{t('lexicon.definition')}</label>
-                                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-neutral-300 hover:text-white"><input type="checkbox" checked={searchFields.etymology} onChange={() => toggleField('etymology')} className="text-blue-600 rounded border-neutral-700 bg-neutral-900" />{t('lexicon.etymology')}</label>
-                                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-neutral-300 hover:text-white"><input type="checkbox" checked={searchFields.ipa} onChange={() => toggleField('ipa')} className="text-blue-600 rounded border-neutral-700 bg-neutral-900" />{t('lexicon.ipa')}</label>
+                                <span className="text-xs font-bold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('lexicon.search_in')}:</span>
+                                <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: 'var(--text-secondary)' }}><input type="checkbox" checked={searchFields.word} onChange={() => toggleField('word')} className="rounded" style={{ borderColor: 'var(--border)' }} />{t('lexicon.word')}</label>
+                                <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: 'var(--text-secondary)' }}><input type="checkbox" checked={searchFields.definition} onChange={() => toggleField('definition')} className="rounded" style={{ borderColor: 'var(--border)' }} />{t('lexicon.definition')}</label>
+                                <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: 'var(--text-secondary)' }}><input type="checkbox" checked={searchFields.etymology} onChange={() => toggleField('etymology')} className="rounded" style={{ borderColor: 'var(--border)' }} />{t('lexicon.etymology')}</label>
+                                <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: 'var(--text-secondary)' }}><input type="checkbox" checked={searchFields.ipa} onChange={() => toggleField('ipa')} className="rounded" style={{ borderColor: 'var(--border)' }} />{t('lexicon.ipa')}</label>
                             </div>
-                            <div className="pl-4 ml-auto border-l border-neutral-800 rtl:border-l-0 rtl:border-r rtl:ml-0 rtl:mr-auto rtl:pr-0 rtl:pl-4">
-                                <select value={conflictMode} onChange={(e) => setConflictMode(e.target.value as ConflictViewMode)} className="px-2 py-1 text-xs border rounded outline-none bg-neutral-900 border-neutral-700 text-neutral-400 focus:border-blue-500">
+                            <div className="pl-4 ml-auto border-l rtl:border-l-0 rtl:border-r rtl:ml-0 rtl:mr-auto rtl:pr-0 rtl:pl-4" style={{ borderColor: 'var(--divider)' }}>
+                                <select value={conflictMode} onChange={(e) => setConflictMode(e.target.value as ConflictViewMode)} className="px-2 py-1 text-xs border rounded outline-none focus:ring-1" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-secondary)', caretColor: 'var(--accent)' }}>
                                     <option value="PINNED">{t('lexicon.view_mode_pinned')}</option>
                                     <option value="HIDDEN">{t('lexicon.view_mode_hide')}</option>
                                     <option value="ONLY">{t('lexicon.view_mode_only')}</option>
@@ -710,22 +704,22 @@ const Lexicon: React.FC<LexiconProps> = ({
             </div>
 
             {entryToDelete && dependentsWarning.length > 0 && (
-                <div className="fixed inset-0 bg-red-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-[110]">
-                    <div className="w-full max-w-lg overflow-hidden duration-200 border shadow-2xl bg-neutral-900 border-red-500/50 rounded-xl animate-in fade-in zoom-in">
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[110]">
+                    <div className="w-full max-w-lg overflow-hidden duration-200 border shadow-2xl rounded-xl animate-in fade-in zoom-in" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--error)' }}>
                         <div className="p-6">
                             <div className="flex items-start gap-4">
-                                <div className="p-3 rounded-full bg-red-500/10 shrink-0"><ShieldAlert className="text-red-500" size={32} /></div>
+                                <div className="p-3 rounded-full shrink-0" style={{ backgroundColor: 'rgba(220, 38, 38, 0.15)' }}><ShieldAlert style={{ color: 'var(--error)' }} size={32} /></div>
                                 <div>
-                                    <h3 className="mb-2 text-xl font-bold text-neutral-50">{t('integrity.title')}</h3>
-                                    <p className="mb-4 text-neutral-300">{t('integrity.warning')}</p>
-                                    <div className="p-3 mb-4 overflow-y-auto border rounded bg-neutral-950 border-red-900/30 max-h-40">
-                                        <div className="mb-2 text-xs font-bold text-red-400 uppercase">{t('lexicon.dependents_label')}</div>
-                                        <ul className="space-y-1">{dependentsWarning.map(d => <li key={d.id} className="flex items-center gap-2 text-sm text-neutral-400"><ArrowRight className={direction === 'rtl' ? 'rotate-180' : ''} size={12} /> {d.word}</li>)}</ul>
+                                    <h3 className="mb-2 text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{t('integrity.title')}</h3>
+                                    <p className="mb-4" style={{ color: 'var(--text-secondary)' }}>{t('integrity.warning')}</p>
+                                    <div className="p-3 mb-4 overflow-y-auto border rounded max-h-40" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--error)' }}>
+                                        <div className="mb-2 text-xs font-bold uppercase" style={{ color: 'var(--error)' }}>{t('lexicon.dependents_label')}</div>
+                                        <ul className="space-y-1">{dependentsWarning.map(d => <li key={d.id} className="flex items-center gap-2 text-sm" style={{ color: 'var(--text-secondary)' }}><ArrowRight className={direction === 'rtl' ? 'rotate-180' : ''} size={12} /> {d.word}</li>)}</ul>
                                     </div>
-                                    <p className="mb-6 text-xs italic text-neutral-500">{t('integrity.desc')}</p>
+                                    <p className="mb-6 text-xs italic" style={{ color: 'var(--text-tertiary)' }}>{t('integrity.desc')}</p>
                                     <div className="flex justify-end gap-3">
-                                        <button onClick={cancelDelete} className="px-4 py-2 font-medium transition-colors rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-100">{t('integrity.action_cancel')}</button>
-                                        <button onClick={performUnlinkAndDelete} className="flex items-center gap-2 px-4 py-2 font-medium text-white transition-colors bg-red-600 rounded shadow-lg hover:bg-red-700 shadow-red-900/20"><AlertTriangle size={16} />{t('integrity.action_unlink')}</button>
+                                        <button onClick={cancelDelete} className="px-4 py-2 font-medium transition-colors rounded" style={{ backgroundColor: 'var(--elevated)', color: 'var(--text-primary)' }}>{t('integrity.action_cancel')}</button>
+                                        <button onClick={performUnlinkAndDelete} className="flex items-center gap-2 px-4 py-2 font-medium text-white transition-colors rounded shadow-lg" style={{ backgroundColor: 'var(--error)' }}><AlertTriangle size={16} />{t('integrity.action_unlink')}</button>
                                     </div>
                                 </div>
                             </div>
@@ -736,16 +730,16 @@ const Lexicon: React.FC<LexiconProps> = ({
 
             {showSimpleDeleteConfirm && entryToDelete && (
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[110]">
-                    <div className="w-full max-w-md duration-200 border shadow-2xl bg-neutral-900 border-neutral-700 rounded-xl animate-in fade-in zoom-in">
+                    <div className="w-full max-w-md duration-200 border shadow-2xl rounded-xl animate-in fade-in zoom-in" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
                         <div className="p-6">
                             <div className="flex items-start gap-4">
-                                <div className="p-3 rounded-full bg-neutral-800 shrink-0"><HelpCircle className="text-neutral-400" size={32} /></div>
+                                <div className="p-3 rounded-full shrink-0" style={{ backgroundColor: 'var(--elevated)' }}><HelpCircle style={{ color: 'var(--text-secondary)' }} size={32} /></div>
                                 <div>
-                                    <h3 className="mb-2 text-xl font-bold text-neutral-50">{t('lexicon.delete_confirm_title')}</h3>
-                                    <p className="mb-6 text-neutral-300">{t('lexicon.delete_confirm_desc')} <span className="font-bold text-neutral-100">"{entryToDelete.word}"</span>? {t('lexicon.action_cannot_undo')}</p>
+                                    <h3 className="mb-2 text-xl font-bold" style={{ color: 'var(--text-primary)' }}>{t('lexicon.delete_confirm_title')}</h3>
+                                    <p className="mb-6" style={{ color: 'var(--text-secondary)' }}>{t('lexicon.delete_confirm_desc')} <span className="font-bold" style={{ color: 'var(--text-primary)' }}>"{entryToDelete.word}"</span>? {t('lexicon.action_cannot_undo')}</p>
                                     <div className="flex justify-end gap-3">
-                                        <button onClick={cancelDelete} className="px-4 py-2 font-medium transition-colors rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-100">{t('common.cancel')}</button>
-                                        <button onClick={confirmSimpleDelete} className="px-4 py-2 font-medium text-white transition-colors bg-red-600 rounded shadow-lg hover:bg-red-700 shadow-red-900/20">{t('common.delete')}</button>
+                                        <button onClick={cancelDelete} className="px-4 py-2 font-medium transition-colors rounded" style={{ backgroundColor: 'var(--elevated)', color: 'var(--text-primary)' }}>{t('common.cancel')}</button>
+                                        <button onClick={confirmSimpleDelete} className="px-4 py-2 font-medium text-white transition-colors rounded shadow-lg" style={{ backgroundColor: 'var(--error)' }}>{t('common.delete')}</button>
                                     </div>
                                 </div>
                             </div>
@@ -758,34 +752,36 @@ const Lexicon: React.FC<LexiconProps> = ({
                 <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-[100]">
                     {/* FLOATING IPA KEYBOARD - OMNIPRESENT */}
                     {(showIPAKeyboard || pinIPAKeyboard) && (
-                        <div className={`absolute z-[120] bg-neutral-900 border border-neutral-700 rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 ${pinIPAKeyboard ? 'right-4 top-20 bottom-20 w-64' : 'bottom-10 left-1/2 -tranneutral-x-1/2 w-[600px] h-[300px]'}`}>
-                            <div className="flex items-center justify-between p-2 border-b cursor-move bg-neutral-800 border-neutral-700">
-                                <span className="flex items-center gap-2 text-xs font-bold tracking-wider uppercase text-neutral-300">
+                        <div className={`absolute z-[120] rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300 ${pinIPAKeyboard ? 'right-4 top-20 bottom-20 w-64' : 'bottom-10 left-1/2 -translate-x-1/2 w-[600px] h-[300px]'}`} style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', border: '1px solid' }}>
+                            <div className="flex items-center justify-between p-2 border-b cursor-move" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)' }}>
+                                <span className="flex items-center gap-2 text-xs font-bold tracking-wider uppercase" style={{ color: 'var(--text-secondary)' }}>
                                     <Mic size={12} /> {t('lexicon.ipa_keyboard')}
                                 </span>
                                 <div className="flex gap-1">
                                     <button
                                         onClick={() => setPinIPAKeyboard(!pinIPAKeyboard)}
-                                        className={`p-1 rounded hover:bg-neutral-700 ${pinIPAKeyboard ? 'text-blue-400' : 'text-neutral-500'}`}
+                                        className="p-1 rounded transition-colors"
+                                        style={{ color: pinIPAKeyboard ? 'var(--accent)' : 'var(--text-tertiary)' }}
                                         title={t('lexicon.pin_panel')}
                                     >
                                         {pinIPAKeyboard ? <PinOff size={12} /> : <Pin size={12} />}
                                     </button>
-                                    <button onClick={() => { setShowIPAKeyboard(false); setPinIPAKeyboard(false); }} className="p-1 text-neutral-500 hover:text-white">
+                                    <button onClick={() => { setShowIPAKeyboard(false); setPinIPAKeyboard(false); }} className="p-1 transition-colors" style={{ color: 'var(--text-tertiary)' }}>
                                         <X size={12} />
                                     </button>
                                 </div>
                             </div>
-                            <div className="flex-1 p-2 overflow-y-auto bg-neutral-950 custom-scrollbar">
+                            <div className="flex-1 p-2 overflow-y-auto custom-scrollbar" style={{ backgroundColor: 'var(--background)' }}>
                                 {Object.entries(IPA_SYMBOLS).map(([category, symbols]) => (
                                     <div key={category} className="mb-4">
-                                        <div className="text-[10px] font-bold text-neutral-600 uppercase mb-1">{category}</div>
+                                        <div className="text-[10px] font-bold uppercase mb-1" style={{ color: 'var(--text-tertiary)' }}>{category}</div>
                                         <div className="flex flex-wrap gap-1">
                                             {symbols.map(char => (
                                                 <button
                                                     key={char}
                                                     onClick={() => handleIPAInsert(char)}
-                                                    className="flex items-center justify-center w-8 h-8 font-serif text-lg transition-colors border rounded bg-neutral-900 hover:bg-neutral-800 text-neutral-300 hover:text-white border-neutral-800 hover:border-neutral-600"
+                                                    className="flex items-center justify-center w-8 h-8 font-serif text-lg transition-colors border rounded hover:brightness-110"
+                                                    style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
                                                 >
                                                     {char}
                                                 </button>
@@ -798,74 +794,73 @@ const Lexicon: React.FC<LexiconProps> = ({
                     )}
 
                     <div className="bg-neutral-900 border border-neutral-700 rounded-xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh] relative">
-                        <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-800 bg-neutral-950 shrink-0">
-                            <h2 className="flex items-center gap-2 text-lg font-bold text-neutral-100">
-                                {editingEntryId ? <Edit size={18} className="text-blue-500" /> : <Plus size={18} className="text-blue-500" />}
+                        <div className="flex items-center justify-between px-6 py-4 border-b shrink-0" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)' }}>
+                            <h2 className="flex items-center gap-2 text-lg font-bold" style={{ color: 'var(--text-primary)' }}>
+                                {editingEntryId ? <Edit size={18} style={{ color: 'var(--accent)' }} /> : <Plus size={18} style={{ color: 'var(--accent)' }} />}
                                 {editingEntryId ? t('lexicon.edit') : t('lexicon.new')}
                             </h2>
-                            <button onClick={() => setIsModalOpen(false)} className="transition-colors text-neutral-500 hover:text-white">✕</button>
+                            <button onClick={() => setIsModalOpen(false)} className="transition-colors" style={{ color: 'var(--text-secondary)' }}>✕</button>
                         </div>
-                        <div className="p-6 space-y-4 overflow-y-auto">
+                        <div className="p-6 space-y-4 overflow-y-auto" style={{ backgroundColor: 'var(--surface)' }}>
                             {validationErrors.length > 0 && (
-                                <div className="flex items-start gap-3 p-3 border rounded-lg bg-red-950/20 border-red-900/50">
-                                    <AlertOctagon className="text-red-500 shrink-0 mt-0.5" size={16} />
+                                <div className="flex items-start gap-3 p-3 border rounded-lg" style={{ backgroundColor: 'rgba(220, 38, 38, 0.15)', borderColor: 'var(--error)' }}>
+                                    <AlertOctagon style={{ color: 'var(--error)' }} className="shrink-0 mt-0.5" size={16} />
                                     <div>
-                                        <div className="mb-1 text-xs font-bold text-red-400 uppercase">{t('val.errors_title')}</div>
-                                        <ul className="text-sm text-red-200 list-disc list-inside">{validationErrors.map((err, i) => <li key={i}>{err}</li>)}</ul>
+                                        <div className="mb-1 text-xs font-bold uppercase" style={{ color: 'var(--error)' }}>{t('val.errors_title')}</div>
+                                        <ul className="text-sm list-disc list-inside" style={{ color: 'var(--error)' }}>{validationErrors.map((err, i) => <li key={i}>{err}</li>)}</ul>
                                     </div>
                                 </div>
                             )}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                    <label className="text-xs font-semibold uppercase text-neutral-400">{t('lexicon.word')}</label>
-                                    <input autoFocus value={newWord} onChange={(e) => setNewWord(e.target.value)} className={`w-full bg-neutral-950 border rounded p-2 text-neutral-100 focus:outline-none focus:ring-1 ${validationErrors.length > 0 ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-neutral-700 focus:border-blue-500 focus:ring-blue-500'}`} placeholder={t('lexicon.word_placeholder')} />
+                                    <label className="text-xs font-semibold uppercase" style={{ color: 'var(--text-secondary)' }}>{t('lexicon.word')}</label>
+                                    <input autoFocus value={newWord} onChange={(e) => setNewWord(e.target.value)} className="w-full border rounded p-2 text-sm focus:outline-none focus:ring-1" style={{ backgroundColor: 'var(--elevated)', borderColor: validationErrors.length > 0 ? 'var(--error)' : 'var(--border)', color: 'var(--text-primary)', caretColor: 'var(--accent)' }} placeholder={t('lexicon.word_placeholder')} />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-semibold uppercase text-neutral-400">{t('lexicon.ipa')}</label>
+                                    <label className="text-xs font-semibold uppercase" style={{ color: 'var(--text-secondary)' }}>{t('lexicon.ipa')}</label>
                                     <div className="relative">
                                         <input
                                             value={newIPA}
                                             onChange={(e) => setNewIPA(e.target.value)}
                                             onFocus={() => setShowIPAKeyboard(true)}
-                                            // On blur we might want to hide, but if pinned, keep it. 
-                                            // Also need to check if focus moved TO the keyboard.
-                                            className="w-full p-2 font-mono border rounded bg-neutral-950 border-neutral-700 text-neutral-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                            className="w-full p-2 font-mono border rounded text-sm focus:outline-none focus:ring-1"
+                                            style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)', caretColor: 'var(--accent)' }}
                                             placeholder={t('lexicon.ipa_placeholder')}
                                         />
-                                        <button onClick={() => setShowIPAKeyboard(!showIPAKeyboard)} className="absolute right-2 top-1/2 -tranneutral-y-1/2 text-neutral-500 hover:text-blue-400">
+                                        <button onClick={() => setShowIPAKeyboard(!showIPAKeyboard)} className="absolute right-2 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-secondary)' }}>
                                             <Mic size={14} />
                                         </button>
                                     </div>
                                 </div>
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-semibold uppercase text-neutral-400">{t('lexicon.pos')}</label>
+                                <label className="text-xs font-semibold uppercase" style={{ color: 'var(--text-secondary)' }}>{t('lexicon.pos')}</label>
                                 <Combobox value={newPOS} onChange={setNewPOS} options={POS_SUGGESTIONS} placeholder={t('lexicon.pos_placeholder') || 'Select POS...'} renderOption={(opt) => getPosLabel(opt)} />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-semibold uppercase text-neutral-400">{t('lexicon.definition')}</label>
-                                <textarea value={newDefinition} onChange={(e) => setNewDefinition(e.target.value)} className="w-full h-24 p-2 border rounded resize-none bg-neutral-950 border-neutral-700 text-neutral-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="..." />
+                                <label className="text-xs font-semibold uppercase" style={{ color: 'var(--text-secondary)' }}>{t('lexicon.definition')}</label>
+                                <textarea value={newDefinition} onChange={(e) => setNewDefinition(e.target.value)} className="w-full h-24 p-2 border rounded resize-none text-sm focus:outline-none focus:ring-1" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)', caretColor: 'var(--accent)' }} placeholder="..." />
                             </div>
-                            <div className="pt-4 mt-2 border-t border-neutral-800">
+                            <div className="pt-4 mt-2 border-t" style={{ borderColor: 'var(--divider)' }}>
                                 <label className="flex items-center gap-2 mb-3 text-xs font-bold uppercase" style={{ color: 'var(--text-secondary)' }}><GitFork size={12} /> {t('lexicon.etymology')}</label>
                                 <div className="space-y-3">
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-semibold text-neutral-500 uppercase">{t('lexicon.derivedFrom')}</label>
-                                        <select value={newDerivedFrom} onChange={(e) => setNewDerivedFrom(e.target.value)} className="w-full p-2 border rounded bg-neutral-950 border-neutral-700 text-neutral-300 focus:border-blue-500 focus:outline-none">
+                                        <label className="text-[10px] font-semibold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('lexicon.derivedFrom')}</label>
+                                        <select value={newDerivedFrom} onChange={(e) => setNewDerivedFrom(e.target.value)} className="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)', caretColor: 'var(--accent)' }}>
                                             <option value="">{t('lexicon.root_option') || '-- Root --'}</option>
                                             {entries.sort((a, b) => a.word.localeCompare(b.word)).map(e => <option key={e.id} value={e.id}>{e.word} ({getPosLabel(e.pos)})</option>)}
                                         </select>
                                     </div>
                                     <div className="space-y-1">
-                                        <label className="text-[10px] font-semibold text-neutral-500 uppercase">{t('lexicon.etymology')}</label>
-                                        <input value={newEtymology} onChange={(e) => setNewEtymology(e.target.value)} className="w-full p-2 border rounded bg-neutral-950 border-neutral-700 text-neutral-100 focus:border-blue-500 focus:outline-none" placeholder={t('lexicon.etymology_placeholder')} />
+                                        <label className="text-[10px] font-semibold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('lexicon.etymology')}</label>
+                                        <input value={newEtymology} onChange={(e) => setNewEtymology(e.target.value)} className="w-full p-2 border rounded text-sm focus:outline-none focus:ring-1" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)', caretColor: 'var(--accent)' }} placeholder={t('lexicon.etymology_placeholder')} />
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className="flex justify-end gap-3 px-6 py-4 border-t bg-neutral-950 border-neutral-800 shrink-0">
-                            <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-medium transition-colors text-neutral-300 hover:text-white">{t('lexicon.cancel')}</button>
-                            <button onClick={handleSaveEntry} disabled={validationErrors.length > 0} className={`px-4 py-2 text-white text-sm font-medium rounded-md shadow-lg transition-all active:scale-95 ${validationErrors.length > 0 ? 'bg-neutral-700 cursor-not-allowed opacity-50' : 'bg-blue-600 hover:bg-blue-700 shadow-blue-900/20'}`}>{t('lexicon.save')}</button>
+                        <div className="flex justify-end gap-3 px-6 py-4 border-t shrink-0" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)' }}>
+                            <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-medium transition-colors" style={{ color: 'var(--text-secondary)' }}>{t('lexicon.cancel')}</button>
+                            <button onClick={handleSaveEntry} disabled={validationErrors.length > 0} className="px-4 py-2 text-white text-sm font-medium rounded-md shadow-lg transition-all active:scale-95" style={{ backgroundColor: validationErrors.length > 0 ? 'var(--disabled)' : 'var(--accent)', opacity: validationErrors.length > 0 ? 0.5 : 1, cursor: validationErrors.length > 0 ? 'not-allowed' : 'pointer' }}>{t('lexicon.save')}</button>
                         </div>
                     </div>
                 </div>

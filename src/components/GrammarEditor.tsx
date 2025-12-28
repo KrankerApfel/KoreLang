@@ -5,6 +5,7 @@ import MorphologyEditor from './MorphologyEditor';
 import CodeEditor from './CodeEditor';
 import { MorphologyState, ScriptConfig } from '../types';
 import { useTranslation } from '../i18n';
+import { Card, Section } from './ui';
 
 interface GrammarEditorProps {
     grammar: string;
@@ -39,7 +40,7 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
         <div className="h-full flex flex-col p-6 max-w-7xl mx-auto w-full gap-6">
             <div className="flex justify-between items-end">
                 <div>
-                    <h2 className="text-3xl font-bold mb-2 flex items-center gap-3" style={{ color: 'var(--text-secondary)' }}>
+                    <h2 className="text-3xl font-bold mb-2 flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
                         <Languages style={{ color: 'var(--accent)' }} />
                         {t('grammar.title')}
                     </h2>
@@ -47,7 +48,7 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                 </div>
 
                 {/* View Switcher Tabs */}
-                <div className="flex bg-slate-900 p-1 rounded-lg border border-slate-800">
+                <div className="flex p-1 rounded-lg border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
                     <button
                         onClick={() => setActiveTab('SYNTAX')}
                         className={`px-4 py-2 rounded-md text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'SYNTAX'
@@ -78,10 +79,10 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
             {activeTab === 'SYNTAX' ? (
                 <div className="flex-1 flex flex-col lg:flex-row gap-6 overflow-hidden animate-in fade-in duration-300">
                     {/* BNF Editor Panel */}
-                    <div className="flex-1 flex flex-col bg-slate-900 rounded-xl border border-slate-800 shadow-lg overflow-hidden">
-                        <div className="px-4 py-2 border-b border-slate-800 bg-slate-950 flex justify-between items-center">
+                    <Card className="flex-1 flex flex-col overflow-hidden">
+                        <div className="px-4 py-2 border-b flex justify-between items-center" style={{ borderColor: 'var(--border)' }}>
                             <div className="flex items-center gap-2">
-                                <span className="text-xs font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">{t('grammar.bnfc')}</span>
+                                <span className="text-xs font-mono px-2 py-0.5 rounded border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-tertiary)' }}>{t('grammar.bnfc')}</span>
                             </div>
                             <span className="text-xs flex items-center gap-1" style={{ color: 'var(--accent)' }}><CheckCircle size={10} /> {t('grammar.saved')}</span>
                         </div>
@@ -95,19 +96,19 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                                 placeholder={t('grammar.bnf_placeholder')}
                             />
                         </div>
-                    </div>
+                    </Card>
 
                     {/* Test Console */}
                     <div className="w-full lg:w-96 flex flex-col gap-4">
 
                         {/* VISUAL VALIDATION OF MORPHOLOGY CONNECTION */}
-                        <div className="bg-slate-950/50 border border-slate-800 rounded-xl p-3 flex items-center gap-3">
+                        <Card className="p-3 flex items-center gap-3">
                             <div className="p-2 rounded-lg" style={{ backgroundColor: 'rgba(var(--accent-rgb), 0.2)', color: 'var(--accent)' }}>
                                 <Box size={16} />
                             </div>
                             <div className="flex-1">
-                                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t('grammar.morph_context')}</div>
-                                <div className="text-[10px] text-slate-500 flex gap-2 mt-0.5">
+                                <div className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>{t('grammar.morph_context')}</div>
+                                <div className="text-[10px] flex gap-2 mt-0.5" style={{ color: 'var(--text-tertiary)' }}>
                                     <span>{t('grammar.paradigms', { count: totalParadigms })}</span>
                                     <span>•</span>
                                     <span>{t('grammar.rules_loaded', { count: totalRules })}</span>
@@ -118,22 +119,23 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                                     <Link size={10} /> {t('grammar.linked')}
                                 </div>
                             ) : (
-                                <div className="text-xs font-bold px-2 py-1 bg-slate-900 rounded border border-slate-800" style={{ color: 'var(--text-secondary)' }}>{t('grammar.no_rules')}</div>
+                                <div className="text-xs font-bold px-2 py-1 rounded border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}>{t('grammar.no_rules')}</div>
                             )}
-                        </div>
+                        </Card>
 
-                        <div className="bg-slate-900 rounded-xl border border-slate-800 p-4 shadow-lg">
+                        <Card className="p-4">
                             <div className="flex justify-between items-center mb-2">
-                                <label className="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                                <label className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
                                     <Bug size={14} className="text-amber-500" />
-                                    {t('grammar.syntax_sandbox')} <span className="text-[10px] bg-amber-900/50 text-amber-200 px-1.5 rounded border border-amber-800">Alpha</span>
+                                    {t('grammar.syntax_sandbox')} <span className="text-[10px] text-amber-200 px-1.5 rounded border border-amber-800" style={{ backgroundColor: 'rgba(217, 119, 6, 0.2)' }}>Alpha</span>
                                 </label>
                             </div>
                             <div className="flex gap-2">
                                 <input
                                     value={testSentence}
                                     onChange={(e) => setTestSentence(e.target.value)}
-                                    className="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-2 text-slate-100 text-sm focus:border-emerald-500 outline-none font-mono"
+                                    className="flex-1 rounded px-3 py-2 text-sm focus:outline-none font-mono"
+                                    style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-primary)', border: '1px solid' }}
                                     placeholder={t('grammar.type_sentence')}
                                 />
                                 <button
@@ -145,24 +147,24 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                                     <Play size={18} fill="currentColor" />
                                 </button>
                             </div>
-                        </div>
+                        </Card>
 
-                        <div className="flex-1 bg-slate-950 rounded-xl border border-slate-800 p-4 shadow-lg overflow-hidden flex flex-col">
-                            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 border-b border-slate-800 pb-2 flex justify-between">
+                        <Card className="flex-1 p-4 overflow-hidden flex flex-col">
+                            <div className="text-xs font-semibold uppercase tracking-wider mb-2 border-b pb-2 flex justify-between" style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)' }}>
                                 {t('grammar.analysis_output')}
-                                {output && <span className="text-[10px] text-slate-600">AI Generated</span>}
+                                {output && <span className="text-[10px]" style={{ color: 'var(--text-tertiary)' }}>AI Generated</span>}
                             </div>
                             <div className="flex-1 overflow-auto custom-scrollbar">
                                 {loading ? (
                                     <div className="space-y-2 animate-pulse">
-                                        <div className="h-4 bg-slate-800 rounded w-3/4"></div>
-                                        <div className="h-4 bg-slate-800 rounded w-1/2"></div>
-                                        <div className="h-4 bg-slate-800 rounded w-full"></div>
+                                        <div className="h-4 rounded w-3/4" style={{ backgroundColor: 'var(--surface)' }}></div>
+                                        <div className="h-4 rounded w-1/2" style={{ backgroundColor: 'var(--surface)' }}></div>
+                                        <div className="h-4 rounded w-full" style={{ backgroundColor: 'var(--surface)' }}></div>
                                     </div>
                                 ) : output ? (
-                                    <pre className="text-slate-300 font-mono text-xs whitespace-pre-wrap leading-relaxed">{output}</pre>
+                                    <pre className="font-mono text-xs whitespace-pre-wrap leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{output}</pre>
                                 ) : (
-                                    <div className="h-full flex flex-col items-center justify-center text-slate-600 opacity-50">
+                                    <div className="h-full flex flex-col items-center justify-center opacity-50" style={{ color: 'var(--text-tertiary)' }}>
                                         <Lightbulb size={32} className="mb-2 text-amber-500/50" />
                                         <div className="text-xs italic text-center max-w-[200px]">
                                             {t('grammar.sandbox_desc')}
@@ -170,7 +172,7 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                                     </div>
                                 )}
                             </div>
-                        </div>
+                        </Card>
                     </div>
                 </div>
             ) : (
