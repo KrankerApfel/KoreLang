@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Moon, Sun, Cpu, Palette, Download, Upload, Check, Eye, EyeOff, HelpCircle, ExternalLink, ChevronLeft } from 'lucide-react';
+import { X, Moon, Sun, Cpu, Palette, Download, Upload, Check, Eye, EyeOff, HelpCircle, ExternalLink, ChevronLeft, ChevronDown } from 'lucide-react';
 import { useTranslation, languages } from '../i18n';
 import { useUI } from '../ui/UIContext';
 import { AppSettings } from '../types';
@@ -49,25 +49,85 @@ const THEME_PRESETS = {
     active: "#A67756",
     disabled: "#BFBBB5",
   },
+  quenya: {
+    primary: "#8B4513",
+    secondary: "#2C3E50",
+    accent: "#8B4513",
+    background: "#F5EDE1",
+    surface: "#FFFBF5",
+    elevated: "#F5EDE1",
+    textPrimary: "#2C3E50",
+    textSecondary: "#7D6B5A",
+    textTertiary: "#7B5E3B",
+    border: "#D4AF37",
+    divider: "#C9A227",
+    success: "#2E7D32",
+    warning: "#D4AF37",
+    error: "#C62828",
+    info: "#8B4513",
+    hover: "#654321",
+    active: "#5A3A1A",
+    disabled: "#C9B8A2",
+  },
   "tokyo-night": {
-    primary: "#7AA2F7",
+    primary: "#BB9AF7",
     secondary: "#16161E",
     accent: "#7AA2F7",
     background: "#1A1B26",
     surface: "#24283B",
-    elevated: "#414868",
+    elevated: "#2F3347",
     textPrimary: "#A9B1D6",
     textSecondary: "#565F89",
-    textTertiary: "#3B4261",
-    border: "#292E42",
-    divider: "#1F2335",
-    success: "#9ECE6A",
-    warning: "#E0AF68",
+    textTertiary: "#414868",
+    border: "#414868",
+    divider: "#2A2E3F",
+    success: "#73DACA",
+    warning: "#FF9E64",
     error: "#F7768E",
     info: "#7AA2F7",
-    hover: "#5B7FD7",
-    active: "#4B6FC7",
+    hover: "#89B4FA",
+    active: "#6891E6",
     disabled: "#3B4261",
+  },
+  neon: {
+    primary: "#FF006E",
+    secondary: "#2D3561",
+    accent: "#FF006E",
+    background: "#0A0E27",
+    surface: "#131736",
+    elevated: "#1B2148",
+    textPrimary: "#E0E7FF",
+    textSecondary: "#94A3D8",
+    textTertiary: "#6B729D",
+    border: "#2D3561",
+    divider: "#1B2148",
+    success: "#00F5D4",
+    warning: "#FFBE0B",
+    error: "#FF006E",
+    info: "#8338EC",
+    hover: "#D60058",
+    active: "#B3004A",
+    disabled: "#4B5078",
+  },
+  edgerunner: {
+    primary: "#FCEE0A",
+    secondary: "#0C0D14",
+    accent: "#FCEE0A",
+    background: "#0C0D14",
+    surface: "#16171F",
+    elevated: "#1F202B",
+    textPrimary: "#FCEE0A",
+    textSecondary: "#9CA3AF",
+    textTertiary: "#6B7280",
+    border: "#3A3B47",
+    divider: "#23242F",
+    success: "#00FF9F",
+    warning: "#FF9500",
+    error: "#FF003C",
+    info: "#00D9FF",
+    hover: "#FFFF33",
+    active: "#E6D900",
+    disabled: "#2D2F3A",
   },
 };
 
@@ -87,7 +147,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
   const [apiKey, setApiKeyLocal] = useState(getApiKey());
   const [showApiKey, setShowApiKey] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
-  const [currentTheme, setCurrentTheme] = useState(settings.theme);
+  const [currentTheme, setCurrentTheme] = useState<string>(settings.theme);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const hasApiKey = isApiKeySet();
 
   useEffect(() => {
@@ -100,14 +161,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
     executeCommand('updateCustomTheme', { colorKey: key, colorValue: val });
   };
 
-  const setTheme = (theme: 'dark' | 'cappuccino' | 'tokyo-night' | 'custom') => {
+  const setTheme = (theme: keyof typeof THEME_PRESETS | 'custom') => {
     setCurrentTheme(theme);
+    setIsDropdownOpen(false);
     // Copier les couleurs du preset dans customTheme pour permettre la dérivation
     const presetColors = THEME_PRESETS[theme as keyof typeof THEME_PRESETS];
     if (presetColors) {
-      executeCommand('setTheme', { theme, customTheme: presetColors as any });
+      executeCommand('setTheme', { theme: theme as any, customTheme: presetColors as any });
     } else {
-      executeCommand('setTheme', { theme, customTheme: settings.customTheme as any });
+      executeCommand('setTheme', { theme: theme as any, customTheme: settings.customTheme as any });
     }
   };
 
@@ -191,24 +253,101 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
             </>
           ) : (
             <>
-              {/* Theme presets */}
-              <div>
-                <label className="block mb-3 text-xs font-bold uppercase text-slate-500">{t('settings.theme_presets') || 'Préréglages globaux'}</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['dark', 'cappuccino', 'tokyo-night'].map((preset) => (
-                    <button
-                      key={preset}
-                      onClick={() => setTheme(preset as any)}
-                      className={`py-2.5 px-3 text-xs font-bold rounded-lg transition-all uppercase ${
-                        currentTheme === preset
-                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/50'
-                          : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-slate-200'
-                      }`}
-                    >
-                      {preset.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}
-                    </button>
-                  ))}
+              {/* Theme selector dropdown */}
+              <div className="relative space-y-2">
+                <label className="block text-xs font-bold uppercase text-slate-500">{t('settings.theme_select') || 'Thème actif'}</label>
+                
+                {/* Dropdown button */}
+                <div
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-stretch w-full overflow-hidden text-sm font-medium text-left transition-all rounded cursor-pointer"
+                  style={{
+                    border: '1px solid var(--border)'
+                  }}
+                >
+                  <span
+                    className="flex items-center flex-1 px-4 py-2"
+                    style={{
+                      backgroundColor: 'var(--surface)',
+                      color: 'var(--text-primary)'
+                    }}
+                  >
+                    {currentTheme.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}
+                  </span>
+                  <span
+                    className="flex items-center justify-center px-3"
+                    style={{
+                      backgroundColor: 'var(--hover)',
+                      color: 'var(--primary)'
+                    }}
+                  >
+                    <ChevronDown className={`w-4 h-4 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                  </span>
                 </div>
+
+                {/* Dropdown menu */}
+                {isDropdownOpen && (
+                  <div
+                    className="absolute left-0 right-0 z-50 mt-1 overflow-y-auto rounded shadow-lg top-full max-h-64 custom-scrollbar"
+                    style={{
+                      backgroundColor: 'var(--surface)',
+                      border: '1px solid var(--border)'
+                    }}
+                  >
+                    {/* Theme options */}
+                    {Object.keys(THEME_PRESETS).map((theme) => (
+                      <button
+                        key={theme}
+                        onClick={() => setTheme(theme as any)}
+                        className="w-full px-4 py-2.5 text-sm text-left transition-colors flex items-center"
+                        style={{
+                          backgroundColor: currentTheme === theme ? 'var(--hover)' : 'transparent',
+                          color: currentTheme === theme ? 'var(--text-primary)' : 'var(--text-secondary)'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (currentTheme !== theme) {
+                            e.currentTarget.style.backgroundColor = 'var(--elevated)';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (currentTheme !== theme) {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                          }
+                        }}
+                      >
+                        {currentTheme === theme && <Check size={16} className="mr-2" />}
+                        <span style={{ marginLeft: currentTheme === theme ? 0 : '24px' }}>
+                          {theme.split('-').map(w => w[0].toUpperCase() + w.slice(1)).join(' ')}
+                        </span>
+                      </button>
+                    ))}
+                    {/* Custom option */}
+                    <button
+                      onClick={() => setTheme('custom')}
+                      className="w-full px-4 py-2.5 text-sm text-left transition-colors flex items-center border-t"
+                      style={{
+                        backgroundColor: currentTheme === 'custom' ? 'var(--hover)' : 'transparent',
+                        color: currentTheme === 'custom' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                        borderColor: 'var(--divider)'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (currentTheme !== 'custom') {
+                          e.currentTarget.style.backgroundColor = 'var(--elevated)';
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (currentTheme !== 'custom') {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                        }
+                      }}
+                    >
+                      {currentTheme === 'custom' && <Check size={16} className="mr-2" />}
+                      <span style={{ marginLeft: currentTheme === 'custom' ? 0 : '24px' }}>
+                        Custom
+                      </span>
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Custom theme section */}
@@ -237,7 +376,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
                   </div>
                 </div>
                 
-                <div className="space-y-3 bg-slate-900/50 p-4 rounded-lg border border-slate-800">
+                <div className="p-4 space-y-3 border rounded-lg bg-slate-900/50 border-slate-800">
                   {[
                     { key: 'primary', label: t('settings.primary_color') || 'Couleur primaire' },
                     { key: 'secondary', label: t('settings.secondary_color') || 'Couleur secondaire' },
@@ -259,17 +398,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
                     { key: 'disabled', label: t('settings.disabled') || 'Désactivé' }
                   ].map(({ key, label }) => (
                     <div key={key} className="flex items-center justify-between gap-4">
-                      <label className="text-sm text-slate-300 flex-1">{label}</label>
+                      <label className="flex-1 text-sm text-slate-300">{label}</label>
                       <div className="flex items-center gap-3">
                         <span className="text-xs text-slate-500 font-mono min-w-[60px] text-right">
                           {settings.customTheme?.[key as keyof typeof DEFAULT_CUSTOM] || DEFAULT_CUSTOM[key as keyof typeof DEFAULT_CUSTOM]}
                         </span>
-                        <div className="relative w-10 h-10 rounded overflow-hidden border-2 border-slate-700 hover:border-blue-500 transition-colors">
+                        <div className="relative w-10 h-10 overflow-hidden transition-colors border-2 rounded border-slate-700 hover:border-blue-500">
                           <input
                             type="color"
                             value={settings.customTheme?.[key as keyof typeof DEFAULT_CUSTOM] || DEFAULT_CUSTOM[key as keyof typeof DEFAULT_CUSTOM]}
                             onChange={(e) => handleCustomUpdate(key as keyof typeof DEFAULT_CUSTOM, e.target.value)}
-                            className="absolute cursor-pointer border-0 outline-none"
+                            className="absolute border-0 outline-none cursor-pointer"
                             style={{ 
                               width: '200%', 
                               height: '200%', 

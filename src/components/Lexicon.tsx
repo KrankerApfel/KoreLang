@@ -512,26 +512,29 @@ const Lexicon: React.FC<LexiconProps> = ({
     }
 
     return (
-        <div className="flex flex-col h-full bg-neutral-950">
-            <div className="flex flex-col border-b border-neutral-800 bg-neutral-900/50 sticky top-0 z-20 backdrop-blur-md">
+        <div className="flex flex-col h-full" style={{ backgroundColor: 'var(--background)' }}>
+            <div className="flex flex-col sticky top-0 z-20 backdrop-blur-md" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
 
-                <div className="flex items-center justify-between p-4 gap-4">
+                <div className="flex items-center justify-between p-4 gap-4 border-b" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--divider)' }}>
                     <div className="flex items-center gap-2 flex-1 max-w-2xl">
                         <div className="relative flex-1">
-                            <Search className="absolute start-3 top-1/2 -tranneutral-y-1/2 text-neutral-500" size={18} />
+                            <Search className="absolute start-3 top-1/2 -tranneutral-y-1/2" size={18} style={{ color: 'var(--text-secondary)' }} />
                             <input
                                 type="text"
                                 placeholder={t('lexicon.search')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full bg-neutral-900 border border-neutral-700 ps-10 pe-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 placeholder-neutral-600 transition-all shadow-sm"
-                                style={{ color: 'var(--text-primary)', borderColor: 'var(--accent)' }}
+                                className="w-full ps-10 pe-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all shadow-sm"
+                                style={{ backgroundColor: 'var(--surface)', color: 'var(--text-primary)', border: `1px solid var(--divider)`, boxShadow: '0 0 0 0', outline: 'none' }}
                             />
-                            {searchTerm && <button onClick={() => setSearchTerm('')} className="absolute end-3 top-1/2 -tranneutral-y-1/2 text-neutral-500 hover:text-neutral-100"><X size={14} /></button>}
+                            {searchTerm && <button onClick={() => setSearchTerm('')} className="absolute end-3 top-1/2 -tranneutral-y-1/2" style={{ color: 'var(--text-secondary)' }}><X size={14} /></button>}
                         </div>
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className={`p-2.5 rounded-lg border transition-colors flex items-center gap-2 ${showFilters || posFilter !== 'ALL' ? 'bg-blue-900/20 border-blue-600 text-blue-400' : 'bg-neutral-900 border-neutral-700 text-neutral-400 hover:text-white hover:border-neutral-500'}`}
+                            className="p-2.5 rounded-lg border transition-colors flex items-center gap-2"
+                            style={showFilters || posFilter !== 'ALL'
+                                ? { backgroundColor: 'rgba( 0, 0, 0, 0.08 )', borderColor: 'var(--accent)', color: 'var(--accent)' }
+                                : { backgroundColor: 'var(--surface)', borderColor: 'var(--divider)', color: 'var(--text-secondary)' }}
                             title={t('lexicon.filter_options')}
                         >
                             <SlidersHorizontal size={18} />
@@ -539,7 +542,10 @@ const Lexicon: React.FC<LexiconProps> = ({
                         {totalConflictCount > 0 && (
                             <button
                                 onClick={toggleConflictMode}
-                                className={`p-2.5 rounded-lg border transition-all flex items-center gap-2 ${conflictMode !== 'HIDDEN' ? 'bg-red-950/20 border-red-500/30 text-red-400 hover:bg-red-900/30' : 'bg-neutral-900 border-neutral-700 text-neutral-500 hover:text-neutral-300'}`}
+                                className="p-2.5 rounded-lg border transition-all flex items-center gap-2"
+                                style={conflictMode !== 'HIDDEN'
+                                    ? { backgroundColor: 'rgba(255, 118, 142, 0.15)', borderColor: 'var(--error)', color: 'var(--error)' }
+                                    : { backgroundColor: 'var(--surface)', borderColor: 'var(--divider)', color: 'var(--text-secondary)' }}
                                 title={conflictMode === 'HIDDEN' ? t('lexicon.view_mode_pinned') : t('lexicon.view_mode_hide')}
                             >
                                 {conflictMode === 'HIDDEN' ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -602,12 +608,12 @@ const Lexicon: React.FC<LexiconProps> = ({
                             const isConflictGroup = letter === t('lexicon.conflicts_group');
                             return (
                                 <div key={letter} className="space-y-4">
-                                    <div className={`flex items-center gap-4 sticky top-0 backdrop-blur-sm z-10 py-2 ${isConflictGroup ? 'bg-neutral-950/95 text-red-400 border-b border-red-900/20' : 'bg-neutral-950/90'}`}>
-                                        <h2 className={`text-4xl font-bold select-none flex items-center gap-3 ${isConflictGroup ? 'text-red-400 scale-90 origin-left rtl:origin-right' : 'text-neutral-100'}`}>
+                                    <div className="flex items-center gap-4 sticky top-0 backdrop-blur-sm z-10 py-2 border-b" style={isConflictGroup ? { backgroundColor: 'var(--surface)', borderColor: 'var(--error)' } : { backgroundColor: 'var(--surface)', borderColor: 'var(--divider)' }}>
+                                        <h2 className="text-4xl font-bold select-none flex items-center gap-3" style={isConflictGroup ? { color: 'var(--error)' } : { color: 'var(--text-primary)' }}>
                                             {isConflictGroup && <AlertTriangle size={24} strokeWidth={2} />}
                                             {letter}
                                         </h2>
-                                        <div className={`h-px flex-1 ${isConflictGroup ? 'bg-red-900/20' : 'bg-neutral-800'}`}></div>
+                                        <div className="h-px flex-1" style={{ backgroundColor: isConflictGroup ? 'var(--error)' : 'var(--divider)', opacity: 0.3 }}></div>
                                     </div>
                                     <div className="grid grid-cols-1 gap-4">
                                         {groupedEntries[letter].map((entry) => renderEntryCard(entry))}
