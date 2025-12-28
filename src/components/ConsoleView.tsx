@@ -2,59 +2,23 @@ import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "../i18n";
 import { X, ChevronDown, ChevronUp, Terminal } from "lucide-react";
 import ConsoleConfig from "./ConsoleConfig";
-import {
-  ProjectConstraints,
-  AppSettings,
-  LexiconEntry,
-  LogEntry,
-  ScriptConfig,
-  ViewState,
-} from "../types";
+import { LogEntry } from "../types";
 
 interface ConsoleViewProps {
   isOpen: boolean;
+  loadingAI: boolean;
   onClose: () => void;
-
-  constraints: ProjectConstraints;
-  setConstraints: (c: ProjectConstraints) => void;
-  settings: AppSettings;
-  setSettings: (s: AppSettings) => void;
-  entries: LexiconEntry[];
-  setEntries: React.Dispatch<React.SetStateAction<LexiconEntry[]>>;
   history: LogEntry[];
   setHistory: React.Dispatch<React.SetStateAction<LogEntry[]>>;
-  setProjectName: (name: string) => void;
-  setProjectDescription: (desc: string) => void;
-  setProjectAuthor: (author: string) => void;
-  setIsSidebarOpen: (open: boolean) => void;
-  setView: (view: ViewState) => void;
-  setJumpToTerm: (term: string | null) => void;
-  setDraftEntry: (entry: Partial<LexiconEntry> | null) => void;
-  scriptConfig?: ScriptConfig;
-  isScriptMode?: boolean;
   author?: string;
 }
 
 const ConsoleView: React.FC<ConsoleViewProps> = ({
   isOpen,
+  loadingAI,
   onClose,
-  constraints,
-  setConstraints,
-  settings,
-  setSettings,
-  entries,
-  setEntries,
   history,
   setHistory,
-  setProjectName,
-  setProjectDescription,
-  setProjectAuthor,
-  setIsSidebarOpen,
-  setView,
-  setJumpToTerm,
-  setDraftEntry,
-  scriptConfig,
-  isScriptMode,
   author,
 }) => {
   const { t } = useTranslation();
@@ -338,23 +302,9 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
         {!isMinimized && (
           <div className="flex-1 flex flex-col overflow-hidden bg-[var(--bg-main)]">
             <ConsoleConfig
-              constraints={constraints}
-              setConstraints={setConstraints}
-              settings={settings}
-              setSettings={setSettings}
-              entries={entries}
-              setEntries={setEntries}
               history={history}
               setHistory={setHistory}
-              setProjectName={setProjectName}
-              setProjectDescription={setProjectDescription}
-              setProjectAuthor={setProjectAuthor}
-              setIsSidebarOpen={setIsSidebarOpen}
-              setView={setView}
-              setJumpToTerm={setJumpToTerm}
-              setDraftEntry={setDraftEntry}
-              scriptConfig={scriptConfig}
-              isScriptMode={isScriptMode}
+              loadingAI={loadingAI}
               author={author}
             />
           </div>

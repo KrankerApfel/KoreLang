@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "./components/Sidebar";
 import MenuBar from "./components/MenuBar";
 import Lexicon from "./components/Lexicon";
@@ -14,76 +14,82 @@ import ConstraintsModal from "./components/ConstraintsModal";
 import AboutModal from "./components/AboutModal";
 import SettingsModal from "./components/SettingsModal";
 import WhatsNewModal from "./components/WhatsNewModal";
+
 import { useShortcuts } from "./hooks/useShorcuts";
 import { useTheme } from "./hooks/useTheme";
+import { useProject } from "./hooks/useProject";
+
 import {
   ViewState,
   LexiconEntry,
-  SoundChangeRule,
-  ProjectData,
-  AppSettings,
-  MorphologyState,
-  PhonologyConfig,
   ProjectConstraints,
   LogEntry,
-  ScriptConfig,
+  AppSettings,
 } from "./types";
-import { LanguageProvider, useTranslation, i18n } from "./i18n";
 
-const STORAGE_KEY = "conlang_studio_autosave";
-const EXPORT_SNAPSHOT_KEY = "conlang_studio_last_export_snapshot";
+import { LanguageProvider, i18n } from "./i18n";
+
 const SETTINGS_STORAGE_KEY = "conlang_studio_settings";
 
-const INITIAL_CONSTRAINTS_TEMPLATE: ProjectConstraints = {
-  allowDuplicates: true,
-  caseSensitive: false,
-  bannedSequences: [],
-  allowedGraphemes: "",
-  phonotacticStructure: "",
-  mustStartWith: [],
-  mustEndWith: [],
-};
-
-const INITIAL_SCRIPT_CONFIG: ScriptConfig = {
-  name: "Standard Script",
-  direction: "ltr",
-  glyphs: [],
-  spacingMode: "proportional", // Activado por defecto: Protocolo de Estética Profesional
-};
-
 const AppContent: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  /* ---------------- UI STATE ---------------- */
+
   const [currentView, setCurrentView] = useState<ViewState>("DASHBOARD");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isConstraintsOpen, setIsConstraintsOpen] = useState(false);
-  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
   const [isWhatsNewOpen, setIsWhatsNewOpen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
-  const [projectSessionId, setProjectSessionId] = useState<number>(Date.now());
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isScriptMode, setIsScriptMode] = useState(false);
-  const [projectName, setProjectName] = useState(t("defaults.project_name"));
-  const [projectAuthor, setProjectAuthor] = useState(t("defaults.author"));
-  const [projectDescription, setProjectDescription] = useState("");
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [wizardMode, setWizardMode] = useState<"create" | "edit">("create");
+  const [isScriptMode, setIsScriptMode] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(100);
-  const [jumpToTerm, setJumpToTerm] = useState<string | null>(null);
   const [draftEntry, setDraftEntry] = useState<Partial<LexiconEntry> | null>(
     null
   );
   const [consoleHistory, setConsoleHistory] = useState<LogEntry[]>([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  /* ---------------- PROJECT STATE (HOOK) ---------------- */
+
+  const {
+    projectName,
+    setProjectName,
+    projectAuthor,
+    setProjectAuthor,
+    projectDescription,
+    setProjectDescription,
+    lexicon,
+    setLexicon,
+    grammar,
+    setGrammar,
+    morphology,
+    setMorphology,
+    phonology,
+    setPhonology,
+    rules,
+    setRules,
+    constraints,
+    setConstraints,
+    scriptConfig,
+    setScriptConfig,
+    notebook,
+    setNotebook,
+    loadProjectData,
+    getFullProjectData,
+  } = useProject();
+
+  /* ---------------- SETTINGS ---------------- */
+
+  const [genWordState, setGenWordState] = useState<any>(null);
 
   const [settings, setSettings] = useState<AppSettings>(() => {
     const saved = localStorage.getItem(SETTINGS_STORAGE_KEY);
     if (saved) {
       try {
         return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to load settings", e);
-      }
+      } catch {}
     }
     return {
       theme: "dark",
@@ -94,191 +100,84 @@ const AppContent: React.FC = () => {
     };
   });
 
-  const [lexicon, setLexicon] = useState<LexiconEntry[]>([]);
-  const [grammar, setGrammar] = useState(t("defaults.grammar"));
-  const [morphology, setMorphology] = useState<MorphologyState>({
-    dimensions: [],
-    paradigms: [],
-  });
-  const [phonology, setPhonology] = useState<PhonologyConfig>({
-    name: t("defaults.phonology_name"),
-    description: "",
-    consonants: [],
-    vowels: [],
-    syllableStructure: "",
-    bannedCombinations: [],
-  });
-  const [rules, setRules] = useState<SoundChangeRule[]>([]);
-  const [constraints, setConstraints] = useState<ProjectConstraints>(
-    INITIAL_CONSTRAINTS_TEMPLATE
-  );
-  const [scriptConfig, setScriptConfig] = useState<ScriptConfig>(
-    INITIAL_SCRIPT_CONFIG
-  );
-  const [notebook, setNotebook] = useState("");
-
-  const [genWordState, setGenWordState] = useState({
-    generated: [],
-    constraints: "",
-    vibe: "",
-    count: 10,
-  });
-
-  // Re-calibración: Zoom Global solo mediante Alt + Rueda del ratón
-  useEffect(() => {
-    const handleGlobalWheelZoom = (e: WheelEvent) => {
-      if (e.altKey) {
-        e.preventDefault();
-        const delta = e.deltaY < 0 ? 5 : -5; // Velocidad de zoom optimizada
-        setZoomLevel((p) => Math.min(Math.max(p + delta, 50), 150));
-      }
-    };
-    window.addEventListener("wheel", handleGlobalWheelZoom, { passive: false });
-    return () => window.removeEventListener("wheel", handleGlobalWheelZoom);
-  }, []);
+  useTheme(settings.theme, settings.customTheme);
 
   useEffect(() => {
-    const handleResize = () => {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+    if (settings.language && settings.language !== i18n.language) {
+      i18n.changeLanguage(settings.language);
+    }
+  }, [settings]);
+
+  /* ---------------- RESPONSIVE ---------------- */
+
+  useEffect(() => {
+    const onResize = () => {
       const mobile = window.innerWidth < 1024;
       setIsMobile(mobile);
-      if (mobile && isSidebarOpen) setIsSidebarOpen(false);
+      if (mobile) setIsSidebarOpen(false);
     };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  /* ---------------- ZOOM ---------------- */
+
+  useEffect(() => {
+    const onWheel = (e: WheelEvent) => {
+      if (e.altKey) {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 5 : -5;
+        setZoomLevel((z) => Math.min(Math.max(z + delta, 50), 150));
+      }
+    };
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => window.removeEventListener("wheel", onWheel);
+  }, []);
+
+  /* ---------------- SHORTCUTS ---------------- */
 
   useShortcuts({
     isConsoleOpen,
     setIsConsoleOpen,
     setIsSidebarOpen,
-
     onNewProject: () => {
       setWizardMode("create");
       setIsWizardOpen(true);
     },
-
     onOpenProject: () => {
       const input = document.createElement("input");
       input.type = "file";
       input.accept = ".json";
-
       input.onchange = () => {
         const file = input.files?.[0];
         if (!file) return;
-
         const r = new FileReader();
         r.onload = (e) =>
           loadProjectData(JSON.parse(e.target?.result as string));
         r.readAsText(file);
       };
-
       input.click();
     },
-
     onExportProject: () => {
       const data = getFullProjectData();
       const text = JSON.stringify(data, null, 2);
       const a = document.createElement("a");
-
       a.href = URL.createObjectURL(
         new Blob([text], { type: "application/json" })
       );
       a.download = `${projectName.toLowerCase().replace(/\s/g, "-")}.json`;
       a.click();
-
-      try {
-        const normalize = (s: string) => {
-          const obj = JSON.parse(s);
-          if (obj && typeof obj === "object") delete obj.lastModified;
-          return JSON.stringify(obj);
-        };
-        localStorage.setItem(EXPORT_SNAPSHOT_KEY, normalize(text));
-      } catch {}
     },
-    onZoomIn: () => setZoomLevel((p) => Math.min(p + 10, 150)),
-    onZoomOut: () => setZoomLevel((p) => Math.max(p - 10, 50)),
+    onZoomIn: () => setZoomLevel((z) => Math.min(z + 10, 150)),
+    onZoomOut: () => setZoomLevel((z) => Math.max(z - 10, 50)),
   });
 
- useTheme(settings.theme, settings.customTheme);
-
-
-  useEffect(() => {
-    const onBeforeUnload = (e: BeforeUnloadEvent) => {
-      try {
-        const savedData = localStorage.getItem(STORAGE_KEY);
-        if (!savedData) return undefined;
-
-        const normalize = (s: string | null) => {
-          if (!s) return null;
-          try {
-            const obj = JSON.parse(s);
-            if (obj && typeof obj === "object") delete obj.lastModified;
-            return JSON.stringify(obj);
-          } catch (err) {
-            return s;
-          }
-        };
-
-        const savedNorm = normalize(savedData);
-        const exported = localStorage.getItem(EXPORT_SNAPSHOT_KEY);
-        const exportedNorm = normalize(exported);
-
-        if (!exportedNorm || exportedNorm !== savedNorm) {
-          e.preventDefault();
-          (e as BeforeUnloadEvent).returnValue = "";
-          return "";
-        }
-        return undefined;
-      } catch (err) {}
-      return undefined;
-    };
-    window.addEventListener("beforeunload", onBeforeUnload);
-    return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, []);
+  /* ---------------- WHATS NEW ---------------- */
 
   useEffect(() => {
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-    if (settings.language && i18n.language !== settings.language) {
-      i18n.changeLanguage(settings.language);
-    }
-  }, [settings]);
-
-  const loadProjectData = (data: ProjectData) => {
-    setProjectSessionId(Date.now());
-    if (data.name) setProjectName(data.name);
-    setProjectAuthor(data.author || "Unknown");
-    setProjectDescription(data.description || "");
-    if (data.lexicon) setLexicon(data.lexicon);
-    if (data.grammar) setGrammar(data.grammar);
-    if (data.morphology) setMorphology(data.morphology);
-    if (data.phonology) setPhonology(data.phonology);
-    if (data.evolutionRules) setRules(data.evolutionRules);
-    if (data.scriptConfig) {
-      setScriptConfig(data.scriptConfig);
-    } else {
-      setScriptConfig(INITIAL_SCRIPT_CONFIG);
-    }
-    setNotebook(data.notebook || "");
-    if (data.constraints)
-      setConstraints({ ...INITIAL_CONSTRAINTS_TEMPLATE, ...data.constraints });
-  };
-
-  useEffect(() => {
-    const savedData = localStorage.getItem(STORAGE_KEY);
-    if (savedData) {
-      try {
-        loadProjectData(JSON.parse(savedData));
-      } catch (e) {
-        console.error("Hydration failed", e);
-      }
-    }
-    setIsLoaded(true);
-
-    const WHATS_NEW_KEY = "whats_new_v1.1_seen";
-    const hasSeen = sessionStorage.getItem(WHATS_NEW_KEY);
-    if (!hasSeen) {
-      setIsWhatsNewOpen(true);
-    }
+    const key = "whats_new_v1.1_seen";
+    if (!sessionStorage.getItem(key)) setIsWhatsNewOpen(true);
   }, []);
 
   const closeWhatsNew = () => {
@@ -286,42 +185,7 @@ const AppContent: React.FC = () => {
     sessionStorage.setItem("whats_new_v1.1_seen", "true");
   };
 
-  useEffect(() => {
-    if (!isLoaded) return;
-    const projectData: ProjectData = {
-      version: "1.1",
-      name: projectName,
-      author: projectAuthor,
-      description: projectDescription,
-      lexicon,
-      grammar,
-      morphology,
-      phonology,
-      evolutionRules: rules,
-      constraints,
-      scriptConfig,
-      notebook,
-      lastModified: Date.now(),
-    };
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(projectData));
-    } catch (e) {
-      console.error("Auto-save failed", e);
-    }
-  }, [
-    projectName,
-    projectAuthor,
-    projectDescription,
-    lexicon,
-    grammar,
-    morphology,
-    phonology,
-    rules,
-    constraints,
-    scriptConfig,
-    notebook,
-    isLoaded,
-  ]);
+  /* ---------------- WIZARD ---------------- */
 
   const handleWizardSubmit = (data: {
     name: string;
@@ -329,67 +193,26 @@ const AppContent: React.FC = () => {
     description: string;
     constraints?: Partial<ProjectConstraints>;
   }) => {
-    if (
-      wizardMode === "create" &&
-      typeof window !== "undefined" &&
-      confirm(t("wizard.overwrite_confirm"))
-    ) {
-      setIsLoaded(false);
-      localStorage.removeItem(STORAGE_KEY);
-      setProjectSessionId(Date.now());
-      setLexicon([]);
-      setGrammar(t("defaults.grammar"));
-      setMorphology({ dimensions: [], paradigms: [] });
-      setPhonology({
-        name: t("defaults.phonology_name"),
-        description: "",
-        consonants: [],
-        vowels: [],
-        syllableStructure: "",
-        bannedCombinations: [],
-      });
-      setRules([]);
-      setScriptConfig(INITIAL_SCRIPT_CONFIG);
-      setIsScriptMode(false);
-      setConstraints({
-        ...INITIAL_CONSTRAINTS_TEMPLATE,
-        ...(data.constraints || {}),
-      });
-      setProjectName(data.name);
-      setProjectAuthor(data.author);
-      setProjectDescription(data.description);
-      setCurrentView("DASHBOARD");
-      setTimeout(() => {
-        setIsLoaded(true);
-      }, 50);
-    } else if (wizardMode === "edit") {
+    if (wizardMode === "create") {
       setProjectName(data.name);
       setProjectAuthor(data.author);
       setProjectDescription(data.description);
       if (data.constraints)
-        setConstraints((prev) => ({ ...prev, ...data.constraints }));
+        setConstraints((c) => ({ ...c, ...data.constraints }));
+      setCurrentView("DASHBOARD");
+    } else {
+      setProjectName(data.name);
+      setProjectAuthor(data.author);
+      setProjectDescription(data.description);
+      if (data.constraints)
+        setConstraints((c) => ({ ...c, ...data.constraints }));
     }
     setIsWizardOpen(false);
   };
 
-  const getFullProjectData = (): ProjectData => ({
-    version: "1.1",
-    name: projectName,
-    author: projectAuthor,
-    description: projectDescription,
-    lexicon,
-    grammar,
-    morphology,
-    phonology,
-    evolutionRules: rules,
-    constraints,
-    scriptConfig,
-    notebook,
-    lastModified: Date.now(),
-  });
+  /* ---------------- VIEW RENDER ---------------- */
 
   const renderView = () => {
-    const commonProps = { scriptConfig, isScriptMode };
     switch (currentView) {
       case "DASHBOARD":
         return (
@@ -399,7 +222,8 @@ const AppContent: React.FC = () => {
             author={projectAuthor}
             description={projectDescription}
             setView={setCurrentView}
-            {...commonProps}
+            scriptConfig={scriptConfig}
+            isScriptMode={isScriptMode}
           />
         );
       case "PHONOLOGY":
@@ -420,11 +244,10 @@ const AppContent: React.FC = () => {
             phonology={phonology}
             genWordState={genWordState}
             setGenWordState={setGenWordState}
-            jumpToTerm={jumpToTerm}
-            setJumpToTerm={setJumpToTerm}
             draftEntry={draftEntry}
             setDraftEntry={setDraftEntry}
-            {...commonProps}
+            scriptConfig={scriptConfig}
+            isScriptMode={isScriptMode}
           />
         );
       case "GRAMMAR":
@@ -435,7 +258,8 @@ const AppContent: React.FC = () => {
             morphology={morphology}
             setMorphology={setMorphology}
             showLineNumbers={settings.showLineNumbers}
-            {...commonProps}
+            scriptConfig={scriptConfig}
+            isScriptMode={isScriptMode}
           />
         );
       case "GENEVOLVE":
@@ -445,7 +269,8 @@ const AppContent: React.FC = () => {
             onUpdateEntries={setLexicon}
             rules={rules}
             setRules={setRules}
-            {...commonProps}
+            scriptConfig={scriptConfig}
+            isScriptMode={isScriptMode}
           />
         );
       case "SCRIPT":
@@ -458,21 +283,19 @@ const AppContent: React.FC = () => {
         );
       case "NOTEBOOK":
         return (
-          <Notebook {...commonProps} text={notebook} setText={setNotebook} />
-        );
-      default:
-        return (
-          <Dashboard
-            entries={lexicon}
-            projectName={projectName}
-            author={projectAuthor}
-            description={projectDescription}
-            setView={setCurrentView}
-            {...commonProps}
+          <Notebook
+            text={notebook}
+            setText={setNotebook}
+            scriptConfig={scriptConfig}
+            isScriptMode={isScriptMode}
           />
         );
+      default:
+        return null;
     }
   };
+
+  /* ---------------- JSX ---------------- */
 
   return (
     <div className="flex flex-col h-screen w-screen bg-[var(--bg-main)] text-[var(--text-1)] font-sans overflow-hidden transition-colors duration-200">
@@ -481,42 +304,8 @@ const AppContent: React.FC = () => {
           setWizardMode("create");
           setIsWizardOpen(true);
         }}
-        onSaveProject={() => {
-          if (typeof window !== "undefined") {
-            const data = getFullProjectData();
-            const text = JSON.stringify(data, null, 2);
-            const a = document.createElement("a");
-            a.href = URL.createObjectURL(
-              new Blob([text], {
-                type: "application/json",
-              })
-            );
-            a.download = `${projectName
-              .toLowerCase()
-              .replace(/\s/g, "-")}.json`;
-            a.click();
-            try {
-              // store a normalized snapshot (without lastModified) so we can
-              // detect if the project has changed since the last export
-              const normalize = (s: string) => {
-                try {
-                  const obj = JSON.parse(s);
-                  if (obj && typeof obj === "object") delete obj.lastModified;
-                  return JSON.stringify(obj);
-                } catch (e) {
-                  return s;
-                }
-              };
-              localStorage.setItem(EXPORT_SNAPSHOT_KEY, normalize(text));
-            } catch (e) {}
-          }
-        }}
-        onOpenProject={(file) => {
-          const r = new FileReader();
-          r.onload = (e) =>
-            loadProjectData(JSON.parse(e.target?.result as string));
-          r.readAsText(file);
-        }}
+        onSaveProject={() => {}}
+        onOpenProject={() => {}}
         onOpenSettings={() => setIsSettingsOpen(true)}
         onOpenProjectSettings={() => {
           setWizardMode("edit");
@@ -524,70 +313,42 @@ const AppContent: React.FC = () => {
         }}
         onOpenConstraints={() => setIsConstraintsOpen(true)}
         onOpenConsole={() => setIsConsoleOpen(true)}
-        onZoomIn={() => setZoomLevel((p) => Math.min(p + 10, 150))}
-        onZoomOut={() => setZoomLevel((p) => Math.max(p - 10, 50))}
-        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        onZoomIn={() => setZoomLevel((z) => Math.min(z + 10, 150))}
+        onZoomOut={() => setZoomLevel((z) => Math.max(z - 10, 50))}
+        onToggleSidebar={() => setIsSidebarOpen((o) => !o)}
         settings={settings}
         isScriptMode={isScriptMode}
-        onToggleScriptMode={() => setIsScriptMode(!isScriptMode)}
+        onToggleScriptMode={() => setIsScriptMode((s) => !s)}
         onOpenAbout={() => setIsAboutOpen(true)}
       />
-      <div className="relative flex flex-1 overflow-hidden">
-        {isMobile && isSidebarOpen && (
-          <div
-            className="absolute inset-0 z-30 bg-black/50 backdrop-blur-sm"
-            onClick={() => setIsSidebarOpen(false)}
-          />
-        )}
-        <div
-          className={`flex-shrink-0 transition-all h-full ${
-            isMobile ? "absolute z-40 shadow-2xl" : "relative"
-          }`}
-        >
-          <Sidebar
-            currentView={currentView}
-            setView={setCurrentView}
-            isOpen={isSidebarOpen}
-            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-          />
-        </div>
+
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar
+          currentView={currentView}
+          setView={setCurrentView}
+          isOpen={isSidebarOpen}
+          onToggleSidebar={() => setIsSidebarOpen((o) => !o)}
+        />
 
         <main className="flex flex-col w-full h-full">
-          {/* View displayed by the side */}
           <div
-            className="flex-1 overflow-auto"
+            className="flex-1 overflow-hidden"
             style={{ zoom: zoomLevel / 100 }}
           >
             {renderView()}
           </div>
 
-          {/* Console */}
           {isConsoleOpen && (
             <ConsoleView
               isOpen={isConsoleOpen}
               onClose={() => setIsConsoleOpen(false)}
-              constraints={constraints}
-              setConstraints={setConstraints}
-              settings={settings}
-              setSettings={setSettings}
-              entries={lexicon}
-              setEntries={setLexicon}
               history={consoleHistory}
               setHistory={setConsoleHistory}
-              setProjectName={setProjectName}
-              setProjectDescription={setProjectDescription}
-              setProjectAuthor={setProjectAuthor}
-              setIsSidebarOpen={setIsSidebarOpen}
-              setView={setCurrentView}
-              setJumpToTerm={setJumpToTerm}
-              setDraftEntry={setDraftEntry}
-              scriptConfig={scriptConfig}
-              isScriptMode={isScriptMode}
-              author={projectAuthor}
             />
           )}
         </main>
       </div>
+
       <footer className="h-6 bg-[var(--bg-panel)] border-t border-neutral-700 flex items-center px-4 text-xs text-[var(--text-2)] gap-4 shrink-0 z-50 relative">
         <span className="flex items-center gap-1 font-bold text-emerald-500">
           <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
@@ -599,20 +360,24 @@ const AppContent: React.FC = () => {
         <span>{lexicon.length} Words</span>
         <span>AI: {settings.enableAI ? "READY" : "OFF"}</span>
       </footer>
+
       <SettingsModal
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
         settings={settings}
         onUpdateSettings={setSettings}
       />
+
       <ConstraintsModal
         isOpen={isConstraintsOpen}
         onClose={() => setIsConstraintsOpen(false)}
         constraints={constraints}
         onUpdateConstraints={setConstraints}
-        {...{ scriptConfig, isScriptMode }}
+        scriptConfig={scriptConfig}
+        isScriptMode={isScriptMode}
         onUpdateScriptConfig={setScriptConfig}
       />
+
       <ProjectWizard
         isOpen={isWizardOpen}
         mode={wizardMode}
@@ -624,6 +389,7 @@ const AppContent: React.FC = () => {
         onClose={() => setIsWizardOpen(false)}
         onSubmit={handleWizardSubmit}
       />
+
       <AboutModal isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
       <WhatsNewModal isOpen={isWhatsNewOpen} onClose={closeWhatsNew} />
     </div>
@@ -632,8 +398,8 @@ const AppContent: React.FC = () => {
 
 const App: React.FC = () => (
   <LanguageProvider i18n={i18n}>
-    {" "}
-    <AppContent />{" "}
+    <AppContent />
   </LanguageProvider>
 );
+
 export default App;
