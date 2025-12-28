@@ -69,6 +69,10 @@ const Lexicon: React.FC<LexiconProps> = ({
 
     // Smart Copy Feedback State
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    // Entry click copy feedback (border flash + animation + success message)
+    const [copyFlashId, setCopyFlashId] = useState<string | null>(null);
+    const [clickAnimId, setClickAnimId] = useState<string | null>(null);
+    const [successMsgId, setSuccessMsgId] = useState<string | null>(null);
 
     useEffect(() => {
         if (jumpToTerm) {
@@ -354,11 +358,49 @@ const Lexicon: React.FC<LexiconProps> = ({
                 return char;
             }).join('');
 
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                setCopiedId(`${entry.id}-script`);
-                setTimeout(() => setCopiedId(null), 2000);
+            copyTextSafe(textToCopy).then((ok) => {
+                if (ok) {
+                    setCopiedId(`${entry.id}-script`);
+                    setTimeout(() => setCopiedId(null), 2000);
+                }
             });
         }
+    };
+
+    // Safe clipboard helper with fallback
+    const copyTextSafe = async (text: string): Promise<boolean> => {
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(text);
+                return true;
+            }
+        } catch (_) {}
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            const ok = document.execCommand('copy');
+            document.body.removeChild(ta);
+            return ok;
+        } catch (_) {
+            return false;
+        }
+    };
+
+    // Click-to-copy on entry card with success flash + bubble tip
+    const handleCardCopy = (entry: LexiconEntry, e: React.MouseEvent<HTMLDivElement>) => {
+        setClickAnimId(entry.id);
+        setTimeout(() => setClickAnimId(null), 150);
+        copyTextSafe(entry.word).then(() => {
+            setCopyFlashId(entry.id);
+            setSuccessMsgId(entry.id);
+            setTimeout(() => setCopyFlashId(null), 600);
+            setTimeout(() => setSuccessMsgId(null), 1500);
+        });
     };
 
     // IPA Keyboard Handler
@@ -376,26 +418,75 @@ const Lexicon: React.FC<LexiconProps> = ({
         const isInvalid = entryErrors.length > 0;
 
         return (
-            <div key={entry.id} className={`rounded-lg p-3 hover:bg-neutral-800/50 transition-colors group relative overflow-hidden border ${isInvalid ? 'border-red-900/30 bg-red-950/5' : 'border-neutral-800/50 bg-neutral-900/50'}`}>
-                {entry.derivedFrom && <GitFork className={`absolute ${direction === 'rtl' ? '-left-4 -scale-x-100' : '-right-4'} -top-4 text-neutral-800 opacity-10 w-32 h-32 rotate-12`} />}
+            <div
+                key={entry.id}
+                onClick={(e) => handleCardCopy(entry, e)}
+                className={`p-4 cursor-pointer transition-all group relative overflow-hidden border bg-neutral-800 
+                    ${isInvalid ? 'border-red-900/30' : successMsgId === entry.id || copyFlashId === entry.id ? '' : 'border-neutral-700'} 
+                    ${successMsgId !== entry.id && copyFlashId !== entry.id ? 'hover:border-blue-500' : ''}`}
+                style={{
+                    ...(successMsgId === entry.id 
+                        ? { 
+                            borderColor: 'var(--success) !important'
+                          }
+                        : copyFlashId === entry.id 
+                        ? { borderColor: 'var(--success) !important' }
+                        : {}),
+                    transform: clickAnimId === entry.id ? 'scale(0.98)' : 'scale(1)',
+                    transition: 'transform 0.15s ease, border-color 0.5s ease-out'
+                }}
+            >
+                {entry.derivedFrom && <GitFork className={`absolute ${direction === 'rtl' ? '-left-4 -scale-x-100' : '-right-4'} -top-4 text-neutral-800 opacity-20 w-32 h-32 rotate-12`} />}
+
+                {/* ACTION BUTTONS */}
+                <div className="absolute top-0 right-0 flex gap-0 opacity-0 group-hover:opacity-100 transition-opacity border-l border-b rounded-bl-lg" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--accent)' }}>
+                    {/* Copy Script Button (Only in Script Mode) */}
+                    {isScriptMode && (
+                        <button
+                            onClick={(ev) => { ev.stopPropagation(); handleCopyScript(entry); }}
+                            className="p-1.5 transition-colors"
+                            style={{ color: 'var(--text-primary)' }}
+                            title={t('lexicon.copy_native') || "Copy Native Script Symbols (PUA)"}
+                        >
+                            {copiedId === `${entry.id}-script` ? <Check size={14} className="text-emerald-500" /> : <Feather size={14} />}
+                        </button>
+                    )}
+
+                    <button
+                        onClick={(ev) => { ev.stopPropagation(); openEditModal(entry); }}
+                        className="p-1.5 transition-colors"
+                        style={{ color: 'var(--text-primary)' }}
+                        title={t('lexicon.edit')}
+                    >
+                        <Edit size={14} />
+                    </button>
+                    <button
+                        onClick={(e) => { e.stopPropagation(); requestDelete(entry, e); }}
+                        className="p-1.5 transition-colors"
+                        style={{ color: 'var(--text-primary)' }}
+                        title={t('common.delete')}
+                    >
+                        <Trash2 size={14} />
+                    </button>
+                </div>
 
                 <div className="flex justify-between items-start gap-3 relative z-10">
                     <div className="flex-1 min-w-0">
-                        <div className="flex items-end gap-2 mb-2 flex-wrap">
+                        <div className="flex items-baseline gap-3 mb-1 flex-wrap">
                             {/* OMNI-GLYPH LOGIC */}
                             {isScriptMode ? (
-                                <div className="flex flex-col gap-1">
-                                    <div className="text-3xl leading-none" style={{ color: 'var(--accent)' }}>
+                                <div className="flex flex-col">
+                                    <div className="text-4xl text-purple-200 leading-none mb-1">
                                         <ConScriptText text={entry.word} scriptConfig={scriptConfig} />
                                     </div>
-                                    <span className="text-[10px] font-mono" style={{ color: 'var(--text-secondary)' }}>{entry.word}</span>
+                                    <span className="text-xs font-mono text-neutral-500">{entry.word}</span>
                                 </div>
                             ) : (
-                                <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>{entry.word}</h3>
+                                <h3 className="text-2xl font-serif text-neutral-100 font-bold">{entry.word}</h3>
                             )}
 
-                            <span className="font-mono text-[10px] px-1.5 py-0.5 rounded" style={{ color: 'var(--text-secondary)', backgroundColor: 'var(--divider)' }}>/{entry.ipa}/</span>
-                            <span className="text-[10px] uppercase font-semibold tracking-wide px-2 py-0.5 rounded" style={{ color: 'var(--accent)', borderColor: 'var(--accent)', border: '1px solid var(--accent)', backgroundColor: 'transparent' }}>{getPosLabel(entry.pos)}</span>
+                            <span className="text-neutral-300 font-mono text-sm px-2 py-0.5 rounded" style={{ backgroundColor: 'var(--border)' }}>/{entry.ipa}/</span>
+                            <span className="font-sans text-blue-400 text-xs uppercase font-bold tracking-wider border border-blue-900 bg-blue-950/30 px-1.5 rounded">{getPosLabel(entry.pos)}</span>
                             {isInvalid && (
                                 <div className="group/badge relative">
                                     <span className="flex items-center gap-1 text-red-400 text-[9px] uppercase font-bold tracking-wider border border-dashed border-red-500/30 bg-red-950/20 px-1 rounded cursor-help">
@@ -409,30 +500,30 @@ const Lexicon: React.FC<LexiconProps> = ({
                             )}
                         </div>
 
-                        <p className="text-sm mb-2" style={{ color: 'var(--text-primary)', lineHeight: '1.4' }}>{entry.definition}</p>
+                        <p className="text-neutral-500 text-sm mb-2">{entry.definition}</p>
 
                         {(parent || descendants.length > 0 || entry.etymology) && (
-                            <div className="bg-neutral-950/30 rounded p-2 border border-neutral-800/30 space-y-1 text-[11px]">
-                                {entry.etymology && <div className="italic" style={{ color: 'var(--text-secondary)' }}>"{entry.etymology}"</div>}
-                                <div className="flex flex-wrap items-center gap-y-1 gap-x-3">
+                            <div className="bg-neutral-950/50 rounded-md p-3 border border-neutral-800/50 space-y-2">
+                                {entry.etymology && <div className="text-neutral-500 text-sm italic mb-1">"{ entry.etymology}"</div>}
+                                <div className="flex flex-wrap items-center gap-y-2 text-sm">
                                     {parent ? (
-                                        <div className="flex items-center gap-1.5 text-neutral-400">
-                                            <Link size={10} />
+                                        <div className="flex items-center gap-2 text-neutral-400">
+                                            <Link size={12} />
                                             <span>{t('lexicon.derived_from') || 'Derived From'}:</span>
-                                            <button onClick={() => jumpToWord(parent.word)} className="text-amber-500 hover:text-amber-400 font-semibold hover:underline">{parent.word}</button>
+                                            <button onClick={() => jumpToWord(parent.word)} className="text-amber-500 hover:text-amber-400 font-bold hover:underline flex items-center gap-1">{parent.word}</button>
                                         </div>
                                     ) : (
-                                        <span className="text-[10px] uppercase font-semibold tracking-widest border border-neutral-700 px-1 rounded text-neutral-600">{t('lexicon.root') || 'Root'}</span>
+                                        <span className="text-xs uppercase font-bold tracking-widest border border-neutral-700 px-1 rounded text-neutral-600">{t('lexicon.root') || 'Root'}</span>
                                     )}
                                     {descendants.length > 0 && (
                                         <>
-                                            {parent && <span className="text-neutral-700">|</span>}
-                                            <div className="flex items-center gap-1.5 text-neutral-400">
-                                                <GitFork size={10} />
+                                            {parent && <span className="mx-2 text-neutral-700">|</span>}
+                                            <div className="flex items-center gap-2 text-neutral-400">
+                                                <GitFork size={12} />
                                                 <span>{t('lexicon.descendants') || 'Descendants'}:</span>
-                                                <div className="flex flex-wrap gap-1">
+                                                <div className="flex flex-wrap gap-2">
                                                     {descendants.map(desc => (
-                                                        <button key={desc.id} onClick={() => jumpToWord(desc.word)} className="bg-neutral-800 hover:bg-neutral-700 text-blue-300 px-1.5 py-0.5 rounded text-[10px] transition-colors">{desc.word}</button>
+                                                        <button key={desc.id} onClick={() => jumpToWord(desc.word)} className="bg-neutral-800 hover:bg-neutral-700 text-blue-300 px-2 py-0.5 rounded text-xs transition-colors">{desc.word}</button>
                                                     ))}
                                                 </div>
                                             </div>
@@ -442,41 +533,23 @@ const Lexicon: React.FC<LexiconProps> = ({
                             </div>
                         )}
                     </div>
-
-                    {/* ACTION BUTTONS: FIXED VISIBILITY */}
-                    <div className="flex gap-1.5 items-start shrink-0">
-                        {/* Copy Text Button */}
-                        <button
-                            onClick={() => handleCopyText(entry)}
-                            className="p-1.5 rounded-md transition-colors relative border border-transparent"
-                            style={{ color: 'var(--text-secondary)' }}
-                            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface)'; e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.borderColor = 'var(--text-secondary)'; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'transparent'; }}
-                            title={t('lexicon.copy_latin') || "Copy Latin Text"}
-                        >
-                            {copiedId === `${entry.id}-text` ? <Check size={14} className="text-emerald-500" /> : <Type size={14} />}
-                        </button>
-
-                        {/* Copy Script Button (Only in Script Mode) */}
-                        {isScriptMode && (
-                            <button
-                                onClick={() => handleCopyScript(entry)}
-                                className="p-1.5 rounded-md transition-colors relative border border-transparent"
-                                style={{ color: 'var(--accent)' }}
-                                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(var(--accent-rgb), 0.2)'; e.currentTarget.style.borderColor = 'var(--accent)'; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.borderColor = 'transparent'; }}
-                                title={t('lexicon.copy_native') || "Copy Native Script Symbols (PUA)"}
-                            >
-                                {copiedId === `${entry.id}-script` ? <Check size={14} className="text-emerald-500" /> : <Feather size={14} />}
-                            </button>
-                        )}
-
-                        <button onClick={() => openEditModal(entry)} className="p-1.5 rounded-md transition-colors" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface)'; e.currentTarget.style.color = 'var(--text-primary)'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-secondary)'; }} title={t('lexicon.edit')}>
-                            <Edit size={14} />
-                        </button>
-                        <button onClick={(e) => requestDelete(entry, e)} className="p-1.5 text-red-400 hover:bg-red-950/30 rounded-md" title={t('common.delete')}><Trash2 size={14} /></button>
-                    </div>
                 </div>
+
+                {/* Success message on copy with neon glow and blink */}
+                {successMsgId === entry.id && (
+                    <div
+                        className="absolute bottom-3 right-3 flex items-center gap-1.5 text-sm font-medium pointer-events-none animate-in fade-in duration-200"
+                        style={{
+                            color: 'var(--success)',
+                            textShadow: '0 0 8px var(--success), 0 0 16px var(--success)',
+                            animation: successMsgId === entry.id ? 'blinkFadeOut 1.5s ease-in-out forwards' : 'none',
+                            fontWeight: 600
+                        }}
+                    >
+                        <span>{t('common.copied') || 'Copy'}</span>
+                        <Check size={16} style={{ filter: 'drop-shadow(0 0 4px var(--success))' }} />
+                    </div>
+                )}
             </div>
         );
     };
@@ -518,38 +591,38 @@ const Lexicon: React.FC<LexiconProps> = ({
                 <div className="flex items-center justify-between px-4 py-1.5 gap-3 border-b" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--divider)' }}>
                     <div className="flex items-center gap-2 flex-1 max-w-2xl">
                         <div className="relative flex-1">
-                            <Search className="absolute start-2.5 top-1/2 -tranneutral-y-1/2" size={14} style={{ color: 'var(--text-secondary)' }} />
+                            <Search className="absolute start-3 top-1/2 -tranneutral-y-1/2" size={18} style={{ color: 'var(--text-secondary)' }} />
                             <input
                                 type="text"
                                 placeholder={t('lexicon.search')}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full ps-9 pe-3 py-1 rounded text-xs focus:outline-none focus:ring-1 transition-all"
+                                className="w-full ps-10 pe-4 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 transition-all shadow-sm"
                                 style={{ backgroundColor: 'var(--surface)', color: 'var(--text-primary)', border: `1px solid var(--divider)`, outline: 'none' }}
                             />
-                            {searchTerm && <button onClick={() => setSearchTerm('')} className="absolute end-2.5 top-1/2 -tranneutral-y-1/2" style={{ color: 'var(--text-secondary)' }}><X size={10} /></button>}
+                            {searchTerm && <button onClick={() => setSearchTerm('')} className="absolute end-3 top-1/2 -tranneutral-y-1/2" style={{ color: 'var(--text-secondary)' }}><X size={14} /></button>}
                         </div>
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className="p-1.5 rounded border transition-colors flex items-center"
+                            className="p-2.5 rounded-lg border transition-colors flex items-center"
                             style={showFilters || posFilter !== 'ALL'
                                 ? { backgroundColor: 'rgba( 0, 0, 0, 0.08 )', borderColor: 'var(--accent)', color: 'var(--accent)' }
                                 : { backgroundColor: 'var(--surface)', borderColor: 'var(--divider)', color: 'var(--text-secondary)' }}
                             title={t('lexicon.filter_options')}
                         >
-                            <SlidersHorizontal size={14} />
+                            <SlidersHorizontal size={18} />
                         </button>
                         {totalConflictCount > 0 && (
                             <button
                                 onClick={toggleConflictMode}
-                                className="p-1.5 rounded border transition-all flex items-center gap-1"
+                                className="p-2.5 rounded-lg border transition-all flex items-center gap-2"
                                 style={conflictMode !== 'HIDDEN'
                                     ? { backgroundColor: 'rgba(255, 118, 142, 0.15)', borderColor: 'var(--error)', color: 'var(--error)' }
                                     : { backgroundColor: 'var(--surface)', borderColor: 'var(--divider)', color: 'var(--text-secondary)' }}
                                 title={conflictMode === 'HIDDEN' ? t('lexicon.view_mode_pinned') : t('lexicon.view_mode_hide')}
                             >
-                                {conflictMode === 'HIDDEN' ? <EyeOff size={14} /> : <Eye size={14} />}
-                                {conflictMode !== 'HIDDEN' && <span className="font-mono text-[10px] font-bold">{totalConflictCount}</span>}
+                                {conflictMode === 'HIDDEN' ? <EyeOff size={18} /> : <Eye size={18} />}
+                                {conflictMode !== 'HIDDEN' && <span className="font-mono text-xs font-bold">{totalConflictCount}</span>}
                             </button>
                         )}
                     </div>
