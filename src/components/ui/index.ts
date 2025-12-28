@@ -5,3 +5,4 @@ export { StatBox } from './StatBox';
 export { ActionButton } from './ActionButton';
 export { FormField } from './FormField';
 export { ViewHeader } from './ViewHeader';
+export { ViewLayout } from './ViewLayout';

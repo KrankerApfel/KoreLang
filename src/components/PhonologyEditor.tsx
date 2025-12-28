@@ -3,7 +3,7 @@ import { Wand2, RefreshCw, Volume2, Info, LayoutGrid, EyeOff, ShieldAlert, Plus,
 import { generatePhonology, isApiKeySet } from '../services/geminiService';
 import { PhonologyConfig, Phoneme } from '../types';
 import { useTranslation } from '../i18n';
-import { Card, Section, ViewHeader } from './ui';
+import { Card, Section, ViewLayout } from './ui';
 
 interface PhonologyEditorProps {
     data: PhonologyConfig;
@@ -120,9 +120,11 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
     };
 
     return (
-        <div className="h-full flex flex-col" style={{ backgroundColor: 'var(--background)' }}>
-            <ViewHeader icon={Volume2} title={t('phonology.title')} subtitle={t('phonology.subtitle')} />
-            
+        <ViewLayout
+            icon={Volume2}
+            title={t('phonology.title')}
+            subtitle={t('phonology.subtitle')}
+        >
             <div className="flex h-full gap-6 p-6 overflow-hidden">
 
             {/* Left Panel: Controls */}
@@ -540,7 +542,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                 </div>
             )}
             </div>
-        </div>
+        </ViewLayout>
     );
 };
 

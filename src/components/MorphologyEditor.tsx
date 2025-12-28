@@ -3,7 +3,7 @@ import { Plus, Trash2, Table, Tag, Box, ArrowRight, Save, Grid, BookDashed, Filt
 import { MorphologyState, MorphParadigm, MorphDimension, InflectionRule, POS_SUGGESTIONS, ScriptConfig } from '../types';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
-import { Card, Section, ViewHeader } from './ui';
+import { Card, Section, ViewLayout } from './ui';
 
 interface MorphologyEditorProps {
   data: MorphologyState;
@@ -107,11 +107,13 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
       return true;
   };
 
-  return (
-    <div className="h-full flex flex-col" style={{ backgroundColor: 'var(--background)' }}>
-      <ViewHeader icon={Table} title={t('morph.title')} subtitle={t('morph.subtitle')} />
-      
-      <div className="flex flex-1 overflow-hidden rounded-xl border m-4" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
+    return (
+        <ViewLayout
+            icon={Table}
+            title={t('morph.title')}
+            subtitle={t('morph.subtitle')}
+        >
+            <div className="flex flex-1 overflow-hidden rounded-xl border m-4" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
       {/* Sidebar: Paradigms */}
       <div className="w-64 border-r flex flex-col" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--elevated)' }}>
         <div className="p-4 border-b flex justify-between items-center" style={{ borderColor: 'var(--border)' }}>
@@ -317,8 +319,8 @@ const MorphologyEditor: React.FC<MorphologyEditorProps> = ({ data, setData, scri
               </div>
           )}
       </div>
-      </div>
-    </div>
+            </div>
+        </ViewLayout>
   );
 };
 

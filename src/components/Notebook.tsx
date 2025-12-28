@@ -3,7 +3,7 @@ import { BookOpen, Eraser, Save, Copy, ZoomIn, ZoomOut, Type } from 'lucide-reac
 import { ConScriptText } from './ConScriptRenderer';
 import { ScriptConfig } from '../types';
 import { useTranslation } from '../i18n';
-import { ViewHeader } from './ui';
+import { ViewLayout } from './ui';
 
 interface NotebookProps {
     scriptConfig?: ScriptConfig;
@@ -26,32 +26,37 @@ const Notebook: React.FC<NotebookProps> = ({ scriptConfig, isScriptMode, text, s
     }, [scriptConfig?.direction, text]); // Re-run on text change to keep anchored? Maybe just direction switch is safer to avoid fighting user. Added text to keep it anchored if they are typing.
 
     return (
-        <div className="h-full flex flex-col" style={{ backgroundColor: 'var(--background)' }}>
-            <ViewHeader icon={BookOpen} title={t('notebook.title')} subtitle={t('notebook.subtitle')}>
-                {/* OPTICAL SCALING CONTROLS */}
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded border group" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--text-secondary)' }}>
-                    <Type size={14} style={{ color: 'var(--text-secondary)' }} />
-                    <input
-                        type="range"
-                        min="12"
-                        max="128"
-                        value={fontSize}
-                        onChange={(e) => setFontSize(Number(e.target.value))}
-                        className="w-24 h-1 rounded-lg appearance-none cursor-pointer"
-                        style={{ backgroundColor: 'var(--surface)' }}
-                    />
-                    <span className="text-[10px] font-mono w-8 text-center" style={{ color: 'var(--text-secondary)' }}>{fontSize}px</span>
-                </div>
+        <ViewLayout
+            icon={BookOpen}
+            title={t('notebook.title')}
+            subtitle={t('notebook.subtitle')}
+            headerChildren={
+                <>
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded border group" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--text-secondary)' }}>
+                        <Type size={14} style={{ color: 'var(--text-secondary)' }} />
+                        <input
+                            type="range"
+                            min="12"
+                            max="128"
+                            value={fontSize}
+                            onChange={(e) => setFontSize(Number(e.target.value))}
+                            className="w-24 h-1 rounded-lg appearance-none cursor-pointer"
+                            style={{ backgroundColor: 'var(--surface)' }}
+                        />
+                        <span className="text-[10px] font-mono w-8 text-center" style={{ color: 'var(--text-secondary)' }}>{fontSize}px</span>
+                    </div>
 
-                <div className="flex gap-1 p-1 rounded border" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--text-secondary)' }}>
-                    <button onClick={() => setText('')} className="p-1.5 rounded transition-colors" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface)'; e.currentTarget.style.color = 'var(--text-primary)'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-secondary)'; }} title={t('notebook.clear')}>
-                        <Eraser size={16} />
-                    </button>
-                    <button onClick={() => navigator.clipboard.writeText(text)} className="p-1.5 rounded transition-colors" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface)'; e.currentTarget.style.color = 'var(--text-primary)'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-secondary)'; }} title={t('notebook.copy')}>
-                        <Copy size={16} />
-                    </button>
-                </div>
-            </ViewHeader>
+                    <div className="flex gap-1 p-1 rounded border" style={{ backgroundColor: 'var(--background)', borderColor: 'var(--text-secondary)' }}>
+                        <button onClick={() => setText('')} className="p-1.5 rounded transition-colors" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface)'; e.currentTarget.style.color = 'var(--text-primary)'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-secondary)'; }} title={t('notebook.clear')}>
+                            <Eraser size={16} />
+                        </button>
+                        <button onClick={() => navigator.clipboard.writeText(text)} className="p-1.5 rounded transition-colors" style={{ color: 'var(--text-secondary)' }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'var(--surface)'; e.currentTarget.style.color = 'var(--text-primary)'; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; e.currentTarget.style.color = 'var(--text-secondary)'; }} title={t('notebook.copy')}>
+                            <Copy size={16} />
+                        </button>
+                    </div>
+                </>
+            }
+        >
 
             {/* Split View */}
             <div className="flex-1 flex overflow-hidden">
@@ -93,7 +98,7 @@ const Notebook: React.FC<NotebookProps> = ({ scriptConfig, isScriptMode, text, s
                     )}
                 </div>
             </div>
-        </div>
+        </ViewLayout>
     );
 };
 

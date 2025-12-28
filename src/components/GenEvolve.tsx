@@ -4,6 +4,7 @@ import { LexiconEntry, SoundChangeRule, ScriptConfig } from '../types';
 import { evolveWords } from '../services/geminiService';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
+import { ViewLayout } from './ui';
 
 interface GenEvolveProps {
   entries: LexiconEntry[];
@@ -45,28 +46,25 @@ const GenEvolve: React.FC<GenEvolveProps> = ({ entries, onUpdateEntries, rules, 
       alert(t('genevolve.commit_alert'));
   };
 
-  return (
-    <div className="h-full flex flex-col overflow-hidden">
-        <div className="p-6 border-b border-slate-800 bg-slate-900/50 flex justify-between items-center">
-             <div>
-                <h2 className="text-2xl font-bold flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
-                    <GitBranch style={{ color: 'var(--accent)' }} />
-                    {t('genevolve.title')}
-                </h2>
-                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{t('genevolve.desc')}</p>
-             </div>
-             <button
-                onClick={runSimulation}
-                disabled={loading}
-                className="px-6 py-2 rounded-lg font-bold flex items-center gap-2 disabled:opacity-50"
-                style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
-             >
-                {loading ? <span className="animate-spin">⟳</span> : <PlayCircle />}
-                {t('genevolve.run')}
-             </button>
-        </div>
+    return (
+        <ViewLayout
+            icon={GitBranch}
+            title={t('genevolve.title')}
+            subtitle={t('genevolve.desc')}
+            headerChildren={
+                <button
+                    onClick={runSimulation}
+                    disabled={loading}
+                    className="px-6 py-2 rounded-lg font-bold flex items-center gap-2 disabled:opacity-50"
+                    style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
+                >
+                    {loading ? <span className="animate-spin">⟳</span> : <PlayCircle />}
+                    {t('genevolve.run')}
+                </button>
+            }
+        >
 
-        <div className="flex-1 flex overflow-hidden">
+                <div className="flex-1 flex overflow-hidden">
             {/* Rules Editor */}
             <div className="w-1/3 bg-slate-900 border-r border-slate-800 p-6 overflow-y-auto">
                 <div className="flex justify-between items-center mb-4">
@@ -142,8 +140,8 @@ const GenEvolve: React.FC<GenEvolveProps> = ({ entries, onUpdateEntries, rules, 
                     </div>
                 )}
             </div>
-        </div>
-    </div>
+                </div>
+        </ViewLayout>
   );
 };
 

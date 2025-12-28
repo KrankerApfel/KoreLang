@@ -7,7 +7,7 @@ import { ConScriptText } from './ConScriptRenderer';
 import { useTranslation } from '../i18n';
 import { searchLexicon, SearchResult } from '../services/searchService';
 import { isApiKeySet } from '../services/geminiService';
-import { Card, Section } from './ui';
+import { ViewLayout } from './ui';
 
 interface LexiconProps {
     entries: LexiconEntry[];
@@ -550,20 +550,83 @@ const Lexicon: React.FC<LexiconProps> = ({
 
     const isSearchActive = debouncedSearchTerm.trim() !== '' || posFilter !== 'ALL';
 
+    const headerActions = (
+        <div className="flex items-center w-full gap-3">
+            <div className="flex items-center flex-1 max-w-2xl gap-2">
+                <div className="relative flex-1">
+                    <Search className="absolute -translate-y-1/2 start-3 top-1/2" size={18} style={{ color: 'var(--text-secondary)' }} />
+                    <input
+                        type="text"
+                        placeholder={t('lexicon.search')}
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full ps-10 pe-4 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 transition-all shadow-sm placeholder:[color:var(--disabled)]"
+                        style={{ backgroundColor: 'var(--surface)', color: 'var(--text-primary)', border: `1px solid var(--border)`, outline: 'none', caretColor: 'var(--accent)' }}
+                    />
+                    {searchTerm && <button onClick={() => setSearchTerm('')} className="absolute -translate-y-1/2 end-3 top-1/2" style={{ color: 'var(--text-secondary)' }}><X size={14} /></button>}
+                </div>
+                <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="flex items-center p-2 transition-colors border rounded-md"
+                    style={showFilters || posFilter !== 'ALL'
+                        ? { backgroundColor: 'var(--elevated)', borderColor: 'var(--accent)', color: 'var(--accent)' }
+                        : { backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
+                    title={t('lexicon.filter_options')}
+                >
+                    <SlidersHorizontal size={16} />
+                </button>
+                {totalConflictCount > 0 && (
+                    <button
+                        onClick={toggleConflictMode}
+                        className="p-2.5 rounded-lg border transition-all flex items-center gap-2"
+                        style={conflictMode !== 'HIDDEN'
+                            ? { backgroundColor: 'rgba(255, 118, 142, 0.15)', borderColor: 'var(--error)', color: 'var(--error)' }
+                            : { backgroundColor: 'var(--surface)', borderColor: 'var(--divider)', color: 'var(--text-secondary)' }}
+                        title={conflictMode === 'HIDDEN' ? t('lexicon.view_mode_pinned') : t('lexicon.view_mode_hide')}
+                    >
+                        {conflictMode === 'HIDDEN' ? <EyeOff size={18} /> : <Eye size={18} />}
+                        {conflictMode !== 'HIDDEN' && <span className="font-mono text-xs font-bold">{totalConflictCount}</span>}
+                    </button>
+                )}
+            </div>
+            <div className="flex items-center gap-4">
+                <span className="hidden font-mono text-sm text-neutral-500 md:inline-block">
+                    {isSearchActive ? `${searchResults.length} ${t('lexicon.results_count')}` : `${entries.length} ${t('lexicon.entries_count')}`}
+                </span>
+                {enableAI && (
+                    <button onClick={() => setActiveTab('GENERATE')} className="flex items-center gap-2 px-3 py-2 font-medium text-purple-400 transition-colors border border-transparent rounded-lg hover:text-purple-300 hover:bg-purple-900/20 hover:border-purple-500/50">
+                        <span className="font-mono text-lg">*</span><span className="hidden sm:inline">{t('lexicon.ai_gen_btn')}</span>
+                    </button>
+                )}
+                <button onClick={openAddModal} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-semibold transition-colors shadow-lg" style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}>
+                    <Plus size={16} /><span className="hidden sm:inline">{t('lexicon.new')}</span>
+                </button>
+            </div>
+        </div>
+    );
+
+    const generateHeaderActions = (
+        <div className="flex items-center gap-3">
+            {!isApiKeySet() && (
+                <div className="hidden md:flex items-center flex-1 gap-3 p-2 text-xs border rounded-lg bg-amber-950/20 border-amber-900/50 text-amber-200">
+                    <ShieldAlert size={14} className="shrink-0 text-amber-500" />
+                    <p>{t('lexicon.ai_requires_key') || 'AI Generation requires an API Key.'} <a href="https://github.com/zRinexD/KoreLang/" target="_blank" rel="noopener noreferrer" className="font-bold underline">{t('lexicon.docs') || 'Documentation'}</a>.</p>
+                </div>
+            )}
+            <button onClick={() => setActiveTab('BROWSE')} className="flex items-center gap-2 text-sm font-bold text-neutral-400 hover:text-white">
+                <ArrowRight className={direction === 'rtl' ? '' : 'rotate-180'} size={16} /> {t('common.cancel')}
+            </button>
+        </div>
+    );
+
     if (activeTab === 'GENERATE' && enableAI) {
         return (
-            <div className="flex flex-col h-full bg-neutral-950">
-                <div className="flex items-center justify-between gap-4 p-4 border-b border-neutral-800 bg-neutral-900/50">
-                    <button onClick={() => setActiveTab('BROWSE')} className="flex items-center gap-2 text-sm font-bold text-neutral-400 hover:text-white">
-                        <ArrowRight className={direction === 'rtl' ? '' : 'rotate-180'} size={16} /> {t('common.cancel')}
-                    </button>
-                    {!isApiKeySet() && (
-                        <div className="flex items-center flex-1 gap-3 p-2 text-xs border rounded-lg bg-amber-950/20 border-amber-900/50 text-amber-200">
-                            <ShieldAlert size={14} className="shrink-0 text-amber-500" />
-                            <p>{t('lexicon.ai_requires_key') || 'AI Generation requires an API Key.'} <a href="https://github.com/zRinexD/KoreLang/" target="_blank" rel="noopener noreferrer" className="font-bold underline">{t('lexicon.docs') || 'Documentation'}</a>.</p>
-                        </div>
-                    )}
-                </div>
+            <ViewLayout
+                icon={BookA}
+                title={t('nav.lexicon')}
+                subtitle={t('lexicon.ai_gen_btn')}
+                headerChildren={generateHeaderActions}
+            >
                 <GenWord
                     onAddWords={handleBulkAdd}
                     onEditEntry={handleDraftEntry}
@@ -574,98 +637,48 @@ const Lexicon: React.FC<LexiconProps> = ({
                     isScriptMode={isScriptMode}
                     phonology={phonology}
                 />
-            </div>
+            </ViewLayout>
         );
     }
 
     return (
-        <div className="flex flex-col h-full" style={{ backgroundColor: 'var(--background)' }}>
-            <div className="sticky top-0 z-20 flex flex-col backdrop-blur-md" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
-
-                <div className="flex items-center justify-between gap-3 px-4 py-1 border-b" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)' }}>
-                    <div className="flex items-center flex-1 max-w-2xl gap-2">
-                        <div className="relative flex-1">
-                            <Search className="absolute -translate-y-1/2 start-3 top-1/2" size={18} style={{ color: 'var(--text-secondary)' }} />
-                            <input
-                                type="text"
-                                placeholder={t('lexicon.search')}
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full ps-10 pe-4 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 transition-all shadow-sm placeholder:[color:var(--disabled)]"
-                                style={{ backgroundColor: 'var(--surface)', color: 'var(--text-primary)', border: `1px solid var(--border)`, outline: 'none', caretColor: 'var(--accent)' }}
-                            />
-                            {searchTerm && <button onClick={() => setSearchTerm('')} className="absolute -translate-y-1/2 end-3 top-1/2" style={{ color: 'var(--text-secondary)' }}><X size={14} /></button>}
+        <ViewLayout
+            icon={BookA}
+            title={t('nav.lexicon')}
+            subtitle={t('lexicon.search')}
+            headerChildren={headerActions}
+        >
+            {(showFilters || posFilter !== 'ALL') && (
+                <div className="px-4 pb-4 duration-200 animate-in slide-in-from-top-2">
+                    <div className="flex flex-wrap items-center gap-4 p-3 border rounded-lg" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
+                        <div className="flex items-center gap-2 pr-4 border-r rtl:border-r-0 rtl:border-l rtl:pr-0 rtl:pl-4" style={{ borderColor: 'var(--divider)' }}>
+                            <Filter size={14} style={{ color: 'var(--text-tertiary)' }} />
+                            <span className="text-xs font-bold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('lexicon.pos')}:</span>
+                            <select value={posFilter} onChange={(e) => setPosFilter(e.target.value)} className="px-2 py-1 text-xs border rounded outline-none focus:ring-1" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)', caretColor: 'var(--accent)', outlineColor: 'var(--accent)' }}>
+                                <option value="ALL">{t('val.any_pos') || 'Any POS'}</option>
+                                {POS_SUGGESTIONS.map(pos => <option key={pos} value={pos}>{getPosLabel(pos)}</option>)}
+                            </select>
                         </div>
-                        <button
-                            onClick={() => setShowFilters(!showFilters)}
-                            className="flex items-center p-2 transition-colors border rounded-md"
-                            style={showFilters || posFilter !== 'ALL'
-                                ? { backgroundColor: 'var(--elevated)', borderColor: 'var(--accent)', color: 'var(--accent)' }
-                                : { backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
-                            title={t('lexicon.filter_options')}
-                        >
-                            <SlidersHorizontal size={16} />
-                        </button>
-                        {totalConflictCount > 0 && (
-                            <button
-                                onClick={toggleConflictMode}
-                                className="p-2.5 rounded-lg border transition-all flex items-center gap-2"
-                                style={conflictMode !== 'HIDDEN'
-                                    ? { backgroundColor: 'rgba(255, 118, 142, 0.15)', borderColor: 'var(--error)', color: 'var(--error)' }
-                                    : { backgroundColor: 'var(--surface)', borderColor: 'var(--divider)', color: 'var(--text-secondary)' }}
-                                title={conflictMode === 'HIDDEN' ? t('lexicon.view_mode_pinned') : t('lexicon.view_mode_hide')}
-                            >
-                                {conflictMode === 'HIDDEN' ? <EyeOff size={18} /> : <Eye size={18} />}
-                                {conflictMode !== 'HIDDEN' && <span className="font-mono text-xs font-bold">{totalConflictCount}</span>}
-                            </button>
-                        )}
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <span className="hidden font-mono text-sm text-neutral-500 md:inline-block">
-                            {isSearchActive ? `${searchResults.length} ${t('lexicon.results_count')}` : `${entries.length} ${t('lexicon.entries_count')}`}
-                        </span>
-                        {enableAI && (
-                            <button onClick={() => setActiveTab('GENERATE')} className="flex items-center gap-2 px-3 py-2 font-medium text-purple-400 transition-colors border border-transparent rounded-lg hover:text-purple-300 hover:bg-purple-900/20 hover:border-purple-500/50">
-                                <span className="font-mono text-lg">*</span><span className="hidden sm:inline">{t('lexicon.ai_gen_btn')}</span>
-                            </button>
-                        )}
-                        <button onClick={openAddModal} className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-semibold transition-colors shadow-lg" style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}>
-                            <Plus size={16} /><span className="hidden sm:inline">{t('lexicon.new')}</span>
-                        </button>
+                        <div className="flex items-center gap-3">
+                            <span className="text-xs font-bold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('lexicon.search_in')}:</span>
+                            <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: 'var(--text-secondary)' }}><input type="checkbox" checked={searchFields.word} onChange={() => toggleField('word')} className="rounded" style={{ borderColor: 'var(--border)' }} />{t('lexicon.word')}</label>
+                            <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: 'var(--text-secondary)' }}><input type="checkbox" checked={searchFields.definition} onChange={() => toggleField('definition')} className="rounded" style={{ borderColor: 'var(--border)' }} />{t('lexicon.definition')}</label>
+                            <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: 'var(--text-secondary)' }}><input type="checkbox" checked={searchFields.etymology} onChange={() => toggleField('etymology')} className="rounded" style={{ borderColor: 'var(--border)' }} />{t('lexicon.etymology')}</label>
+                            <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: 'var(--text-secondary)' }}><input type="checkbox" checked={searchFields.ipa} onChange={() => toggleField('ipa')} className="rounded" style={{ borderColor: 'var(--border)' }} />{t('lexicon.ipa')}</label>
+                        </div>
+                        <div className="pl-4 ml-auto border-l rtl:border-l-0 rtl:border-r rtl:ml-0 rtl:mr-auto rtl:pr-0 rtl:pl-4" style={{ borderColor: 'var(--divider)' }}>
+                            <select value={conflictMode} onChange={(e) => setConflictMode(e.target.value as ConflictViewMode)} className="px-2 py-1 text-xs border rounded outline-none focus:ring-1" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-secondary)', caretColor: 'var(--accent)' }}>
+                                <option value="PINNED">{t('lexicon.view_mode_pinned')}</option>
+                                <option value="HIDDEN">{t('lexicon.view_mode_hide')}</option>
+                                <option value="ONLY">{t('lexicon.view_mode_only')}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-                {(showFilters || posFilter !== 'ALL') && (
-                    <div className="px-4 pb-4 duration-200 animate-in slide-in-from-top-2">
-                        <div className="flex flex-wrap items-center gap-4 p-3 border rounded-lg" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
-                            <div className="flex items-center gap-2 pr-4 border-r rtl:border-r-0 rtl:border-l rtl:pr-0 rtl:pl-4" style={{ borderColor: 'var(--divider)' }}>
-                                <Filter size={14} style={{ color: 'var(--text-tertiary)' }} />
-                                <span className="text-xs font-bold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('lexicon.pos')}:</span>
-                                <select value={posFilter} onChange={(e) => setPosFilter(e.target.value)} className="px-2 py-1 text-xs border rounded outline-none focus:ring-1" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)', caretColor: 'var(--accent)', outlineColor: 'var(--accent)' }}>
-                                    <option value="ALL">{t('val.any_pos') || 'Any POS'}</option>
-                                    {POS_SUGGESTIONS.map(pos => <option key={pos} value={pos}>{getPosLabel(pos)}</option>)}
-                                </select>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <span className="text-xs font-bold uppercase" style={{ color: 'var(--text-tertiary)' }}>{t('lexicon.search_in')}:</span>
-                                <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: 'var(--text-secondary)' }}><input type="checkbox" checked={searchFields.word} onChange={() => toggleField('word')} className="rounded" style={{ borderColor: 'var(--border)' }} />{t('lexicon.word')}</label>
-                                <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: 'var(--text-secondary)' }}><input type="checkbox" checked={searchFields.definition} onChange={() => toggleField('definition')} className="rounded" style={{ borderColor: 'var(--border)' }} />{t('lexicon.definition')}</label>
-                                <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: 'var(--text-secondary)' }}><input type="checkbox" checked={searchFields.etymology} onChange={() => toggleField('etymology')} className="rounded" style={{ borderColor: 'var(--border)' }} />{t('lexicon.etymology')}</label>
-                                <label className="flex items-center gap-1.5 cursor-pointer text-xs" style={{ color: 'var(--text-secondary)' }}><input type="checkbox" checked={searchFields.ipa} onChange={() => toggleField('ipa')} className="rounded" style={{ borderColor: 'var(--border)' }} />{t('lexicon.ipa')}</label>
-                            </div>
-                            <div className="pl-4 ml-auto border-l rtl:border-l-0 rtl:border-r rtl:ml-0 rtl:mr-auto rtl:pr-0 rtl:pl-4" style={{ borderColor: 'var(--divider)' }}>
-                                <select value={conflictMode} onChange={(e) => setConflictMode(e.target.value as ConflictViewMode)} className="px-2 py-1 text-xs border rounded outline-none focus:ring-1" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-secondary)', caretColor: 'var(--accent)' }}>
-                                    <option value="PINNED">{t('lexicon.view_mode_pinned')}</option>
-                                    <option value="HIDDEN">{t('lexicon.view_mode_hide')}</option>
-                                    <option value="ONLY">{t('lexicon.view_mode_only')}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
+            )}
 
-            <div className="relative flex flex-col flex-1 overflow-hidden">
-                <div className="flex-1 px-6 py-4 space-y-3 overflow-y-auto custom-scrollbar">
+            <div className="relative flex flex-col">
+                <div className="px-6 py-4 space-y-3">
                     {isSearchActive ? (
                         <div className="space-y-2">
                             {searchResults.length > 0 ? searchResults.map((entry) => renderEntryCard(entry)) : <div className="py-20 text-center text-neutral-600"><Search size={40} className="mx-auto mb-4 opacity-50" /><p className="text-sm">{t('lexicon.no_matches')}</p><p className="text-xs">{t('lexicon.try_adjust')}</p></div>}
@@ -865,7 +878,7 @@ const Lexicon: React.FC<LexiconProps> = ({
                     </div>
                 </div>
             )}
-        </div>
+        </ViewLayout>
     );
 };
 

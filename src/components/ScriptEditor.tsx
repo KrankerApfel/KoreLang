@@ -4,7 +4,7 @@ import { Feather, Save, Image as ImageIcon, Palette, Spline, RotateCw, RotateCcw
 import { ScriptConfig, ScriptGlyph, ProjectConstraints, GlyphStroke } from '../types';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
-import { Card, Section, ViewHeader } from './ui';
+import { Card, Section, ViewLayout } from './ui';
 
 interface ScriptEditorProps {
     scriptConfig: ScriptConfig;
@@ -306,9 +306,12 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
     };
 
     return (
-        <div className="h-full flex flex-col bg-[var(--background)] overflow-hidden text-slate-200">
-            <ViewHeader icon={Feather} title="Neural-Glyph Studio v4.6" subtitle="Professional Layer Engine">
-                <div className="flex gap-4 items-center">
+        <ViewLayout
+            icon={Feather}
+            title="Neural-Glyph Studio v4.6"
+            subtitle="Professional Layer Engine"
+            headerChildren={
+                <div className="flex gap-4 items-center text-slate-200">
                     <div className="flex gap-1 bg-neutral-900 border border-neutral-800 rounded p-1">
                         <button
                             onClick={toggleSpacingMode}
@@ -346,9 +349,10 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                         <Save size={18} /> {isDirty ? 'Commit Changes' : 'Synced'}
                     </button>
                 </div>
-            </ViewHeader>
+            }
+        >
 
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex overflow-hidden bg-[var(--background)] text-slate-200">
                 <div className={`border-r border-neutral-800 flex flex-col bg-[var(--surface)]/50 transition-all duration-300 ${sidebarCollapsed ? 'w-12' : 'w-72'}`}>
                     <div className="p-3 border-b border-neutral-800 flex justify-between items-center bg-neutral-950">
                         {!sidebarCollapsed && <span className="text-xs font-bold text-neutral-500 uppercase">Symbol Map</span>}
@@ -532,7 +536,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({ scriptConfig, setScriptConf
                     </div>
                 </div>
             </div>
-        </div>
+        </ViewLayout>
     );
 };
 

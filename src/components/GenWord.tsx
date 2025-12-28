@@ -4,6 +4,7 @@ import { generateWords } from '../services/geminiService';
 import { LexiconEntry, PartOfSpeech, ProjectConstraints, ScriptConfig, PhonologyConfig } from '../types';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
+import { ViewLayout } from './ui';
 
 interface GenWordState {
   generated: Array<{ word: string, ipa: string }>;
@@ -100,16 +101,8 @@ const GenWord: React.FC<GenWordProps> = ({ onAddWords, onEditEntry, initialState
   };
 
   return (
-    <div className="h-full flex flex-col p-8 max-w-6xl mx-auto w-full">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold mb-2 flex items-center gap-3" style={{ color: 'var(--text-primary)' }}>
-          <Wand2 style={{ color: 'var(--accent)' }} />
-          {t('genword.title')}
-        </h2>
-        <p style={{ color: 'var(--text-secondary)' }}>{t('genword.desc')}</p>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full">
+    <ViewLayout icon={Wand2} title={t('genword.title')} subtitle={t('genword.desc')}>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full p-8 max-w-6xl mx-auto w-full">
         {/* Controls */}
         <div className="lg:col-span-1 space-y-6">
           <div className="bg-slate-900 p-6 rounded-xl border border-slate-800 shadow-lg">
@@ -221,7 +214,7 @@ const GenWord: React.FC<GenWordProps> = ({ onAddWords, onEditEntry, initialState
           </div>
         </div>
       </div>
-    </div>
+    </ViewLayout>
   );
 };
 

@@ -5,7 +5,7 @@ import MorphologyEditor from './MorphologyEditor';
 import CodeEditor from './CodeEditor';
 import { MorphologyState, ScriptConfig } from '../types';
 import { useTranslation } from '../i18n';
-import { Card, Section, ViewHeader } from './ui';
+import { Card, Section, ViewLayout } from './ui';
 
 interface GrammarEditorProps {
     grammar: string;
@@ -37,9 +37,11 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
     const totalRules = morphology.paradigms.reduce((acc, p) => acc + p.rules.length, 0);
 
     return (
-        <div className="h-full flex flex-col">
-            <ViewHeader icon={Languages} title={t('grammar.title')} subtitle={t('grammar.desc')}>
-                {/* View Switcher Tabs */}
+        <ViewLayout
+            icon={Languages}
+            title={t('grammar.title')}
+            subtitle={t('grammar.desc')}
+            headerChildren={
                 <div className="flex p-1 rounded-lg border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
                     <button
                         onClick={() => setActiveTab('SYNTAX')}
@@ -66,7 +68,8 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                         <Table size={16} /> {t('grammar.tab.morphology')}
                     </button>
                 </div>
-            </ViewHeader>
+            }
+        >
 
             <div className="p-6 max-w-7xl mx-auto w-full flex-1 overflow-hidden flex flex-col gap-6">
             {activeTab === 'SYNTAX' ? (
@@ -179,7 +182,7 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                 </div>
             )}
             </div>
-        </div>
+        </ViewLayout>
     );
 };
 
