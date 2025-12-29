@@ -3,7 +3,7 @@ import { Wand2, RefreshCw, Volume2, Info, LayoutGrid, EyeOff, ShieldAlert, Plus,
 import { generatePhonology, isApiKeySet } from '../services/geminiService';
 import { PhonologyConfig, Phoneme } from '../types';
 import { useTranslation } from '../i18n';
-import { Card, Section, ViewLayout } from './ui';
+import { Card, Section, ViewLayout, FormField, ActionButton, CompactButton, Modal, SearchInput } from './ui';
 import PhonemeGrid from './PhonemeGrid';
 
 interface PhonologyEditorProps {
@@ -21,6 +21,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
     const { t } = useTranslation();
     const [prompt, setPrompt] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showAIModal, setShowAIModal] = useState(false);
     const [pendingPhonology, setPendingPhonology] = useState<PhonologyConfig | null>(null);
     const [showPreview, setShowPreview] = useState(false);
     const [isPreviewMinimized, setIsPreviewMinimized] = useState(false);
@@ -123,104 +124,73 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
         return classifiedVowels.filter(p => normalize(p.height) === nh && normalize(p.backness) === nb);
     };
 
+    const headerActions = enableAI ? (
+        <div className="flex items-center gap-3">
+            <CompactButton
+                onClick={() => setShowAIModal(true)}
+                icon={<Wand2 size={14} />}
+                label={t('phonology.generate_btn')}
+                color="var(--primary)"
+            />
+            {pendingPhonology && (
+                <CompactButton
+                    onClick={() => setShowPreview(!showPreview)}
+                    icon={<Eye size={14} />}
+                    label={showPreview ? t('phonology.hide_preview') : t('phonology.show_preview')}
+                />
+            )}
+        </div>
+    ) : null;
+
     return (
         <ViewLayout
             icon={Volume2}
             title={t('phonology.title')}
             subtitle={t('phonology.subtitle')}
+            headerChildren={headerActions}
         >
             <div className="flex h-full gap-6 p-6 overflow-hidden">
 
             {/* Left Panel: Controls */}
             <div className="w-80 flex flex-col gap-6 shrink-0">
-
-                {/* AI GENERATOR PANEL (Conditional) */}
-                {enableAI ? (
-                    <Card className="p-5">
-                        <Section title={t('phonology.ai_generator')} icon={<Wand2 size={20} />} className="mb-4">
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="text-xs font-bold uppercase tracking-wider mb-2 block" style={{ color: 'var(--text-tertiary)' }}>{t('phonology.vibe_label')}</label>
-                                    <textarea
-                                        value={prompt}
-                                        onChange={(e) => setPrompt(e.target.value)}
-                                        placeholder={t('phonology.vibe_placeholder')}
-                                        className="w-full border rounded-lg p-3 text-sm focus:ring-2 focus:ring-purple-500 outline-none h-32 resize-none placeholder:text-[var(--text-tertiary)] placeholder:opacity-50"
-                                        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-tertiary)' }}
-                                    />
-                                    {!isApiKeySet() && (
-                                        <div className="mt-3 p-3 bg-amber-950/20 border border-amber-900/50 rounded-lg text-[11px] text-amber-200 flex items-start gap-3">
-                                            <ShieldAlert size={14} className="shrink-0 text-amber-500" />
-                                            <div>
-                                                {t('console.ai_failed_no_key')} <a href="https://github.com/zRinexD/KoreLang/" target="_blank" rel="noopener noreferrer" className="underline font-bold">{t('menu.docs')}</a>.
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                                <button
-                                    onClick={handleGenerate}
-                                    disabled={loading || !prompt}
-                                    className="w-full disabled:opacity-50 font-bold py-3 rounded-lg flex items-center justify-center gap-2 transition-all shadow-lg"
-                                    style={{ backgroundColor: (loading || !prompt) ? 'var(--disabled)' : 'var(--primary)', color: 'var(--text-primary)' }}
-                                >
-                                    {loading ? <RefreshCw className="animate-spin" style={{ color: 'var(--text-primary)' }} /> : <Wand2 size={18} style={{ color: 'var(--text-primary)' }} />}
-                                    {loading ? t('phonology.analyze_btn') : t('phonology.generate_btn')}
-                                </button>
-                                {pendingPhonology && (
-                                    <button
-                                        onClick={() => setShowPreview(!showPreview)}
-                                        className="w-full mt-2 font-bold py-2 rounded-lg flex items-center justify-center gap-2 transition-all border"
-                                        style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--accent)', color: 'var(--text-secondary)' }}
-                                    >
-                                        <Eye size={16} />
-                                        {showPreview ? t('phonology.hide_preview') : t('phonology.show_preview')}
-                                    </button>
-                                )}
-                            </div>
-                        </Section>
-                    </Card>
-                ) : (
-                    <Card className="p-5 flex flex-col items-center justify-center text-center opacity-50">
-                        <EyeOff size={32} className="mb-2" style={{ color: 'var(--text-secondary)' }} />
-                        <h3 className="font-bold" style={{ color: 'var(--text-secondary)' }}>{t('phonology.ai_disabled_title')}</h3>
-                        <p className="text-xs mt-1" style={{ color: 'var(--text-secondary)' }}>{t('phonology.ai_disabled_desc')}</p>
-                    </Card>
-                )}
-
-                <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-5 shadow-lg flex-1 overflow-y-auto">
+                <Card className="p-5 flex-1 overflow-y-auto">
                     <Section title={t('phonology.stats')} icon={<Info size={20} />} className="mb-4">
-                        <div className="space-y-4 text-sm">
-                            <div className="flex justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
-                                <span style={{ color: 'var(--text-tertiary)' }}>{t('phonology.inventory')}</span>
-                                <span className="font-mono" style={{ color: 'var(--text-tertiary)' }}>{(data.consonants?.length || 0) + (data.vowels?.length || 0)}</span>
+                        <div className="space-y-4">
+                            <div className="flex justify-between items-center py-2 px-3 rounded" style={{ backgroundColor: 'var(--surface)' }}>
+                                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{t('phonology.inventory')}</span>
+                                <span className="font-mono text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{(data.consonants?.length || 0) + (data.vowels?.length || 0)}</span>
                             </div>
-                            <div className="flex justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
-                                <span style={{ color: 'var(--text-tertiary)' }}>{t('phonology.consonants')}</span>
-                                <span className="font-mono" style={{ color: 'var(--text-tertiary)' }}>{data.consonants?.length || 0}</span>
+                            <div className="flex justify-between items-center py-2 px-3 rounded" style={{ backgroundColor: 'var(--surface)' }}>
+                                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{t('phonology.consonants')}</span>
+                                <span className="font-mono text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{data.consonants?.length || 0}</span>
                             </div>
-                            <div className="flex justify-between border-b pb-2" style={{ borderColor: 'var(--border)' }}>
-                                <span style={{ color: 'var(--text-tertiary)' }}>{t('phonology.vowels')}</span>
-                                <span className="font-mono" style={{ color: 'var(--text-tertiary)' }}>{data.vowels?.length || 0}</span>
+                            <div className="flex justify-between items-center py-2 px-3 rounded" style={{ backgroundColor: 'var(--surface)' }}>
+                                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{t('phonology.vowels')}</span>
+                                <span className="font-mono text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{data.vowels?.length || 0}</span>
                             </div>
-                            <div>
-                                <span className="block mb-1" style={{ color: 'var(--text-tertiary)' }}>{t('phonology.syllable_struct')}</span>
+                            <FormField label={t('phonology.syllable_struct')}>
                                 <input
                                     value={data.syllableStructure || ''}
                                     onChange={(e) => setData({ ...data, syllableStructure: e.target.value })}
                                     placeholder={t('phonology.syllable_placeholder')}
-                                    className="w-full px-2 py-1 rounded font-mono text-xs border outline-none focus:ring-1 focus:ring-emerald-500 placeholder:text-[var(--text-tertiary)] placeholder:opacity-50"
-                                    style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-tertiary)' }}
+                                    className="w-full px-3 py-2 rounded font-mono text-sm border outline-none focus:ring-2 transition-all"
+                                    style={{ 
+                                        backgroundColor: 'var(--surface)', 
+                                        borderColor: 'var(--border)',
+                                        color: 'var(--text-primary)',
+                                        '--tw-ring-color': 'var(--accent)'
+                                    } as React.CSSProperties}
                                 />
-                            </div>
-                            <button
+                            </FormField>
+                            <ActionButton
                                 onClick={clearAll}
-                                className="w-full mt-4 flex items-center justify-center gap-2 text-xs text-red-500 hover:text-red-400 border border-red-900/30 py-2 rounded transition-colors"
-                            >
-                                <Trash2 size={12} /> {t('phonology.clear_inventory')}
-                            </button>
+                                icon={<Trash2 size={16} />}
+                                title={t('phonology.clear_inventory')}
+                                className="bg-red-900/20 border-red-900/30 hover:border-red-700"
+                            />
                         </div>
                     </Section>
-                </div>
+                </Card>
             </div>
 
             {/* Right Panel: Charts */}
@@ -456,6 +426,64 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                         </>
                     )}
                 </div>
+            )}
+
+            {/* AI Generator Modal */}
+            {enableAI && (
+                <Modal
+                    isOpen={showAIModal}
+                    onClose={() => setShowAIModal(false)}
+                    title={t('phonology.ai_generator')}
+                    icon={<Wand2 size={18} />}
+                    maxWidth="max-w-md"
+                    footer={(
+                        <>
+                            <button
+                                onClick={() => setShowAIModal(false)}
+                                className="px-4 py-2 text-sm font-medium transition-colors"
+                                style={{ color: 'var(--text-secondary)' }}
+                            >
+                                {t('common.cancel')}
+                            </button>
+                            <CompactButton
+                                onClick={() => {
+                                    handleGenerate();
+                                    setShowAIModal(false);
+                                }}
+                                icon={loading ? <RefreshCw className="animate-spin" size={14} /> : <Wand2 size={14} />}
+                                label={loading ? t('phonology.analyze_btn') : t('phonology.generate_btn')}
+                                disabled={loading || !prompt}
+                                color="var(--primary)"
+                            />
+                        </>
+                    )}
+                >
+                    <FormField label={t('phonology.vibe_label')}>
+                        <textarea
+                            value={prompt}
+                            onChange={(e) => setPrompt(e.target.value)}
+                            placeholder={t('phonology.vibe_placeholder')}
+                            autoFocus
+                            className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 outline-none resize-none"
+                            style={{ 
+                                backgroundColor: 'var(--surface)', 
+                                borderColor: 'var(--border)', 
+                                color: 'var(--text-primary)',
+                                '--tw-ring-color': 'var(--accent)',
+                                minHeight: '8rem'
+                            } as React.CSSProperties}
+                            rows={4}
+                        />
+                    </FormField>
+                    {!isApiKeySet() && (
+                        <div className="p-3 bg-amber-950/20 border border-amber-900/50 rounded-lg text-xs text-amber-200 flex items-start gap-3">
+                            <ShieldAlert size={14} className="shrink-0 text-amber-500" />
+                            <div>
+                                {t('console.ai_failed_no_key')} <a href="https://github.com/zRinexD/KoreLang/" target="_blank" rel="noopener noreferrer" className="underline font-bold">{t('menu.docs')}</a>.
+                            </div>
+                        </div>
+                    )}
+                </Modal>
             )}
             </div>
         </ViewLayout>
