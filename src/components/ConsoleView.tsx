@@ -305,15 +305,13 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
           </div>
         </div>
 
-        {!isMinimized && (
-          <div className="flex-1 flex flex-col overflow-hidden bg-[var(--background)]">
-            <ConsoleConfig
-              loadingAI={loadingAI}
-              author={author}
-              currentView={currentView}
-            />
-          </div>
-        )}
+        <div className={`flex-1 flex flex-col overflow-hidden bg-[var(--background)] ${isMinimized ? 'hidden' : ''}`}>
+          <ConsoleConfig
+            loadingAI={loadingAI}
+            author={author}
+            currentView={currentView}
+          />
+        </div>
       </div>
     </div>
   );

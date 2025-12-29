@@ -1,5 +1,5 @@
 import { Info, Zap } from "lucide-react";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo, memo } from "react";
 import { LogEntry, ViewState } from "../types";
 import { useTranslation } from "../i18n";
 import { useCommandExecutor, resolveModal } from "../state/commandStore";
@@ -19,9 +19,73 @@ interface ConsoleConfigProps {
   currentView?: ViewState;
 }
 
+// Memoized LogItem component to prevent unnecessary re-renders
+interface LogItemProps {
+  log: LogEntry;
+  author: string;
+  terminalHeader: string;
+  onDoubleClick: () => void;
+}
+
+const LogItem = memo(({ log, author, terminalHeader, onDoubleClick }: LogItemProps) => {
+  const isTerminalHeader = log.content.includes("██╗") || log.content.includes("KoreLang");
+  
+  const getTextColor = () => {
+    switch (log.type) {
+      case "error": return "text-red-500";
+      case "warning": return "text-[var(--warning)]";
+      case "success": return "text-emerald-400";
+      case "info": return "text-[var(--info)]";
+      case "command": return "text-[var(--text-1)] font-bold";
+      default: return "text-[var(--text-2)]";
+    }
+  };
+
+  const renderContent = () => {
+    if (log.type === "command") {
+      return (
+        <>
+          <span className="text-emerald-500">KoreLang-@{author}:~$</span>
+          <span className="ml-3">{log.content}</span>
+        </>
+      );
+    }
+
+    const cats = ['lexicon', 'project', 'sb', 'console'];
+    const firstWord = log.content.split(' ')[0].toLowerCase();
+    
+    if (cats.includes(firstWord)) {
+      return (
+        <>
+          <span style={{ color: 'var(--primary)' }}>{firstWord}</span>
+          {log.content.slice(firstWord.length)}
+        </>
+      );
+    }
+    
+    return log.content;
+  };
+
+  return (
+    <div
+      className={`flex flex-col cursor-text ${getTextColor()}`}
+      onDoubleClick={onDoubleClick}
+    >
+      <div className="flex gap-3 leading-relaxed">
+        <span className={isTerminalHeader ? "whitespace-pre text-blue-400 font-bold leading-none" : ""} style={isTerminalHeader ? { whiteSpace: 'pre' } : {}}>
+          {renderContent()}
+        </span>
+      </div>
+      {log.component && <div className="mt-2 mb-4">{log.component}</div>}
+    </div>
+  );
+});
+
 const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user", currentView }) => {
   const { t } = useTranslation();
-  const [history, setHistory] = useState<LogEntry[]>([]);
+  const [history, setHistory] = useState<LogEntry[]>([
+    { type: "info", content: TERMINAL_HEADER, timestamp: new Date().toLocaleTimeString() }
+  ]);
   const [input, setInput] = useState("");
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyCursor, setHistoryCursor] = useState<number>(0);
@@ -37,7 +101,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
     { cmd: "cd", args: "<section>", desc: "Navigate to a section", options: ["dashboard", "lexicon", "phonology", "grammar", "morphology", "genevolve", "genword", "script", "notebook", "console"] },
     { cmd: "help", args: "[-cat <category>]", desc: "Show help", options: ["project", "lexicon", "sb", "console"] },
     { cmd: "clear", args: "", desc: "Clear the terminal" },
-    { cmd: "cls", args: "", desc: "Alias for CLEAR" },
+    { cmd: "clr", args: "", desc: "Alias for CLEAR" },
     { cmd: "about", args: "", desc: "About this console" },
   ];
 
@@ -55,7 +119,6 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
       name: "Lexicon",
       commands: [
         { cmd: "--add", args: "-w <word> -p <pos> -d <def> [-ipa <ipa>] [-ety <etym>] [-drv <derived>]", desc: "Add lexicon entry" },
-        { cmd: "--list", args: "", desc: "View lexicon" },
         { cmd: "--delete", args: "-w <word>", desc: "Delete an entry" },
         { cmd: "--search", args: "-q <term>", desc: "Search lexicon" },
       ]
@@ -285,7 +348,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
     const cmd = rawCommand.toLowerCase();
 
     // Root commands
-    if (cmd === "clear" || cmd === "cls") {
+    if (cmd === "clear" || cmd === "clr") {
       clearTerminal();
       return;
     }
@@ -302,42 +365,43 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
       if (category && COMMAND_CATEGORIES[category as keyof typeof COMMAND_CATEGORIES]) {
         const cat = COMMAND_CATEGORIES[category as keyof typeof COMMAND_CATEGORIES];
         addLog("output", "");
-        addLog("output", `[${category.toUpperCase()}]`, (
+        addLog("output", "", (
           <span style={{ color: 'var(--primary)' }}>
             [{category.toUpperCase()}]
           </span>
         ));
         cat.commands.forEach(c => {
-          addLog("output", `  ${category} ${c.cmd} ${c.args}`, (
+          addLog("output", "", (
             <span>
               <span style={{ color: 'var(--primary)' }}>{category}</span>
               <span style={{ color: 'var(--warning)' }}> {c.cmd}</span>
               <span style={{ color: 'var(--info)' }}> {c.args}</span>
+              <span style={{ color: 'var(--text-2)' }}> | {c.desc}</span>
             </span>
           ));
-          log.info(`    ${c.desc}`);
         });
         addLog("output", "");
+        log.info(`Available categories: ${CATEGORY_NAMES.join(', ')}`);
       } else if (category) {
         log.error(`Unknown category: ${category}`);
         log.info(`Available categories: ${Object.keys(COMMAND_CATEGORIES).join(', ')}`);
       } else {
         // Display only root commands
         addLog("output", "");
-        addLog("output", "KORELANG CONSOLE - ROOT COMMANDS", (
+        addLog("output", "", (
           <span style={{ color: 'var(--primary)' }}>
             KORELANG CONSOLE - ROOT COMMANDS
           </span>
         ));
         addLog("output", "");
         ROOT_COMMANDS.forEach(c => {
-          addLog("output", `  ${c.cmd} ${c.args}`, (
+          addLog("output", "", (
             <span>
               <span style={{ color: 'var(--warning)' }}>{c.cmd}</span>
               <span style={{ color: 'var(--info)' }}> {c.args}</span>
+              <span style={{ color: 'var(--text-2)' }}> | {c.desc}</span>
             </span>
           ));
-          addLog("info", `    ${c.desc}`);
         });
         addLog("output", "");
         log.info(`Type 'help -cat <category>' to see available categories:`);
@@ -519,9 +583,6 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
           executeCommand("addLexiconEntry", newEntry);
           log.success(`Entry added: "${newEntry.word}" (${newEntry.pos})`);
           log.info(`Definition: ${newEntry.definition}`);
-        } else if (subCmd === "--list") {
-          executeCommand("navigateTo", { view: "LEXICON" });
-          log.success("Navigated to Lexicon view.");
         } else if (subCmd === "--delete") {
           const word = params["-w"];
           if (!word) {
@@ -589,45 +650,16 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
       {/* Terminal history */}
       <div className="flex-1 p-4 space-y-2 overflow-y-auto custom-scrollbar" onClick={() => inputRef.current?.focus()}>
         {history.map((log, i) => (
-          <div
+          <LogItem
             key={i}
-            className={`flex flex-col cursor-text ${
-              log.type === "error"
-                ? "text-red-500"
-                : log.type === "warning"
-                ? "text-[var(--warning)]"
-                : log.type === "success"
-                ? "text-emerald-400"
-                : log.type === "command"
-                ? "text-[var(--text-1)] font-bold"
-                : "text-[var(--text-2)]"
-            }`}
+            log={log}
+            author={author}
+            terminalHeader={TERMINAL_HEADER}
             onDoubleClick={() => {
-              // Copy log content to clipboard on double-click
-              const textToCopy = log.component ? log.content : log.content;
+              const textToCopy = log.content;
               navigator.clipboard.writeText(textToCopy);
             }}
-          >
-            <div className="flex gap-3 leading-relaxed">
-              {log.type === "command" && <span className="text-emerald-500">KoreLang-@{author}:~$</span>}
-              <span className={log.content === TERMINAL_HEADER ? "whitespace-pre text-blue-400 font-bold leading-none" : ""}>
-                {(() => {
-                  const cats = ['lexicon', 'project', 'sb', 'console'];
-                  const firstWord = log.content.split(' ')[0].toLowerCase();
-                  if (cats.includes(firstWord)) {
-                    return (
-                      <>
-                        <span style={{ color: 'var(--primary)' }}>{firstWord}</span>
-                        {log.content.slice(firstWord.length)}
-                      </>
-                    );
-                  }
-                  return log.content;
-                })()}
-              </span>
-            </div>
-            {log.component && <div className="mt-2 mb-4">{log.component}</div>}
-          </div>
+          />
         ))}
         <div ref={bottomRef} />
       </div>
