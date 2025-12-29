@@ -3,12 +3,15 @@ import { UIModal } from "../ui/types";
 
 export type CommandId =
   | "toggleSidebar"
+  | "openSidebar"
+  | "closeSidebar"
   | "openConsole"
   | "closeConsole"
   | "maximizeConsole"
   | "minimizeConsole"
   | "newProject"
   | "openProject"
+  | "loadProject"
   | "exportProject"
   | "openModal"
   | "toggleScriptMode"
@@ -18,7 +21,11 @@ export type CommandId =
   | "setAIEnabled"
   | "setApiKey"
   | "setTheme"
-  | "updateCustomTheme";
+  | "updateCustomTheme"
+  | "navigateTo"
+  | "addLexiconEntry"
+  | "deleteLexiconEntry"
+  | "searchLexicon";
 
 export type CommandPayload = {
   modal?: UIModal | string;
@@ -29,6 +36,20 @@ export type CommandPayload = {
   customTheme?: Record<string, string>;
   colorKey?: string;
   colorValue?: string;
+  view?: string;
+  word?: string;
+  pos?: string;
+  definition?: string;
+  ipa?: string;
+  etymology?: string;
+  derivedFrom?: string;
+  timestamp?: number;
+  query?: string;
+  name?: string;
+  author?: string;
+  description?: string;
+  path?: string;
+  data?: any;
 };
 
 export type CommandHandlers = Partial<

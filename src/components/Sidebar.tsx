@@ -15,6 +15,8 @@ import { CompactButton } from "./ui";
 
 export interface SidebarHandle {
   toggle: () => void;
+  open: () => void;
+  close: () => void;
 }
 
 interface SidebarProps {
@@ -29,9 +31,11 @@ const Sidebar = forwardRef<SidebarHandle, SidebarProps>(
 
     const toggleSidebar = () => setIsOpen((o) => !o);
 
-    // Expose only toggle function to parent
+    // Expose toggle, open, and close functions to parent
     useImperativeHandle(ref, () => ({
       toggle: toggleSidebar,
+      open: () => setIsOpen(true),
+      close: () => setIsOpen(false),
     }));
 
     const authoringItems = [

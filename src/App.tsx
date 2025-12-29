@@ -40,6 +40,8 @@ const AppContent: React.FC = () => {
   useEffect(() => {
     registerCommands({
       toggleSidebar: () => sidebarRef.current?.toggle(),
+      openSidebar: () => sidebarRef.current?.open(),
+      closeSidebar: () => sidebarRef.current?.close(),
       openConsole: () => setIsConsoleOpen(true),
       closeConsole: () => setIsConsoleOpen(false),
       maximizeConsole: () => {
@@ -56,6 +58,11 @@ const AppContent: React.FC = () => {
       },
       newProject: () => open("wizard"),
       openProject: project.handlers.openProject,
+      loadProject: (payload) => {
+        if (payload?.data) {
+          project.loadProjectData(payload.data);
+        }
+      },
       exportProject: project.handlers.exportProject,
       openModal: (payload) => {
         const modal = resolveModal(payload?.modal);
