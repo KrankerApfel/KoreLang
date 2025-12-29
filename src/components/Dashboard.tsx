@@ -52,8 +52,6 @@ const Dashboard: React.FC<DashboardProps> = ({
   // LIMIT TO 8 ENTRIES to prevent dashboard saturation
   const recentEntries = [...entries].reverse().slice(0, 8);
 
-  const hasScript = scriptConfig && scriptConfig.glyphs.length > 0;
-
   return (
     <ViewLayout
       icon={Building2}
@@ -89,13 +87,18 @@ const Dashboard: React.FC<DashboardProps> = ({
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Recent Activity - RESTRICTED HEIGHT */}
           <Card className="lg:col-span-2 p-6 flex flex-col max-h-[400px]">
-            <Section title={t('dashboard.recent_words')} icon={<FileText size={16} />} className="mb-4">
-              {isScriptMode && hasScript && (
-                <span className="inline-flex items-center gap-2 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider animate-pulse" style={{ backgroundColor: 'rgb(from var(--primary) r g b / 0.2)', color: 'var(--primary)', borderColor: 'rgb(from var(--primary) r g b / 0.5)', border: '1px solid' }}>
-                  <Feather size={12} /> Active
-                </span>
-              )}
-            </Section>
+            <Section
+              title={t('dashboard.recent_words')}
+              icon={<FileText size={16} />}
+              className="mb-4"
+              right={
+                isScriptMode ? (
+                  <span className="inline-flex items-center gap-2 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider animate-pulse" style={{ backgroundColor: 'rgb(from var(--primary) r g b / 0.2)', color: 'var(--primary)', borderColor: 'rgb(from var(--primary) r g b / 0.5)', border: '1px solid' }}>
+                    <Feather size={12} /> Active
+                  </span>
+                ) : undefined
+              }
+            />
 
             <div className="flex-1 space-y-1 overflow-y-auto custom-scrollbar">
               {recentEntries.length > 0 ? (
@@ -107,8 +110,8 @@ const Dashboard: React.FC<DashboardProps> = ({
                     onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgb(from var(--surface) r g b / 0.5)'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
                   >
-                      <div className="flex items-center gap-4">
-                      {isScriptMode && hasScript ? (
+                    <div className="flex items-center gap-4">
+                      {isScriptMode ? (
                         <span className="text-xl font-bold" style={{ color: 'var(--accent)' }}>
                           <ConScriptText text={entry.word} scriptConfig={scriptConfig} />
                         </span>

@@ -6,6 +6,7 @@ interface SectionProps {
   children?: ReactNode;
   className?: string;
   icon?: ReactNode;
+  right?: ReactNode;
 }
 
 /**
@@ -18,28 +19,34 @@ export const Section: React.FC<SectionProps> = ({
   subtitle,
   children,
   className = '',
-  icon
+  icon,
+  right
 }) => {
   return (
     <div className={className}>
-      <div className="flex items-center gap-2 mb-2">
-        {icon && <div className="shrink-0" style={{ color: 'var(--accent)' }}>{React.cloneElement(icon as React.ReactElement, { size: 18 })}</div>}
-        <div>
-          <h4 
-            className="text-xs font-bold tracking-wider uppercase"
-            style={{ color: 'var(--text-primary)' }}
-          >
-            {title}
-          </h4>
-          {subtitle && (
-            <p 
-              className="mt-1 text-[10px]"
-              style={{ color: 'var(--text-tertiary)' }}
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          {icon && <div className="shrink-0" style={{ color: 'var(--accent)' }}>{React.cloneElement(icon as React.ReactElement, { size: 18 })}</div>}
+          <div>
+            <h4 
+              className="text-xs font-bold tracking-wider uppercase"
+              style={{ color: 'var(--text-primary)' }}
             >
-              {subtitle}
-            </p>
-          )}
+              {title}
+            </h4>
+            {subtitle && (
+              <p 
+                className="mt-1 text-[10px]"
+                style={{ color: 'var(--text-tertiary)' }}
+              >
+                {subtitle}
+              </p>
+            )}
+          </div>
         </div>
+        {right && (
+          <div className="ml-4">{right}</div>
+        )}
       </div>
       {children}
     </div>
