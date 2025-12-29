@@ -5,6 +5,7 @@ import { PhonologyConfig, Phoneme } from '../types';
 import { useTranslation } from '../i18n';
 import { Card, Section, ViewLayout, FormField, ActionButton, CompactButton, Modal, SearchInput, StatBadge, CIcon, VIcon } from './ui';
 import PhonemeGrid from './PhonemeGrid';
+import { PhonemeModel } from '../types';
 
 interface PhonologyEditorProps {
     data: PhonologyConfig;
@@ -153,6 +154,14 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
         </div>
     );
 
+    // Liste métier des phonèmes (à personnaliser selon la langue/projet)
+    const phonemeModels: PhonemeModel[] = [
+        { id: 'p', symbol: 'p', name: 'Voiceless Bilabial Plosive', category: 'consonant', features: { place: 'bilabial', manner: 'plosive' } },
+        { id: 'b', symbol: 'b', name: 'Voiced Bilabial Plosive', category: 'consonant', features: { place: 'bilabial', manner: 'plosive' } },
+        { id: 't', symbol: 't', name: 'Voiceless Alveolar Plosive', category: 'consonant', features: { place: 'alveolar', manner: 'plosive' } },
+        // ... Ajoutez tous les phonèmes nécessaires ici
+    ];
+
     return (
         <ViewLayout
             icon={Volume2}
@@ -172,12 +181,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                     title={t('phonology.consonants')}
                     icon={<CIcon size={16} />}
                     isVowels={false}
-                    getPhonemes={(manner, place) => getConsonants(manner, place)}
-                    onCellClick={(manner, place) => {
-                        setEditingPhoneme({ type: 'consonant', manner, place });
-                        setVoiced(false);
-                        setSymbol('');
-                    }}
+                    getPhonemes={(manner: string, place: string) => getConsonants(manner, place)}
                     onRemove={(phoneme) => handleRemovePhoneme(phoneme, 'consonant')}
                     renderPhoneme={(p) => (
                         <span
@@ -193,21 +197,14 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                         titleKey: 'phonology.unclassified_consonants',
                         position: 'top',
                     }}
+                    phonemeModels={phonemeModels}
                 />
                 </div>
-
-                {/* Vowels Chart */}
-                <div className="flex-[2] h-full min-h-0">
                 <PhonemeGrid
                     title={t('phonology.vowels')}
                     icon={<VIcon size={16} />}
                     isVowels={true}
-                    getPhonemes={(height, back) => getVowels(height, back)}
-                    onCellClick={(height, backness) => {
-                        setEditingPhoneme({ type: 'vowel', height, backness });
-                        setRounded(false);
-                        setSymbol('');
-                    }}
+                    getPhonemes={(height: string, back: string) => getVowels(height, back)}
                     onRemove={(phoneme) => handleRemovePhoneme(phoneme, 'vowel')}
                     renderPhoneme={(v) => (
                         <span
@@ -235,6 +232,7 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                             </span>
                         ),
                     }}
+                    phonemeModels={phonemeModels}
                 />
                 </div>
 
@@ -475,7 +473,6 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
                     )}
                 </Modal>
             )}
-            </div>
         </ViewLayout>
     );
 };

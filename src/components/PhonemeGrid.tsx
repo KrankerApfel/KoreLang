@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { X, Plus } from 'lucide-react';
-import { Phoneme } from '../types';
+import { Phoneme, PhonemeModel } from '../types';
 import { Card, Section } from './ui';
+import AddPhonemeModal from './AddPhonemeModal';
 import { useTranslation } from '../i18n';
 
 
@@ -55,7 +56,7 @@ export interface PhonemeGridProps {
     icon: React.ReactNode;
     isVowels: boolean;
     getPhonemes: (row: string, col: string) => Phoneme[];
-    onCellClick: (row: string, col: string) => void;
+    // onCellClick: (row: string, col: string) => void;
     onRemove: (phoneme: Phoneme) => void;
     renderPhoneme: (phoneme: Phoneme) => React.ReactNode;
     minWidth?: number;
@@ -68,18 +69,31 @@ export interface PhonemeGridProps {
     };
 }
 
-const PhonemeGrid: React.FC<PhonemeGridProps> = ({
+
+interface AddPhonemeModalState {
+    open: boolean;
+    row: string | null;
+    col: string | null;
+}
+
+interface PhonemeGridWithModelsProps extends PhonemeGridProps {
+    phonemeModels: PhonemeModel[];
+}
+
+const PhonemeGrid: React.FC<PhonemeGridWithModelsProps> = ({
     title,
     icon,
     isVowels,
     getPhonemes,
-    onCellClick,
     onRemove,
     renderPhoneme,
     minWidth = 600,
     legend,
     unclassified,
+    phonemeModels,
 }) => {
+        // État pour la modal d'ajout de phonème
+        const [addModal, setAddModal] = useState<AddPhonemeModalState>({ open: false, row: null, col: null });
     const { t } = useTranslation();
     
     const columns = isVowels ? BACKNESS : PLACES;
@@ -159,7 +173,7 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
                                     key={`${row}-${col}`}
                                     className={`p-1 text-center transition-colors cursor-pointer group hover:bg-[var(--surface)] border-l`}
                                     style={{ borderColor: 'var(--text-tertiary)' }}
-                                    onClick={() => onCellClick(row, col)}
+                                    onClick={() => setAddModal({ open: true, row, col })}
                                 >
                                     <div className="flex justify-center gap-1 items-center min-h-[20px]">
                                         {phonemes.length > 0 ? (
@@ -170,8 +184,8 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
                                                         onClick={(e) => { e.stopPropagation(); onRemove(p); }}
                                                         className="absolute hidden rounded-full -top-4 -right-2 group-hover/ph:block"
                                                         style={{ color: 'var(--error)', backgroundColor: 'var(--background)' }}
-                                                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
-                                                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8' }
+                                                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1' }
                                                     >
                                                         <X size={10} />
                                                     </button>
@@ -193,6 +207,19 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
             </tbody>
         </table>
         </div>
+        {/* Nouvelle modal d'ajout de phonème */}
+        <AddPhonemeModal
+            isOpen={addModal.open}
+            onClose={() => setAddModal({ open: false, row: null, col: null })}
+            place={addModal.col || ''}
+            manner={addModal.row || ''}
+            phonemes={phonemeModels}
+            onSelect={(phoneme) => {
+                // TODO: intégrer la logique d'ajout dans la grille
+                setAddModal({ open: false, row: null, col: null });
+                // ...
+            }}
+        />
 
         {legend ? (
             <div className="mt-2 text-[10px] text-center shrink-0" style={{ color: 'var(--text-tertiary)' }}>
