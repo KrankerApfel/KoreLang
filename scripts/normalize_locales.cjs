@@ -65,7 +65,17 @@ function main() {
     path.join('src', 'locales', 'fr.json'),
     path.join('src', 'locales', 'de.json'),
   ];
-  files = files.map(f => path.resolve(process.cwd(), f));
+  
+  // If no arguments, normalize ALL locale files
+  if (!args.length) {
+    const localesDir = path.join('src', 'locales');
+    files = fs.readdirSync(localesDir)
+      .filter(f => f.endsWith('.json'))
+      .map(f => path.join(localesDir, f));
+  } else {
+    files = files.map(f => path.resolve(process.cwd(), f));
+  }
+  
   for (const f of files) {
     if (!fs.existsSync(f)) {
       console.error(`File not found: ${f}`);

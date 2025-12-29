@@ -14,10 +14,10 @@
   "console": {
     "ai_applied": "IA appliquée : {{count}} mots modifiés.",
     "ai_applied_count": "IA appliquée : {{count}} mots modifiés.",
-    "ai_disabled": "Service IA désactivé.",
+    "ai_disabled": "IA désactivé.",
     "ai_failed_no_key": "Commande IA échouée : Aucune clé API configurée.",
     "ai_pipeline_failed": "Échec du pipeline IA.",
-    "ai_service_disabled": "Service IA désactivé.",
+    "ai_service_disabled": "IA désactivé.",
     "analyzing": "Analyse",
     "available_commands": "COMMANDES DISPONIBLES :",
     "configure_key_msg": "Configurez votre clé API dans le menu Préférences (icône Paramètres) pour activer les fonctionnalités IA.",
