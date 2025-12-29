@@ -4,7 +4,7 @@ import { LexiconEntry, SoundChangeRule, ScriptConfig } from '../types';
 import { evolveWords } from '../services/geminiService';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
-import { ViewLayout, CompactButton } from './ui';
+import { ViewLayout, CompactButton, Card, FormField } from './ui';
 
 interface GenEvolveProps {
   entries: LexiconEntry[];
@@ -65,42 +65,61 @@ const GenEvolve: React.FC<GenEvolveProps> = ({ entries, onUpdateEntries, rules, 
 
                 <div className="flex-1 flex overflow-hidden">
             {/* Rules Editor */}
-            <div className="w-1/3 bg-slate-900 border-r border-slate-800 p-6 overflow-y-auto">
+            <div className="w-1/3 border-r p-6 overflow-y-auto" style={{ borderColor: 'var(--border)' }}>
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-lg font-semibold" style={{ color: 'var(--text-secondary)' }}>{t('genevolve.sound_changes')}</h3>
-                    <button onClick={addRule} className="text-sm" style={{ color: 'var(--accent)' }}>+ {t('genevolve.add_rule')}</button>
+                    <CompactButton
+                        onClick={addRule}
+                        variant="ghost"
+                        icon={<span style={{ fontSize: '14px' }}>+</span>}
+                        label=""
+                    />
                 </div>
                 
                 <div className="space-y-4">
                     {rules.map((rule, index) => (
-                        <div key={rule.id} className="bg-slate-950 p-4 rounded-lg border border-slate-800 relative group">
-                            <div className="absolute -left-2 -top-2 w-6 h-6 bg-slate-700 rounded-full flex items-center justify-center text-xs font-bold border border-slate-900" style={{ color: 'var(--text-primary)' }}>
+                        <Card key={rule.id} className="relative p-4">
+                            <div className="absolute -left-2 -top-2 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border" style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}>
                                 {index + 1}
                             </div>
-                            <div className="space-y-2">
-                                <input 
+                            <div className="space-y-2 mt-2">
+                                <FormField label={t('genevolve.rule')}>
+                                  <input
+                                    type="text"
                                     value={rule.rule}
-                                    onChange={(e) => updateRule(rule.id, 'rule', e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateRule(rule.id, 'rule', e.target.value)}
                                     placeholder={t('genevolve.rule_placeholder')}
-                                    className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 font-mono text-sm"
-                                    style={{ color: 'var(--accent)' }}
-                                />
-                                <input 
+                                    className="w-full px-2 py-1 rounded text-sm font-mono border"
+                                    style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--accent)' }}
+                                  />
+                                </FormField>
+                                <FormField label={t('genevolve.description')}>
+                                  <input
+                                    type="text"
                                     value={rule.description}
-                                    onChange={(e) => updateRule(rule.id, 'description', e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => updateRule(rule.id, 'description', e.target.value)}
                                     placeholder={t('genevolve.desc_placeholder')}
-                                    className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs"
-                                    style={{ color: 'var(--text-secondary)' }}
-                                />
+                                    className="w-full px-2 py-1 rounded text-sm border"
+                                    style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-primary)' }}
+                                  />
+                                </FormField>
                             </div>
-                            <button onClick={() => removeRule(rule.id)} className="absolute top-2 right-2 text-slate-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity">×</button>
-                        </div>
+                            <button 
+                                onClick={() => removeRule(rule.id)} 
+                                className="absolute top-2 right-2 text-sm transition-colors" 
+                                style={{ color: 'var(--text-secondary)' }}
+                                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--error)'}
+                                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}
+                            >
+                                ×
+                            </button>
+                        </Card>
                     ))}
                 </div>
             </div>
 
             {/* Results Preview */}
-            <div className="flex-1 bg-slate-950 p-6 overflow-y-auto">
+            <div className="flex-1 p-6 overflow-y-auto flex flex-col" style={{ backgroundColor: 'var(--surface)' }}>
                 <div className="flex justify-between items-center mb-6">
                     <h3 className="text-lg font-semibold flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
                         {t('genevolve.preview')}
@@ -118,14 +137,16 @@ const GenEvolve: React.FC<GenEvolveProps> = ({ entries, onUpdateEntries, rules, 
                 </div>
 
                 {preview.length === 0 ? (
-                    <div className="text-center text-slate-600 mt-20">
-                        <ArrowRight size={48} className="mx-auto mb-4 opacity-30" />
-                        <p>{t('genevolve.placeholder')}</p>
+                    <div className="flex-1 flex items-center justify-center">
+                        <div className="text-center" style={{ color: 'var(--text-secondary)' }}>
+                            <ArrowRight size={48} className="mx-auto mb-4 opacity-30" />
+                            <p>{t('genevolve.placeholder')}</p>
+                        </div>
                     </div>
                 ) : (
                     <div className="grid gap-4">
                         {preview.map((entry, idx) => (
-                            <div key={idx} className="bg-slate-900 border border-slate-800 rounded-lg p-4 flex items-center gap-4">
+                            <Card key={idx} className="p-4 flex items-center gap-4">
                                 <div className="w-1/3 text-right">
                                     <div className="line-through text-sm" style={{ color: 'var(--text-secondary)' }}>{entries.find(e => e.id === entry.id)?.word || entry.word}</div>
                                     <div className="font-mono text-xs" style={{ color: 'var(--text-secondary)' }}>/{entries.find(e => e.id === entry.id)?.ipa || entry.ipa}/</div>
@@ -138,7 +159,7 @@ const GenEvolve: React.FC<GenEvolveProps> = ({ entries, onUpdateEntries, rules, 
                                     <div className="font-mono text-sm" style={{ color: 'var(--accent)', opacity: 0.7 }}>/{entry.ipa}/</div>
                                     <div className="text-xs mt-1 italic" style={{ color: 'var(--text-secondary)' }}>{entry.etymology}</div>
                                 </div>
-                            </div>
+                            </Card>
                         ))}
                     </div>
                 )}

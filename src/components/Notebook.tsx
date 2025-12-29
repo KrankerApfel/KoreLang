@@ -59,7 +59,7 @@ const Notebook: React.FC<NotebookProps> = ({ scriptConfig, isScriptMode, text, s
         >
 
             {/* Split View */}
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex h-full w-full overflow-hidden">
                 {/* Input Area */}
                 <div className="flex-1 border-r relative" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
                     <textarea

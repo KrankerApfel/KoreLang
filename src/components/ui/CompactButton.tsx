@@ -3,7 +3,7 @@ import React, { ReactNode } from 'react';
 interface CompactButtonProps {
   onClick: () => void;
   icon: ReactNode;
-  label: string;
+  label?: string;
   disabled?: boolean;
   variant?: 'solid' | 'outline' | 'ghost';
   color?: string;
@@ -111,11 +111,11 @@ export const CompactButton: React.FC<CompactButtonProps> = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold transition-colors disabled:cursor-not-allowed hover:opacity-90 ${className}`}
+      className={`flex items-center justify-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold transition-colors disabled:cursor-not-allowed hover:opacity-90 ${!hideLabel && label ? '' : 'justify-center'} ${className}`}
       style={getButtonStyles()}
     >
       {icon}
-      {!hideLabel && <span className="hidden sm:inline">{label}</span>}
+      {!hideLabel && label && <span className="hidden sm:inline">{label}</span>}
     </button>
   );
 };

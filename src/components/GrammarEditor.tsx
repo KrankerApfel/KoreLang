@@ -124,14 +124,14 @@ const GrammarEditor: React.FC<GrammarEditorProps> = ({ grammar, setGrammar, morp
                                     style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-primary)', border: '1px solid' }}
                                     placeholder={t('grammar.type_sentence')}
                                 />
-                                <button
+                                <CompactButton
                                     onClick={handleAnalyze}
                                     disabled={loading}
-                                    className="p-2 rounded transition-colors disabled:opacity-50 shadow-lg"
-                                    style={{ backgroundColor: 'var(--accent)', color: 'var(--text-primary)' }}
-                                >
-                                    <Play size={18} fill="currentColor" />
-                                </button>
+                                    variant="outline"
+                                    color="var(--accent)"
+                                    icon={<Play size={18} fill="currentColor" />}
+                                    label=""
+                                />
                             </div>
                         </Card>
 
