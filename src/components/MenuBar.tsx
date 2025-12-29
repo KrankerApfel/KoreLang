@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { AppSettings } from "../types";
 import { useTranslation } from "../i18n";
-import { MonoToggle } from './ui';
+import { MonoToggle } from "./ui";
 
 interface MenuItem {
   label: string;
@@ -83,7 +83,6 @@ const MenuBar: React.FC<MenuBarProps> = ({
     if (fileInputRef.current) fileInputRef.current.value = "";
     setActiveMenu(null);
   };
-
 
   const menuItems: MenuGroup[] = [
     {
@@ -178,20 +177,14 @@ const MenuBar: React.FC<MenuBarProps> = ({
     },
   ];
 
-  const getThemeLabel = () => {
-    switch (settings.theme) {
-      case "dark":
-        return t("settings.dark");
-      case "cappuccino":
-        return t("settings.cappuccino");
-      default:
-        // Fallback: prettify theme key (kebab-case → Title Case)
-        return settings.theme.split('-').map(w => w[0]?.toUpperCase() + w.slice(1)).join(' ');
-    }
-  };
-
   return (
-    <header className="z-50 flex items-center h-10 px-2 border-b select-none" style={{ backgroundColor: 'var(--secondary)', borderColor: 'var(--border)' }}>
+    <header
+      className="z-50 flex items-center h-10 px-2 border-b select-none"
+      style={{
+        backgroundColor: "var(--secondary)",
+        borderColor: "var(--border)",
+      }}
+    >
       <input
         type="file"
         ref={fileInputRef}
@@ -199,7 +192,10 @@ const MenuBar: React.FC<MenuBarProps> = ({
         className="hidden"
         accept=".json"
       />
-      <div className="flex items-center gap-2 px-2 font-bold me-4" style={{ color: 'var(--accent)' }}>
+      <div
+        className="flex items-center gap-2 px-2 font-bold me-4"
+        style={{ color: "var(--accent)" }}
+      >
         <span>⚡ KL</span>
       </div>
 
@@ -213,11 +209,18 @@ const MenuBar: React.FC<MenuBarProps> = ({
             <button
               className={`h-full px-3 text-sm flex items-center gap-1 transition-colors`}
               style={{
-                backgroundColor: activeMenu === menu.id ? 'var(--accent)' : undefined,
-                color: 'var(--text-primary)'
+                backgroundColor:
+                  activeMenu === menu.id ? "var(--accent)" : undefined,
+                color: "var(--text-primary)",
               }}
-              onMouseEnter={(e) => activeMenu !== menu.id && (e.currentTarget.style.backgroundColor = 'var(--surface)')}
-              onMouseLeave={(e) => activeMenu !== menu.id && (e.currentTarget.style.backgroundColor = 'transparent')}
+              onMouseEnter={(e) =>
+                activeMenu !== menu.id &&
+                (e.currentTarget.style.backgroundColor = "var(--surface)")
+              }
+              onMouseLeave={(e) =>
+                activeMenu !== menu.id &&
+                (e.currentTarget.style.backgroundColor = "transparent")
+              }
               onClick={() =>
                 setActiveMenu(activeMenu === menu.id ? null : menu.id)
               }
@@ -230,14 +233,20 @@ const MenuBar: React.FC<MenuBarProps> = ({
                   className="fixed inset-0 z-40"
                   onClick={() => setActiveMenu(null)}
                 />
-                <div className="absolute z-50 w-56 py-1 border shadow-xl start-0 top-full rounded-b-md" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
+                <div
+                  className="absolute z-50 w-56 py-1 border shadow-xl start-0 top-full rounded-b-md"
+                  style={{
+                    backgroundColor: "var(--surface)",
+                    borderColor: "var(--border)",
+                  }}
+                >
                   {menu.items.map((item, idx) => {
                     if (item.type === "separator")
                       return (
                         <div
                           key={idx}
                           className="h-px mx-2 my-1"
-                          style={{ backgroundColor: 'var(--divider)' }}
+                          style={{ backgroundColor: "var(--divider)" }}
                         />
                       );
                     const Icon = item.icon;
@@ -245,14 +254,15 @@ const MenuBar: React.FC<MenuBarProps> = ({
                       <button
                         key={idx}
                         className="w-full text-left px-4 py-1.5 text-sm flex items-center justify-between group"
-                        style={{ color: 'var(--text-primary)' }}
+                        style={{ color: "var(--text-primary)" }}
                         onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = 'var(--accent)';
-                          e.currentTarget.style.color = 'var(--text-primary)';
+                          e.currentTarget.style.backgroundColor =
+                            "var(--accent)";
+                          e.currentTarget.style.color = "var(--text-primary)";
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = 'var(--text-primary)';
+                          e.currentTarget.style.backgroundColor = "transparent";
+                          e.currentTarget.style.color = "var(--text-primary)";
                         }}
                         onClick={() => {
                           item.action();
@@ -263,13 +273,16 @@ const MenuBar: React.FC<MenuBarProps> = ({
                           {Icon && (
                             <Icon
                               size={14}
-                              style={{ color: 'var(--text-secondary)' }}
+                              style={{ color: "var(--text-secondary)" }}
                             />
                           )}
                           {item.label}
                         </span>
                         {item.shortcut && (
-                          <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>
+                          <span
+                            className="text-xs"
+                            style={{ color: "var(--text-secondary)" }}
+                          >
                             {item.shortcut}
                           </span>
                         )}
@@ -290,16 +303,17 @@ const MenuBar: React.FC<MenuBarProps> = ({
           <MonoToggle
             active={isScriptMode}
             onClick={toggleScriptMode}
-            icon={<Feather size={14} className={isScriptMode ? "animate-pulse" : ""} />}
+            icon={
+              <Feather
+                size={14}
+                className={isScriptMode ? "animate-pulse" : ""}
+              />
+            }
             label="Script Mode"
             title="Toggle Native Neural-Glyph Rendering"
             color="var(--primary)"
           />
         )}
-        <div className="w-px h-4 bg-neutral-800" />
-        <div className="mr-2 text-xs text-neutral-500">
-          {t("menu.env")}: {getThemeLabel()}
-        </div>
       </div>
     </header>
   );
