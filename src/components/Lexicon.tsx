@@ -8,6 +8,7 @@ import { useTranslation } from '../i18n';
 import { searchLexicon, SearchResult } from '../services/searchService';
 import { isApiKeySet } from '../services/geminiService';
 import { ViewLayout, CompactButton } from './ui';
+import LexiconLetterIndicator from './LexiconLetterIndicator';
 
 interface LexiconProps {
     entries: LexiconEntry[];
@@ -116,6 +117,16 @@ const Lexicon: React.FC<LexiconProps> = ({
             return 'C';
         }).join('');
     };
+
+    // Scroll to the group for the clicked letter (preserves layout; no visual changes)
+    const scrollToLetter = useCallback((letter: string) => {
+        try {
+            const groupEl = document.querySelector(`[data-letter="${CSS.escape(letter)}"]`);
+            if (groupEl && 'scrollIntoView' in groupEl) {
+                (groupEl as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        } catch {}
+    }, []);
 
     const checkConformance = useCallback((word: string, pos: string): string[] => {
         const errors: string[] = [];
@@ -422,10 +433,10 @@ const Lexicon: React.FC<LexiconProps> = ({
             <div
                 key={entry.id}
                 onClick={(e) => handleCardCopy(entry, e)}
-                className="p-4 cursor-pointer transition-all group relative overflow-hidden rounded-lg border hover:border-[var(--accent)]"
+                className="p-4 cursor-pointer transition-all group relative overflow-hidden rounded-lg border border-[var(--border)] hover:border-[var(--accent)]"
                 style={{
                     backgroundColor: 'var(--surface)',
-                    borderColor: isInvalid ? 'var(--error)' : successMsgId === entry.id || copyFlashId === entry.id ? 'var(--success)' : 'var(--border)',
+                    borderColor: isInvalid ? 'var(--error)' : (successMsgId === entry.id || copyFlashId === entry.id ? 'var(--success)' : undefined),
                     transform: clickAnimId === entry.id ? 'scale(0.98)' : 'scale(1)',
                     transition: 'transform 0.15s ease, border-color 0.5s ease-out'
                 }}
@@ -532,12 +543,13 @@ const Lexicon: React.FC<LexiconProps> = ({
                 {/* Success message on copy with neon glow and blink */}
                 {successMsgId === entry.id && (
                     <div
-                        className="absolute bottom-3 right-3 flex items-center gap-1.5 text-sm font-medium pointer-events-none animate-in fade-in duration-200"
+                        className="absolute bottom-3 right-3 flex items-center gap-1.5 text-sm font-medium pointer-events-none animate-in fade-in duration-200 z-50"
                         style={{
                             color: 'var(--success)',
                             textShadow: '0 0 8px var(--success), 0 0 16px var(--success)',
                             animation: successMsgId === entry.id ? 'blinkFadeOut 1.5s ease-in-out forwards' : 'none',
-                            fontWeight: 600
+                            fontWeight: 600,
+                            zIndex: 100
                         }}
                     >
                         <span>{t('common.copied') || 'Copy'}</span>
@@ -696,23 +708,14 @@ const Lexicon: React.FC<LexiconProps> = ({
                             const isConflictGroup = letter === t('lexicon.conflicts_group');
                             const groupCount = groupedEntries[letter]?.length || 0;
                             return (
-                                <div key={letter} className="space-y-3">
+                                <div key={letter} className="space-y-3" data-letter={letter}>
                                     <div className="sticky flex justify-start" style={{ top: '40px', left: 0, marginLeft: '-24px', zIndex: 50 }}>
-                                        <span
-                                            className="inline-flex items-baseline gap-2 px-3 py-1 text-xs font-bold leading-none tracking-wide shadow-sm"
-                                            style={{
-                                                borderRadius: '0 0 10px 0',
-                                                ...(isConflictGroup
-                                                    ? { backgroundColor: 'rgba(255, 0, 0, 0.08)', color: 'var(--error)', border: '1px solid var(--error)' }
-                                                    : { backgroundColor: 'var(--surface)', color: 'var(--text-secondary)', border: '1px solid var(--divider)' })
-                                            }}
-                                        >
-                                            {isConflictGroup && <AlertTriangle size={14} />}
-                                            <span className="leading-none">{letter}</span>
-                                            <span className="text-[10px] font-light leading-none" style={isConflictGroup ? { color: 'var(--error)', opacity: 0.6 } : { color: 'var(--text-tertiary)' }}>
-                                                {groupCount}
-                                            </span>
-                                        </span>
+                                        <LexiconLetterIndicator
+                                            letter={letter}
+                                            count={groupCount}
+                                            isConflictGroup={isConflictGroup}
+                                            onClick={() => scrollToLetter(letter)}
+                                        />
                                     </div>
                                     <div className="grid grid-cols-1 gap-3 mt-2">
                                         {groupedEntries[letter].map((entry) => renderEntryCard(entry))}
