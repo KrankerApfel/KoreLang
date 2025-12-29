@@ -29,6 +29,7 @@ export function useShortcuts({
       { keys: ["e"], alt: true, action: () => executeCommand("exportProject") },
       { keys: ["+"], alt: true, action: () => executeCommand("zoomIn") },
       { keys: ["-"], alt: true, action: () => executeCommand("zoomOut") },
+      { keys: [","], ctrl: true, action: () => executeCommand("openModal", { modal: "settings" }) },
     ];
 
     const onKeyDown = (e: KeyboardEvent) => {

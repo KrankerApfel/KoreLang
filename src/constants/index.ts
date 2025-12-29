@@ -7,6 +7,7 @@ export const DEFAULT_CUSTOM: CustomTheme = {
   background: '#FAF8F4',
   surface: '#F3EFEA',
   elevated: '#EBE5DE',
+  inputField: '#3A2A1F',
   textPrimary: '#2D1F15',
   textSecondary: '#5C4A3D',
   textTertiary: '#8B7765',

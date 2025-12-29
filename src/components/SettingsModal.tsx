@@ -17,6 +17,7 @@ const THEME_PRESETS = {
     background: "#0E1118",
     surface: "#151B26",
     elevated: "#1C2332",
+    inputField: "#1C2332",
     textPrimary: "#E5E9F2",
     textSecondary: "#A7B3C6",
     textTertiary: "#7B8499",
@@ -36,6 +37,7 @@ const THEME_PRESETS = {
     background: "#FAF8F4",
     surface: "#F3EFEA",
     elevated: "#EBE5DE",
+    inputField: "#3A2A1F",
     textPrimary: "#2D1F15",
     textSecondary: "#5C4A3D",
     textTertiary: "#8B7765",
@@ -56,6 +58,7 @@ const THEME_PRESETS = {
     background: "#FAF7F2",
     surface: "#F3EEE6",
     elevated: "#ECE6DE",
+    inputField: "#2F2A22",
     textPrimary: "#2C2A26",
     textSecondary: "#60584F",
     textTertiary: "#9A9186",
@@ -75,6 +78,7 @@ const THEME_PRESETS = {
     background: "#F7FBFF",
     surface: "#F0F7FD",
     elevated: "#E7F2FB",
+    inputField: "#17212B",
     textPrimary: "#1E2A33",
     textSecondary: "#5A6C79",
     textTertiary: "#8A9AA6",
@@ -95,6 +99,7 @@ const THEME_PRESETS = {
     background: "#0C0813",
     surface: "#130E1D",
     elevated: "#1B1427",
+    inputField: "#1B1427",
     textPrimary: "#F1E8FF",
     textSecondary: "#C3B1E6",
     textTertiary: "#9585B8",
@@ -114,6 +119,7 @@ const THEME_PRESETS = {
     background: "#121417",
     surface: "#191C21",
     elevated: "#20242A",
+    inputField: "#20242A",
     textPrimary: "#F1F3F5",
     textSecondary: "#AEB4BC",
     textTertiary: "#868D96",
@@ -134,6 +140,7 @@ const THEME_PRESETS = {
     background: "#FFFBF7",
     surface: "#FFF3E8",
     elevated: "#FFE8D5",
+    inputField: "#2B180C",
     textPrimary: "#2A1A0E",
     textSecondary: "#5C3E2A",
     textTertiary: "#8A6A52",
@@ -153,6 +160,7 @@ const THEME_PRESETS = {
     background: "#FFF7FB",
     surface: "#FFEFF6",
     elevated: "#FFE6F1",
+    inputField: "#2A1E29",
     textPrimary: "#3A2A36",
     textSecondary: "#6E586A",
     textTertiary: "#988497",
@@ -284,7 +292,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
                     value={apiKey}
                     onChange={(e) => handleApiKeyChange(e.target.value)}
                     className="w-full px-3 py-2 pr-10 text-sm transition-colors border rounded outline-none focus:ring-1"
-                    style={{ backgroundColor: 'var(--elevated)', borderColor: 'var(--border)', color: 'var(--text-primary)', caretColor: 'var(--accent)' }}
+                    style={{ backgroundColor: 'var(--inputfield)', borderColor: 'var(--border)', color: 'var(--text-primary)', caretColor: 'var(--accent)' }}
                     placeholder={t('settings.api_key_ph')}
                   />
                   <CompactButton
@@ -457,6 +465,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ settings, updateSettings 
                     { key: 'background', label: t('settings.background') || 'Arrière-plan principal' },
                     { key: 'surface', label: t('settings.surface') || 'Surface / Panneaux' },
                     { key: 'elevated', label: t('settings.elevated') || 'Élevé / En-têtes' },
+                    { key: 'inputField', label: t('settings.inputfield') || 'Champ de saisie' },
                     { key: 'textPrimary', label: t('settings.text_primary') || 'Texte principal' },
                     { key: 'textSecondary', label: t('settings.text_secondary') || 'Texte secondaire' },
                     { key: 'textTertiary', label: t('settings.text_tertiary') || 'Texte tertiaire' },

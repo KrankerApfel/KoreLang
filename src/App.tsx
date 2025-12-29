@@ -93,7 +93,7 @@ const AppContent: React.FC = () => {
         if (!payload?.colorKey || !payload?.colorValue) return;
         const current = project.settings.customTheme || {
           primary: "", secondary: "", accent: "",
-          background: "", surface: "", elevated: "",
+          background: "", surface: "", elevated: "", inputField: "",
           textPrimary: "", textSecondary: "", textTertiary: "",
           border: "", divider: "",
           success: "", warning: "", error: "", info: "",

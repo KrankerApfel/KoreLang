@@ -7,6 +7,7 @@ const THEMES = {
     background: '#0E1118',
     surface: '#151B26',
     elevated: '#1C2332',
+    inputField: '#1C2332',
     textPrimary: '#E5E9F2',
     textSecondary: '#A7B3C6',
     textTertiary: '#7B8499',
@@ -27,6 +28,7 @@ const THEMES = {
     background: '#FAF8F4',
     surface: '#F3EFEA',
     elevated: '#EBE5DE',
+    inputField: '#3A2A1F',
     textPrimary: '#2D1F15',
     textSecondary: '#5C4A3D',
     textTertiary: '#8B7765',
@@ -48,6 +50,7 @@ const THEMES = {
     background: '#FAF7F2',
     surface: '#F3EEE6',
     elevated: '#ECE6DE',
+    inputField: '#2F2A22',
     textPrimary: '#2C2A26',
     textSecondary: '#60584F',
     textTertiary: '#9A9186',
@@ -68,6 +71,7 @@ const THEMES = {
     background: '#F7FBFF',
     surface: '#F0F7FD',
     elevated: '#E7F2FB',
+    inputField: '#17212B',
     textPrimary: '#1E2A33',
     textSecondary: '#5A6C79',
     textTertiary: '#8A9AA6',
@@ -89,6 +93,7 @@ const THEMES = {
     background: '#0C0813',
     surface: '#130E1D',
     elevated: '#1B1427',
+    inputField: '#1B1427',
     textPrimary: '#F1E8FF',
     textSecondary: '#C3B1E6',
     textTertiary: '#9585B8',
@@ -109,6 +114,7 @@ const THEMES = {
     background: '#121417',
     surface: '#191C21',
     elevated: '#20242A',
+    inputField: '#20242A',
     textPrimary: '#F1F3F5',
     textSecondary: '#AEB4BC',
     textTertiary: '#868D96',
@@ -131,6 +137,7 @@ const THEMES = {
     background: '#FFF7FB',
     surface: '#FFEFF6',
     elevated: '#FFE6F1',
+    inputField: '#2A1E29',
     textPrimary: '#3A2A36',
     textSecondary: '#6E586A',
     textTertiary: '#988497',
@@ -151,6 +158,7 @@ const THEMES = {
     background: '#FFFBF7',
     surface: '#FFF3E8',
     elevated: '#FFE8D5',
+    inputField: '#2B180C',
     textPrimary: '#2A1A0E',
     textSecondary: '#5C3E2A',
     textTertiary: '#8A6A52',
@@ -179,6 +187,9 @@ export const useTheme = (themeName: string, customTheme?: any) => {
     root.style.setProperty("--background", theme.background);
     root.style.setProperty("--surface", theme.surface);
     root.style.setProperty("--elevated", theme.elevated);
+    if ((theme as any).inputField) {
+      root.style.setProperty("--inputfield", (theme as any).inputField);
+    }
     root.style.setProperty("--text-primary", theme.textPrimary);
     root.style.setProperty("--text-secondary", theme.textSecondary);
     root.style.setProperty("--text-tertiary", theme.textTertiary);

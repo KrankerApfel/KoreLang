@@ -9,6 +9,7 @@
     --background: #0E1118;
     --surface: #151B26;
     --elevated: #1C2332;
+  --inputfield: #1C2332;
     --text-primary: #E5E9F2;
     --text-secondary: #A7B3C6;
     --text-tertiary: #7B8499;
@@ -146,6 +147,12 @@ input[type="range"]::-moz-range-thumb {
 
 /* Override Tailwind utility classes to use theme CSS variables */
 @layer components {
+  /* Inputs default to themed input field */
+  input, textarea, select {
+    background-color: var(--inputfield);
+    color: var(--text-primary);
+    border-color: var(--border);
+  }
   /* Background colors */
   .bg-slate-800 {
     background-color: var(--surface) !important;

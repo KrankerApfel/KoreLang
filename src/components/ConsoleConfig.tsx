@@ -126,9 +126,9 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ history, setHistory, load
   };
 
   return (
-    <div className="h-full flex flex-col bg-[var(--bg-main)] font-mono text-sm relative">
+    <div className="h-full flex flex-col bg-[var(--inputfield)] font-mono text-sm relative">
       {/* Header */}
-      <div className="p-2 border-b border-white/5 flex justify-between items-center text-xs text-[var(--text-2)]">
+      <div className="p-2 border-b border-white/5 bg-[var(--inputfield)] flex justify-between items-center text-xs text-[var(--text-2)]">
         <span className="flex items-center gap-2">
           <Info size={10} /> KoreLang kernel_v1.1
         </span>
@@ -164,7 +164,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ history, setHistory, load
       </div>
 
       {/* Input */}
-      <div className="p-2 bg-[var(--bg-main)] border-t border-white/5 flex items-center">
+      <div className="p-2 bg-[var(--inputfield)] border-t border-white/5 flex items-center">
         <span className="font-bold text-emerald-500">KoreLang-@{author}:~$</span>
         <input
           ref={inputRef}

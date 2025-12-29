@@ -160,6 +160,7 @@ export interface CustomTheme {
   background: string;
   surface: string;
   elevated: string;
+  inputField: string;
   textPrimary: string;
   textSecondary: string;
   textTertiary: string;
