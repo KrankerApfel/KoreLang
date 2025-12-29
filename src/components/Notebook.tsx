@@ -31,38 +31,17 @@ const Notebook: React.FC<NotebookProps> = ({ scriptConfig, isScriptMode, text, s
             title={t('notebook.title')}
             subtitle={t('notebook.subtitle')}
             headerChildren={
-                <>
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded" style={{ backgroundColor: 'var(--elevated)' }}>
-                        <Type size={14} style={{ color: 'var(--text-secondary)' }} />
-                        <Slider
-                            value={fontSize}
-                            onChange={setFontSize}
-                            min={12}
-                            max={128}
-                            className="w-24"
-                        />
-                        <span className="text-[10px] font-mono w-8 text-center" style={{ color: 'var(--text-secondary)' }}>{fontSize}px</span>
-                    </div>
-
-                    <div className="flex gap-1">
-                        <div title={t('notebook.clear')}>
-                            <CompactButton
-                                onClick={() => setText('')}
-                                variant="ghost"
-                                icon={<Eraser size={16} />}
-                                label=""
-                            />
-                        </div>
-                        <div title={t('notebook.copy')}>
-                            <CompactButton
-                                onClick={() => navigator.clipboard.writeText(text)}
-                                variant="ghost"
-                                icon={<Copy size={16} />}
-                                label=""
-                            />
-                        </div>
-                    </div>
-                </>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded" style={{ backgroundColor: 'var(--surface)' }}>
+                    <Type size={14} style={{ color: 'var(--text-secondary)' }} />
+                    <Slider
+                        value={fontSize}
+                        onChange={setFontSize}
+                        min={12}
+                        max={128}
+                        className="w-24"
+                    />
+                    <span className="text-[10px] font-mono w-8 text-center" style={{ color: 'var(--text-secondary)' }}>{fontSize}px</span>
+                </div>
             }
         >
 
@@ -70,9 +49,25 @@ const Notebook: React.FC<NotebookProps> = ({ scriptConfig, isScriptMode, text, s
             <div className="flex h-full w-full overflow-hidden gap-4 p-4">
                 {/* Input Area */}
                 <div className="flex-1 flex flex-col overflow-hidden rounded border" style={{ backgroundColor: 'var(--surface)', borderColor: 'var(--border)' }}>
-                    <div className="flex justify-between items-center p-4 border-b" style={{ borderColor: 'var(--border)' }}>
+                    <div className="flex justify-between items-center px-4 py-3 border-b" style={{ borderColor: 'var(--border)' }}>
                         <h3 className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>{t('notebook.input')}</h3>
-                        <StatBadge value={text.length} label="chars" />
+                        <div className="flex items-center gap-1">
+                            <CompactButton
+                                onClick={() => setText('')}
+                                variant="ghost"
+                                icon={<Eraser size={14} />}
+                                label=""
+                                title={t('notebook.clear')}
+                            />
+                            <CompactButton
+                                onClick={() => navigator.clipboard.writeText(text)}
+                                variant="ghost"
+                                icon={<Copy size={14} />}
+                                label=""
+                                title={t('notebook.copy')}
+                            />
+                            <StatBadge value={text.length} label="chars" />
+                        </div>
                     </div>
                     <textarea
                         value={text}
@@ -90,7 +85,7 @@ const Notebook: React.FC<NotebookProps> = ({ scriptConfig, isScriptMode, text, s
                     className={`flex-1 flex flex-col overflow-hidden rounded border custom-scrollbar ${scriptConfig?.direction === 'ttb' ? 'overflow-x-auto' : ''}`}
                     style={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)' }}
                 >
-                    <div className="flex justify-between items-center p-4 border-b" style={{ borderColor: 'var(--border)' }}>
+                    <div className="flex justify-between items-center px-4 py-3 border-b" style={{ borderColor: 'var(--border)' }}>
                         <h3 className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>{t('notebook.live_renderer')}</h3>
                     </div>
                     <div className="flex-1 p-4 overflow-y-auto">

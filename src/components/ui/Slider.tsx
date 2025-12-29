@@ -25,10 +25,10 @@ export const Slider: React.FC<SliderProps> = ({
             step={step}
             value={value}
             onChange={(e) => onChange(Number(e.target.value))}
-            className={`h-1 rounded-lg appearance-none cursor-pointer ${className}`}
+            className={`h-1 rounded-lg appearance-none cursor-pointer slider-custom ${className}`}
             style={{
-                backgroundColor: 'var(--elevated)',
-                accentColor: 'var(--accent)',
+                backgroundColor: 'var(--text-tertiary)',
+                opacity: 0.3,
             }}
         />
     );
