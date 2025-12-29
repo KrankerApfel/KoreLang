@@ -34,7 +34,7 @@ const AppContent: React.FC = () => {
   
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [isScriptMode, setIsScriptMode] = useState(false);
-  const [zoomLevel, setZoomLevel] = useState(100);
+  const [zoomLevel, setZoomLevel] = useState(80);
   const [consoleHistory, setConsoleHistory] = useState<LogEntry[]>([]);
   const sidebarRef = React.useRef<SidebarHandle>(null);
 
