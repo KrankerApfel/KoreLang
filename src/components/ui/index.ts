@@ -2,6 +2,7 @@
 export { Card } from './Card';
 export { Section } from './Section';
 export { StatBox } from './StatBox';
+export { StatBadge } from './StatBadge';
 export { ActionButton } from './ActionButton';
 export { FormField } from './FormField';
 export { ViewHeader } from './ViewHeader';

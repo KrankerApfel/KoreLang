@@ -166,7 +166,7 @@ const AppContent: React.FC = () => {
         </main>
       </div>
       <Modals modals={modals} settings={project.settings} updateSettings={project.updateSettings} />
-      <Footer project={project} />
+      <Footer project={project} currentView={project.currentView as ViewState} />
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { Wand2, RefreshCw, Volume2, Info, LayoutGrid, EyeOff, ShieldAlert, Plus,
 import { generatePhonology, isApiKeySet } from '../services/geminiService';
 import { PhonologyConfig, Phoneme } from '../types';
 import { useTranslation } from '../i18n';
-import { Card, Section, ViewLayout, FormField, ActionButton, CompactButton, Modal, SearchInput } from './ui';
+import { Card, Section, ViewLayout, FormField, ActionButton, CompactButton, Modal, SearchInput, StatBadge } from './ui';
 import PhonemeGrid from './PhonemeGrid';
 
 interface PhonologyEditorProps {
@@ -124,23 +124,38 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
         return classifiedVowels.filter(p => normalize(p.height) === nh && normalize(p.backness) === nb);
     };
 
-    const headerActions = enableAI ? (
-        <div className="flex items-center gap-3">
-            <CompactButton
-                onClick={() => setShowAIModal(true)}
-                icon={<Wand2 size={14} />}
-                label={t('phonology.generate_btn')}
-                color="var(--primary)"
-            />
-            {pendingPhonology && (
+    const totalPhonemes = (data.consonants?.length || 0) + (data.vowels?.length || 0);
+
+    const headerActions = (
+        <div className="flex items-center justify-between w-full gap-6">
+            {/* Left: Stats */}
+            <div className="flex items-center gap-4">
+                <StatBadge value={data.consonants?.length || 0} label="C" />
+                <StatBadge value={data.vowels?.length || 0} label="V" />
+                <button
+                    onClick={clearAll}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold transition-colors border"
+                    style={{ 
+                        backgroundColor: 'var(--surface)',
+                        borderColor: 'var(--error)',
+                        color: 'var(--error)'
+                    }}
+                >
+                    <Trash2 size={12} />
+                    <span className="hidden sm:inline">{t('phonology.clear_inventory')}</span>
+                </button>
+            </div>
+            {/* Right: AI Actions */}
+            {enableAI && (
                 <CompactButton
-                    onClick={() => setShowPreview(!showPreview)}
-                    icon={<Eye size={14} />}
-                    label={showPreview ? t('phonology.hide_preview') : t('phonology.show_preview')}
+                    onClick={() => setShowAIModal(true)}
+                    icon={<Wand2 size={14} />}
+                    label={t('phonology.generate_btn')}
+                    color="var(--primary)"
                 />
             )}
         </div>
-    ) : null;
+    );
 
     return (
         <ViewLayout
@@ -148,52 +163,11 @@ const PhonologyEditor: React.FC<PhonologyEditorProps> = ({ data, setData, enable
             title={t('phonology.title')}
             subtitle={t('phonology.subtitle')}
             headerChildren={headerActions}
+            footer={<span style={{ color: 'var(--text-secondary)' }} className="text-sm">{totalPhonemes} phonems</span>}
         >
-            <div className="flex h-full gap-6 p-6 overflow-hidden">
+            <div className="flex h-full p-6 overflow-hidden">
 
-            {/* Left Panel: Controls */}
-            <div className="w-80 flex flex-col gap-6 shrink-0">
-                <Card className="p-5 flex-1 overflow-y-auto">
-                    <Section title={t('phonology.stats')} icon={<Info size={20} />} className="mb-4">
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-center py-2 px-3 rounded" style={{ backgroundColor: 'var(--surface)' }}>
-                                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{t('phonology.inventory')}</span>
-                                <span className="font-mono text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{(data.consonants?.length || 0) + (data.vowels?.length || 0)}</span>
-                            </div>
-                            <div className="flex justify-between items-center py-2 px-3 rounded" style={{ backgroundColor: 'var(--surface)' }}>
-                                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{t('phonology.consonants')}</span>
-                                <span className="font-mono text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{data.consonants?.length || 0}</span>
-                            </div>
-                            <div className="flex justify-between items-center py-2 px-3 rounded" style={{ backgroundColor: 'var(--surface)' }}>
-                                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{t('phonology.vowels')}</span>
-                                <span className="font-mono text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{data.vowels?.length || 0}</span>
-                            </div>
-                            <FormField label={t('phonology.syllable_struct')}>
-                                <input
-                                    value={data.syllableStructure || ''}
-                                    onChange={(e) => setData({ ...data, syllableStructure: e.target.value })}
-                                    placeholder={t('phonology.syllable_placeholder')}
-                                    className="w-full px-3 py-2 rounded font-mono text-sm border outline-none focus:ring-2 transition-all"
-                                    style={{ 
-                                        backgroundColor: 'var(--surface)', 
-                                        borderColor: 'var(--border)',
-                                        color: 'var(--text-primary)',
-                                        '--tw-ring-color': 'var(--accent)'
-                                    } as React.CSSProperties}
-                                />
-                            </FormField>
-                            <ActionButton
-                                onClick={clearAll}
-                                icon={<Trash2 size={16} />}
-                                title={t('phonology.clear_inventory')}
-                                className="bg-red-900/20 border-red-900/30 hover:border-red-700"
-                            />
-                        </div>
-                    </Section>
-                </Card>
-            </div>
-
-            {/* Right Panel: Charts */}
+            {/* Charts */}
             <div className="flex-1 overflow-y-auto space-y-8 pr-2 custom-scrollbar">
 
                 {/* Consonants Chart */}

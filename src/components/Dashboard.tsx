@@ -4,7 +4,7 @@ import { BookA, Languages, ArrowRight, FileText, Feather, Building2, BarChart3 }
 import { LexiconEntry, ViewState, ScriptConfig } from '../types';
 import { useTranslation } from '../i18n';
 import { ConScriptText } from './ConScriptRenderer';
-import { Card, StatBox, ActionButton, Section, ViewLayout } from './ui';
+import { Card, StatBox, ActionButton, Section, ViewLayout, StatBadge } from './ui';
 
 interface DashboardProps {
   entries: LexiconEntry[];
@@ -59,7 +59,7 @@ const Dashboard: React.FC<DashboardProps> = ({
       icon={Building2}
       title={displayProjectName}
       subtitle={`${t('dashboard.by')} ${displayAuthor}`}
-      headerChildren={<StatBox value={totalWords} label={t('dashboard.lexiconsize')} className="min-w-[140px] shrink-0" variant="compact" />}
+      headerChildren={<StatBadge value={totalWords} label={t('dashboard.lexiconsize')} className="min-w-[140px] shrink-0" />}
     >
       <div className="p-8 mx-auto space-y-8 max-w-7xl">
         {description && (

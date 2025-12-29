@@ -9,6 +9,7 @@ interface ViewLayoutProps {
     titleContent?: ReactNode; // Custom content to replace title/subtitle (Dashboard-like)
     headerChildren?: ReactNode; // Extra widgets/buttons in header
     children: ReactNode; // Main content
+    footer?: ReactNode; // Optional footer content
 }
 
 /**
@@ -31,7 +32,8 @@ export const ViewLayout: React.FC<ViewLayoutProps> = ({
     subtitle, 
     titleContent,
     headerChildren,
-    children 
+    children,
+    footer
 }) => {
     return (
         <div className="h-full flex flex-col" style={{ backgroundColor: 'var(--background)' }}>
@@ -47,6 +49,12 @@ export const ViewLayout: React.FC<ViewLayoutProps> = ({
             <div className="flex-1 overflow-y-auto custom-scrollbar">
                 {children}
             </div>
+            
+            {footer && (
+                <div className="border-t px-6 py-3" style={{ borderColor: 'var(--border)' }}>
+                    {footer}
+                </div>
+            )}
         </div>
     );
 };

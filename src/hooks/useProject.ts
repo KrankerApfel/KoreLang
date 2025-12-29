@@ -54,6 +54,9 @@ export const useProject = () => {
   const [currentView, setCurrentView] = useState<ViewState>("DASHBOARD");
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
 
+  // Track if initial load is complete to prevent auto-save before loading
+  const [isInitialLoadComplete, setIsInitialLoadComplete] = useState(false);
+
   // Integrate app settings via useSettings
   const { settings, updateSettings } = useSettings();
 
@@ -78,20 +81,36 @@ export const useProject = () => {
     setConstraints({ ...INITIAL_CONSTRAINTS, ...(data.constraints || {}) });
   };
 
-  // Load project from localStorage on mount
+  // Load project from localStorage on mount, or load default Sindarin project
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
         loadProjectData(JSON.parse(saved));
+        setIsInitialLoadComplete(true);
       } catch (e) {
         console.error("Failed to load project from storage", e);
+        setIsInitialLoadComplete(true);
       }
+    } else {
+      // No saved project, load default Sindarin project
+      fetch("/sindarin_complete.json")
+        .then(res => res.json())
+        .then(data => {
+          loadProjectData(data);
+          setIsInitialLoadComplete(true);
+        })
+        .catch(err => {
+          console.error("Failed to load default Sindarin project", err);
+          setIsInitialLoadComplete(true);
+        });
     }
   }, []);
 
-  // Auto-save project to localStorage
+  // Auto-save project to localStorage (skip on initial load)
   useEffect(() => {
+    if (!isInitialLoadComplete) return;
+    
     const projectData: ProjectData = {
       version: "1.1",
       name: projectName,
@@ -113,6 +132,7 @@ export const useProject = () => {
       console.error("Auto-save failed", e);
     }
   }, [
+    isInitialLoadComplete,
     projectName,
     projectAuthor,
     projectDescription,
