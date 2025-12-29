@@ -159,6 +159,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
           label: t("menu.preferences"),
           icon: Settings,
           action: openSettings,
+          shortcut: "Alt+,",
         },
       ],
     },
