@@ -4,10 +4,51 @@ import { Phoneme } from '../types';
 import { Card, Section } from './ui';
 import { useTranslation } from '../i18n';
 
+
 const MANNERS = ['plosive', 'nasal', 'trill', 'tap', 'fricative', 'lateral-fricative', 'approximant', 'lateral-approximant'];
 const PLACES = ['bilabial', 'labiodental', 'dental', 'alveolar', 'postalveolar', 'retroflex', 'palatal', 'velar', 'uvular', 'pharyngeal', 'glottal'];
 const HEIGHTS = ['close', 'near-close', 'close-mid', 'mid', 'open-mid', 'near-open', 'open'];
 const BACKNESS = ['front', 'central', 'back'];
+
+// Détermination des cases impossibles selon la structure C# (Phoneme.cs)
+// --- Voyelles ---
+const impossibleVowelCells: Record<string, Record<string, boolean>> = {
+    'close':      { front: false, central: false, back: false },
+    'near-close': { front: false, central: true,  back: false },
+    'close-mid':  { front: false, central: false, back: false },
+    'mid':        { front: true,  central: false, back: true  },
+    'open-mid':   { front: false, central: false, back: false },
+    'near-open':  { front: false, central: false, back: true  },
+    'open':       { front: false, central: true,  back: false },
+};
+
+// --- Consonnes ---
+const impossibleConsonantCells: Record<string, Record<string, boolean>> = {
+    'plosive': {
+        bilabial: false, labiodental: true,  dental: true,  alveolar: false, postalveolar: true,  retroflex: false, palatal: false, velar: false, uvular: false, pharyngeal: true,  glottal: false
+    },
+    'nasal': {
+        bilabial: false, labiodental: false, dental: true,  alveolar: false, postalveolar: true,  retroflex: false, palatal: false, velar: false, uvular: false, pharyngeal: true,  glottal: true
+    },
+    'trill': {
+        bilabial: false, labiodental: true,  dental: true,  alveolar: false, postalveolar: true,  retroflex: true,  palatal: true,  velar: true,  uvular: false, pharyngeal: true,  glottal: true
+    },
+    'tap': {
+        bilabial: true,  labiodental: false, dental: true,  alveolar: false, postalveolar: true,  retroflex: false, palatal: true,  velar: true,  uvular: true,  pharyngeal: true,  glottal: true
+    },
+    'fricative': {
+        bilabial: false, labiodental: false, dental: false, alveolar: false, postalveolar: false, retroflex: false, palatal: false, velar: false, uvular: false, pharyngeal: false, glottal: false
+    },
+    'lateral-fricative': {
+        bilabial: true,  labiodental: true,  dental: true,  alveolar: false, postalveolar: true,  retroflex: true,  palatal: true,  velar: true,  uvular: true,  pharyngeal: true,  glottal: true
+    },
+    'approximant': {
+        bilabial: true,  labiodental: false, dental: true,  alveolar: false, postalveolar: true,  retroflex: false, palatal: false, velar: false, uvular: true,  pharyngeal: true,  glottal: true
+    },
+    'lateral-approximant': {
+        bilabial: true,  labiodental: true,  dental: true,  alveolar: false, postalveolar: true,  retroflex: false, palatal: false, velar: false, uvular: true,  pharyngeal: true,  glottal: true
+    },
+};
 
 export interface PhonemeGridProps {
     title: string;
@@ -53,6 +94,25 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
         );
     }, [rows, columns, getPhonemes]);
 
+    // Composant réutilisable pour une case hachurée
+    const HatchCell: React.FC = () => (
+      <td
+        className="p-1 text-center border-l bg-[var(--surface)] relative"
+        style={{ borderColor: 'var(--text-tertiary)', cursor: 'not-allowed', opacity: 0.6, minWidth: 0, minHeight: 0 }}
+      >
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none w-full h-full">
+          <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+            <defs>
+              <pattern id="hatchPattern" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+                <rect x="0" y="0" width="3" height="8" fill="var(--text-primary)" opacity="0.32" />
+              </pattern>
+            </defs>
+            <rect x="0" y="0" width="100" height="100" fill="url(#hatchPattern)" />
+          </svg>
+        </div>
+      </td>
+    );
+
     return (
     <Card className="flex flex-col h-full min-h-0 p-4 overflow-hidden">
         <Section title={title} icon={icon} className="mb-2 shrink-0" />
@@ -88,10 +148,16 @@ const PhonemeGrid: React.FC<PhonemeGridProps> = ({
                         </th>
                         {columns.map((col, colIdx) => {
                             const phonemes = gridData[rowIdx][colIdx];
+                            const isImpossible = isVowels
+                                ? impossibleVowelCells[rows[rowIdx]]?.[columns[colIdx]]
+                                : impossibleConsonantCells[rows[rowIdx]]?.[columns[colIdx]];
+                            if (isImpossible) {
+                                return <HatchCell key={`${row}-${col}`} />;
+                            }
                             return (
                                 <td
                                     key={`${row}-${col}`}
-                                    className={`p-1 text-center transition-colors cursor-pointer group hover:bg-[var(--surface)] ${colIdx === 0 ? 'border-l' : 'border-l'}`}
+                                    className={`p-1 text-center transition-colors cursor-pointer group hover:bg-[var(--surface)] border-l`}
                                     style={{ borderColor: 'var(--text-tertiary)' }}
                                     onClick={() => onCellClick(row, col)}
                                 >

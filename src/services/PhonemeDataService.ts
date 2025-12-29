@@ -5,7 +5,7 @@
 import { PhonemeType } from "../types";
 
 export class PhonemeDataService {
-  private static readonly phonemeToIPA: Record<PhonemeType, string> = {
+  private static readonly phonemeToIPA: Partial<Record<PhonemeType, string>> = {
     [PhonemeType.VoicedBilabialNasal]: "m",
     [PhonemeType.VoicedLabiodentalNasal]: "ɱ",
     [PhonemeType.VoicedAlveolarNasal]: "n",
@@ -88,7 +88,7 @@ export class PhonemeDataService {
     [PhonemeType.OpenBackRounded]: "ɒ"
   };
 
-  private static readonly phonemeToRarity: Record<PhonemeType, number> = {
+  private static readonly phonemeToRarity: Partial<Record<PhonemeType, number>> = {
     [PhonemeType.VoicedBilabialNasal]: 1,
     [PhonemeType.VoicedLabiodentalNasal]: 3,
     [PhonemeType.VoicedAlveolarNasal]: 1,
