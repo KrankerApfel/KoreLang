@@ -14,14 +14,13 @@ const TERMINAL_HEADER = `
 `;
 
 interface ConsoleConfigProps {
-  history: LogEntry[];
-  setHistory: React.Dispatch<React.SetStateAction<LogEntry[]>>;
   loadingAI: boolean;
   author?: string;
 }
 
-const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ history, setHistory, loadingAI, author = "user" }) => {
+const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user" }) => {
   const { t } = useTranslation();
+  const [history, setHistory] = useState<LogEntry[]>([]);
   const [input, setInput] = useState("");
   const executeCommand = useCommandExecutor();
 

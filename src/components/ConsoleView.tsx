@@ -2,14 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "../i18n";
 import { X, ChevronDown, ChevronUp, Terminal } from "lucide-react";
 import ConsoleConfig from "./ConsoleConfig";
-import { LogEntry } from "../types";
 
 interface ConsoleViewProps {
   isOpen: boolean;
   loadingAI: boolean;
   onClose: () => void;
-  history: LogEntry[];
-  setHistory: React.Dispatch<React.SetStateAction<LogEntry[]>>;
   author?: string;
 }
 
@@ -17,8 +14,6 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
   isOpen,
   loadingAI,
   onClose,
-  history,
-  setHistory,
   author,
 }) => {
   const { t } = useTranslation();
@@ -310,8 +305,6 @@ const ConsoleView: React.FC<ConsoleViewProps> = ({
         {!isMinimized && (
           <div className="flex-1 flex flex-col overflow-hidden bg-[var(--background)]">
             <ConsoleConfig
-              history={history}
-              setHistory={setHistory}
               loadingAI={loadingAI}
               author={author}
             />

@@ -11,7 +11,7 @@ import { ProjectView } from "./components/ProjectView";
 import { Modals } from "./components/Modals";
 import { Footer } from "./components/Footer";
 
-import { ViewState, LogEntry } from "./types";
+import { ViewState } from "./types";
 
 import { LanguageProvider, i18n } from "./i18n";
 import { UIProvider, useUI } from "./ui/UIContext";
@@ -35,7 +35,6 @@ const AppContent: React.FC = () => {
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [isScriptMode, setIsScriptMode] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(80);
-  const [consoleHistory, setConsoleHistory] = useState<LogEntry[]>([]);
   const sidebarRef = React.useRef<SidebarHandle>(null);
 
   useEffect(() => {
@@ -159,8 +158,6 @@ const AppContent: React.FC = () => {
               isOpen={isConsoleOpen}
               loadingAI={project.settings.enableAI}
               onClose={() => setIsConsoleOpen(false)}
-              history={consoleHistory}
-              setHistory={setConsoleHistory}
             />
           )}
         </main>
