@@ -63,7 +63,9 @@ const AppContent: React.FC = () => {
           project.loadProjectData(payload.data);
         }
       },
-      exportProject: project.handlers.exportProject,
+      exportProject: (payload) => {
+        project.handlers.exportProject(payload?.fileName as string);
+      },
       openModal: (payload) => {
         const modal = resolveModal(payload?.modal);
         if (modal) open(modal);

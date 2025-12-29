@@ -165,13 +165,13 @@ export const useProject = () => {
   // Handlers grouped for cleaner props spreading in App
   const handlers = {
     newProject: () => setCurrentView("DASHBOARD"),
-    exportProject: () => {
+    exportProject: (fileName?: string) => {
       const data = getFullProjectData();
       const text = JSON.stringify(data, null, 2);
       const blob = new Blob([text], { type: "application/json" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `project.json`;
+      a.download = fileName || `${projectName || "project"}.json`;
       a.click();
     },
     openProject: () => {

@@ -208,6 +208,24 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
     setHistory(prev => [...prev, { type, content, timestamp, component }]);
   };
 
+  // Unified logging API
+  const log = {
+    error: (message: string) => addLog("error", message),
+    warning: (message: string) => addLog("warning", message),
+    success: (message: string) => addLog("success", message),
+    info: (message: string) => addLog("info", message),
+    msg: (category: string, message: string) => {
+      const component = (
+        <span>
+          <span style={{ color: "var(--primary)", fontWeight: "bold" }}>{category}</span>
+          {" "}
+          <span style={{ color: "var(--text-primary)" }}>{message}</span>
+        </span>
+      );
+      addLog("output", "", component);
+    },
+  };
+
   const clearTerminal = () => {
     setHistory([{ type: "info", content: TERMINAL_HEADER, timestamp: "" }]);
   };
@@ -261,7 +279,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
     // Track command history for ArrowUp/ArrowDown navigation
     setCommandHistory(prev => [...prev, cmdStr]);
     setHistoryCursor(prev => prev + 1);
-    addLog("command", cmdStr);
+    log.msg("command", cmdStr);
 
     const [rawCommand, ...args] = cmdStr.trim().split(/\s+/);
     const cmd = rawCommand.toLowerCase();
@@ -297,12 +315,12 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
               <span style={{ color: 'var(--info)' }}> {c.args}</span>
             </span>
           ));
-          addLog("info", `    ${c.desc}`);
+          log.info(`    ${c.desc}`);
         });
         addLog("output", "");
       } else if (category) {
-        addLog("error", `Unknown category: ${category}`);
-        addLog("info", `Available categories: ${Object.keys(COMMAND_CATEGORIES).join(', ')}`);
+        log.error(`Unknown category: ${category}`);
+        log.info(`Available categories: ${Object.keys(COMMAND_CATEGORIES).join(', ')}`);
       } else {
         // Display only root commands
         addLog("output", "");
@@ -322,8 +340,8 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
           addLog("info", `    ${c.desc}`);
         });
         addLog("output", "");
-        addLog("info", `Type 'help -cat <category>' to see available categories:`);
-        addLog("info", `Available: ${CATEGORY_NAMES.map(c => `${c}`).join(', ')}`);
+        log.info(`Type 'help -cat <category>' to see available categories:`);
+        log.info(`Available: ${CATEGORY_NAMES.map(c => `${c}`).join(', ')}`);
         addLog("output", "");
       }
       return;
@@ -348,14 +366,14 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
       };
 
       if (!section) {
-        addLog("error", "Specify section to navigate to.");
-        addLog("info", `Available sections: ${validSections.join(', ')}`);
+        log.error("Specify section to navigate to.");
+        log.info(`Available sections: ${validSections.join(', ')}`);
         return;
       }
 
       if (!validSections.includes(section)) {
-        addLog("error", `${section} not found`);
-        addLog("info", `Available sections: ${validSections.join(', ')}`);
+        log.error(`${section} not found`);
+        log.info(`Available sections: ${validSections.join(', ')}`);
         return;
       }
 
@@ -364,12 +382,12 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
 
       // Check if already on this view
       if (currentView === targetView) {
-        addLog("warning", `Already on ${section}`);
+        log.warning(`Already on ${section}`);
         return;
       }
 
       executeCommand("navigateTo", { view: targetView });
-      addLog("success", `Navigated to: ${section}`);
+      log.success(`Navigated to: ${section}`);
       return;
     }
 
@@ -378,15 +396,15 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
     if (category) {
       const subCmd = args[0]?.toLowerCase();
       if (!subCmd) {
-        addLog("error", `Specify subcommand for ${cmd}.`);
-        addLog("info", `Available: ${category.commands.map(c => c.cmd).join(', ')}`);
+        log.error(`Specify subcommand for ${cmd}.`);
+        log.info(`Available: ${category.commands.map(c => c.cmd).join(', ')}`);
         return;
       }
 
       const commandDef = category.commands.find(c => c.cmd.toLowerCase() === subCmd);
       if (!commandDef) {
-        addLog("error", `Unknown ${cmd} subcommand: ${subCmd}`);
-        addLog("info", `Available: ${category.commands.map(c => c.cmd).join(', ')}`);
+        log.error(`Unknown ${cmd} subcommand: ${subCmd}`);
+        log.info(`Available: ${category.commands.map(c => c.cmd).join(', ')}`);
         return;
       }
 
@@ -412,43 +430,81 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
           const description = params["-desc"] || "";
           
           executeCommand("newProject", { name, author, description });
-          addLog("success", `Creating project: "${name}"`);
-          addLog("info", `Author: ${author}`);
-          if (description) addLog("info", `Description: ${description}`);
+          log.success(`Creating project: "${name}"`);
+          log.info(`Author: ${author}`);
+          if (description) log.info(`Description: ${description}`);
         } else if (subCmd === "--open") {
-          const path = params["-path"];
+          let path = params["-path"];
           if (!path) {
-            addLog("error", "Missing required flag: -path <file_path>");
-            addLog("info", "Usage: project --open -path <file_path>");
+            log.error("Missing required flag: -path <file_path>");
+            log.info("Usage: project --open -path <file_path>");
             return;
           }
           
-          // Attempt to load file from path
-          fetch(path)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error(`File not found: ${path}`);
+          // Clean path: remove quotes and trim whitespace
+          path = path.replace(/^["']|["']$/g, "").trim();
+          
+          // Extract filename from path
+          const fileName = path.split(/[\\\/]/).pop() || "project.json";
+          
+          // Open file picker to browse for the file
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = ".json";
+          input.onchange = () => {
+            const file = input.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              try {
+                const data = JSON.parse(e.target?.result as string);
+                executeCommand("loadProject", { data });
+                log.success(`Project loaded from: ${file.name}`);
+              } catch (error) {
+                log.error("Invalid JSON file");
               }
-              return response.json();
-            })
-            .then(data => {
-              executeCommand("loadProject", { data });
-              addLog("success", `Project loaded from: ${path}`);
-            })
-            .catch(error => {
-              addLog("error", `Failed to load project: ${error.message}`);
-            });
+            };
+            reader.readAsText(file);
+          };
+          log.info(`Opening file picker to select: ${fileName}`);
+          input.click();
+          return;
         } else if (subCmd === "--export") {
-          executeCommand("exportProject");
-          addLog("success", "Exporting current project...");
+          let fileName = params["-name"];
+          const path = params["-path"];
+          
+          // Extract filename from path if provided
+          if (!fileName && path) {
+            // Remove quotes and trim
+            const cleanPath = path.replace(/^["']|["']$/g, "").trim();
+            // Extract filename from path (last part after / or \)
+            const extracted = cleanPath.split(/[\\\/]/).pop();
+            if (extracted) {
+              fileName = extracted;
+            }
+          }
+          
+          // Default filename
+          fileName = fileName || "project.json";
+          
+          executeCommand("exportProject", { fileName });
+          
+          // Add a small delay to ensure export command completes
+          setTimeout(() => {
+            // The export command should trigger a download via the normal download mechanism
+            log.success(`Exporting project as: ${fileName}`);
+            if (path) {
+              log.info(`Navigate to the download folder to save: ${fileName}`);
+            }
+          }, 100);
         }
       } else if (cmd === "lexicon") {
         if (subCmd === "--add") {
           const requiredFlags = ["-w", "-p", "-d"];
           const missing = requiredFlags.filter(f => !params[f]);
           if (missing.length > 0) {
-            addLog("error", `Missing required flags: ${missing.join(', ')}`);
-            addLog("info", "Required: -w <word> -p <pos> -d <def>");
+            log.error(`Missing required flags: ${missing.join(', ')}`);
+            log.info("Required: -w <word> -p <pos> -d <def>");
             return;
           }
           const newEntry = {
@@ -461,60 +517,60 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
             timestamp: Date.now()
           };
           executeCommand("addLexiconEntry", newEntry);
-          addLog("success", `Entry added: "${newEntry.word}" (${newEntry.pos})`);
-          addLog("info", `Definition: ${newEntry.definition}`);
+          log.success(`Entry added: "${newEntry.word}" (${newEntry.pos})`);
+          log.info(`Definition: ${newEntry.definition}`);
         } else if (subCmd === "--list") {
-          executeCommand("navigateTo", { view: "lexicon" });
-          addLog("success", "Navigated to Lexicon view.");
+          executeCommand("navigateTo", { view: "LEXICON" });
+          log.success("Navigated to Lexicon view.");
         } else if (subCmd === "--delete") {
           const word = params["-w"];
           if (!word) {
-            addLog("error", "Specify word: lexicon --delete -w <word>");
+            log.error("Specify word: lexicon --delete -w <word>");
             return;
           }
           executeCommand("deleteLexiconEntry", { word });
-          addLog("success", `Deletion request for: "${word}"`);
+          log.success(`Deletion request for: "${word}"`);
         } else if (subCmd === "--search") {
           const query = params["-q"];
           if (!query) {
-            addLog("error", "Specify term: lexicon --search -q <term>");
+            log.error("Specify term: lexicon --search -q <term>");
             return;
           }
           executeCommand("searchLexicon", { query });
-          addLog("success", `Searching for: "${query}"`);
+          log.success(`Searching for: "${query}"`);
         }
       } else if (cmd === "sb") {
         if (subCmd === "--t") {
           executeCommand("toggleSidebar");
-          addLog("success", "Sidebar toggled.");
+          log.success("Sidebar toggled.");
         } else if (subCmd === "--o") {
           executeCommand("openSidebar");
-          addLog("success", "Sidebar opened.");
+          log.success("Sidebar opened.");
         } else if (subCmd === "--c") {
           executeCommand("closeSidebar");
-          addLog("success", "Sidebar closed.");
+          log.success("Sidebar closed.");
         }
       } else if (cmd === "console") {
         if (subCmd === "--open") {
           executeCommand("openConsole");
-          addLog("success", "Console opened.");
+          log.success("Console opened.");
         } else if (subCmd === "--close") {
           executeCommand("closeConsole");
-          addLog("success", "Console closed.");
+          log.success("Console closed.");
         } else if (subCmd === "--max") {
           executeCommand("maximizeConsole");
-          addLog("success", "Console maximized.");
+          log.success("Console maximized.");
         } else if (subCmd === "--min") {
           executeCommand("minimizeConsole");
-          addLog("success", "Console minimized.");
+          log.success("Console minimized.");
         }
       }
       return;
     }
 
     // Unknown command
-    addLog("error", `Command not recognized: ${cmdStr}`);
-    addLog("info", "Type 'help' to see available commands.");
+    log.error(`Command not recognized: ${cmdStr}`);
+    log.info("Type 'help' to see available commands.");
   };
 
   return (
@@ -535,7 +591,7 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
         {history.map((log, i) => (
           <div
             key={i}
-            className={`flex flex-col ${
+            className={`flex flex-col cursor-text ${
               log.type === "error"
                 ? "text-red-500"
                 : log.type === "warning"
@@ -546,6 +602,11 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
                 ? "text-[var(--text-1)] font-bold"
                 : "text-[var(--text-2)]"
             }`}
+            onDoubleClick={() => {
+              // Copy log content to clipboard on double-click
+              const textToCopy = log.component ? log.content : log.content;
+              navigator.clipboard.writeText(textToCopy);
+            }}
           >
             <div className="flex gap-3 leading-relaxed">
               {log.type === "command" && <span className="text-emerald-500">KoreLang-@{author}:~$</span>}
@@ -632,6 +693,15 @@ const ConsoleConfig: React.FC<ConsoleConfigProps> = ({ loadingAI, author = "user
                   setInput(commandHistory[nextCursor] ?? "");
                 }
               }
+            }}
+            onContextMenu={(e) => {
+              // Paste from clipboard on right-click
+              e.preventDefault();
+              navigator.clipboard.readText().then(text => {
+                setInput(input + text);
+              }).catch(() => {
+                // Silent fail if clipboard read is denied
+              });
             }}
             className="bg-transparent border-none outline-none text-[var(--text-1)] w-full relative z-10"
             placeholder={t("console.placeholder") || "Enter command..."}

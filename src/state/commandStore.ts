@@ -48,6 +48,7 @@ export type CommandPayload = {
   name?: string;
   author?: string;
   description?: string;
+  fileName?: string;
   path?: string;
   data?: any;
 };
