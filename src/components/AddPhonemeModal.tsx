@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal } from './ui';
 import { useTranslation } from '../i18n';
-import { PhonemeModel } from '../types';
+import { PhonemeModel, ArticulationPlaceModification, RoundnessModification, TonguePositionModification, PhonationModification, OronasalProcessModification, TongueRootPositionModification, SyllabicRoleModification } from '../types';
 
 interface AddPhonemeModalProps {
   isOpen: boolean;
@@ -22,10 +22,25 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  // Filtrer les phonèmes selon place et manner
-  const filtered = phonemes.filter(p =>
-    (p.features?.place === place && p.features?.manner === manner)
-  );
+
+  // Déterminer les options possibles pour la case sélectionnée
+  const isVowel = phonemes.length > 0 && phonemes[0].category === 'vowel';
+  let filtered: PhonemeModel[] = [];
+  if (isVowel) {
+    filtered = phonemes.filter(p => p.features?.height === manner && p.features?.backness === place);
+  } else {
+    filtered = phonemes.filter(p => p.features?.place === place && p.features?.manner === manner);
+  }
+  const [selectedPhonemeId, setSelectedPhonemeId] = React.useState<string>('');
+
+  // Always update selectedPhonemeId to first available when filtered changes or modal opens
+  React.useEffect(() => {
+    if (isOpen && filtered.length > 0) {
+      setSelectedPhonemeId(filtered[0].id);
+    } else if (!isOpen) {
+      setSelectedPhonemeId('');
+    }
+  }, [isOpen, filtered]);
 
   return (
     <Modal
@@ -36,27 +51,40 @@ const AddPhonemeModal: React.FC<AddPhonemeModalProps> = ({
       icon={null}
     >
       <div className="mb-4 text-center text-xs font-bold uppercase tracking-wider text-[var(--text-tertiary)]">
-        {place} / {manner}
+        {isVowel
+          ? `${manner || ''} / ${place || ''}`
+          : `${place || ''} / ${manner || ''}`}
       </div>
-      <div className="flex flex-col gap-1">
-        {filtered.length === 0 && (
+      <div className="flex flex-col gap-2 items-center">
+        {filtered.length === 0 ? (
           <div className="text-center text-[var(--text-secondary)] text-xs py-4">
             {t('phonology.no_phoneme_found') || 'No phoneme found for this cell.'}
           </div>
+        ) : (
+          <>
+            <select
+              value={selectedPhonemeId}
+              onChange={e => setSelectedPhonemeId(e.target.value)}
+              style={{ minWidth: 180, minHeight: 32, border: '2px solid #888', color: '#222', background: '#fff', borderRadius: 4, fontSize: 15, margin: 4 }}
+            >
+              {filtered.map(phoneme => (
+                <option key={phoneme.id} value={phoneme.id}>
+                  [{phoneme.symbol}] {phoneme.name}
+                </option>
+              ))}
+            </select>
+            <button
+              className="mt-2 px-4 py-2 rounded bg-[var(--accent)] text-white font-bold hover:bg-[var(--accent-dark)]"
+              disabled={!selectedPhonemeId}
+              onClick={() => {
+                const selected = filtered.find(p => p.id === selectedPhonemeId);
+                if (selected) onSelect(selected);
+              }}
+            >
+              {t('phonology.add_phoneme') || 'Add Phoneme'}
+            </button>
+          </>
         )}
-        {filtered.map((phoneme, idx) => (
-          <button
-            key={phoneme.id}
-            onClick={() => onSelect(phoneme)}
-            className={`flex items-center gap-2 px-3 py-2 rounded transition-colors w-full text-left font-mono text-sm ${idx % 2 === 0 ? 'bg-[var(--surface)]' : 'bg-[var(--elevated)]'} hover:bg-[var(--hover)]`}
-            style={{ color: 'var(--text-primary)' }}
-          >
-            <span className="inline-block px-2 py-0.5 rounded bg-[var(--accent)] text-white text-xs font-bold min-w-[28px] text-center">
-              {phoneme.symbol}
-            </span>
-            <span className="ml-2 font-sans text-sm">{phoneme.name}</span>
-          </button>
-        ))}
       </div>
     </Modal>
   );
